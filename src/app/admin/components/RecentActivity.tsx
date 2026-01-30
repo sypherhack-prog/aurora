@@ -1,4 +1,5 @@
 import { TrendingUp, CreditCard, Users } from 'lucide-react'
+import { STATUS_STYLES, STATUS_LABELS } from '@/lib/constants'
 
 interface Subscription {
     id: string
@@ -8,25 +9,14 @@ interface Subscription {
 }
 
 function StatusBadge({ status }: { status: string }) {
-    const styles: Record<string, string> = {
-        PENDING: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-        ACTIVE: 'bg-green-500/20 text-green-400 border-green-500/30',
-        EXPIRED: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
-        BLOCKED: 'bg-red-500/20 text-red-400 border-red-500/30',
-    }
-
-    const labels: Record<string, string> = {
-        PENDING: 'En attente',
-        ACTIVE: 'Actif',
-        EXPIRED: 'Expiré',
-        BLOCKED: 'Bloqué',
-    }
+    const style = STATUS_STYLES[status as keyof typeof STATUS_STYLES] || STATUS_STYLES.EXPIRED
+    const label = STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status
 
     return (
         <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || styles.EXPIRED}`}
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${style}`}
         >
-            {labels[status] || status}
+            {label}
         </span>
     )
 }

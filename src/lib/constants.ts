@@ -61,3 +61,18 @@ export const HTTP_STATUS = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
 } as const
+
+// UI Constants
+export const STATUS_STYLES = {
+    PENDING: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    ACTIVE: 'bg-green-500/20 text-green-400 border-green-500/30',
+    EXPIRED: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
+    BLOCKED: 'bg-red-500/20 text-red-400 border-red-500/30',
+} as const
+
+export const STATUS_LABELS = {
+    PENDING: 'En attente',
+    ACTIVE: 'Actif',
+    EXPIRED: 'Expiré',
+    BLOCKED: 'Bloqué',
+} as const
