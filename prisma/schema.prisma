@@ -1,13 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma Schema - PostgreSQL for Production
+// Compatible with Vercel Postgres, Supabase, Neon, etc.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Optional: for Vercel Postgres connection pooling
 }
 
 model User {
@@ -15,7 +16,7 @@ model User {
   email         String    @unique
   name          String?
   password      String
-  role          String    @default("USER") // SQLite does not support Enums
+  role          String    @default("USER") // Values: USER, ADMIN
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   aiUsageCount  Int       @default(0)
@@ -26,8 +27,8 @@ model Subscription {
   id          String      @id @default(cuid())
   userId      String
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan        String // STORED AS STRING: FREE, BASIC, PRO, ANNUAL
-  status      String      @default("PENDING") // STORED AS STRING: PENDING, ACTIVE, EXPIRED, BLOCKED
+  plan        String      // Values: FREE, BASIC, PRO, ANNUAL
+  status      String      @default("PENDING") // Values: PENDING, ACTIVE, EXPIRED, BLOCKED
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime    @default(now())
