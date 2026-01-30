@@ -1,0 +1,43 @@
+
+> saas@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.43.75:3000
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 1076ms
+ GET /login 200 in 895ms (compile: 691ms, render: 203ms)
+[next-auth][warn][NEXTAUTH_URL] 
+https://next-auth.js.org/warnings#nextauth_url
+[next-auth][warn][NO_SECRET] 
+https://next-auth.js.org/warnings#no_secret
+ GET /api/auth/providers 200 in 951ms (compile: 925ms, render: 26ms)
+ GET /api/auth/csrf 200 in 43ms (compile: 9ms, render: 33ms)
+LOGIN CHECK: admin@autonomous-docs.com
+LOGIN ERROR: Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].user.findUnique()` invocation in
+C:\Users\syphe\Desktop\saas\.next\dev\server\chunks\[root-of-the-server]__2fd8cd35._.js:163:171
+
+  160     console.log("LOGIN FAIL: Missing credentials");
+  161     return null;
+  162 }
+→ 163 const user = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].user.findUnique(
+The table `main.User` does not exist in the current database.
+    at <unknown> (src\lib\auth.ts:30:52)
+    at async Object.authorize (src\lib\auth.ts:30:34)
+  28 |                     }
+  29 |
+> 30 |                     const user = await prisma.user.findUnique({
+     |                                                    ^
+  31 |                         where: {
+  32 |                             email: credentials.email
+  33 |                         } {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.19.2'
+}
+ POST /api/auth/callback/credentials 401 in 302ms (compile: 2ms, render: 299ms)
+[?25h
