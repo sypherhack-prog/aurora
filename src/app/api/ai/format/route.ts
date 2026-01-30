@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { getUserPlan } from '@/lib/subscription'
 import { processAIRequest, AIAction } from '@/lib/gemini'
 import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
     try {
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, result })
     } catch (error) {
-        console.error('AI Processing Error:', error)
+        logger.error('AI Processing Error:', error)
         return NextResponse.json({
             error: 'Erreur lors du traitement AI',
             details: error instanceof Error ? error.message : 'Unknown error'

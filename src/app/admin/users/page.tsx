@@ -1,12 +1,22 @@
 
 import { prisma } from '@/lib/db'
-import { Card } from '@/components/ui/Card' // Assuming this exists or I'll use raw HTML/Tailwind
-import { formatDate } from '@/lib/utils' // Assuming this exists, otherwise raw
 
 export default async function AdminUsersPage() {
     const users = await prisma.user.findMany({
         orderBy: { createdAt: 'desc' },
-        include: { subscriptions: true }
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            createdAt: true,
+            subscriptions: {
+                select: {
+                    status: true,
+                    plan: true
+                }
+            }
+        }
     })
 
     return (
@@ -36,8 +46,8 @@ export default async function AdminUsersPage() {
                                         <td className="p-4 text-zinc-400">{user.email}</td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'ADMIN'
-                                                    ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                                    : 'bg-zinc-700 text-zinc-300'
+                                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                                : 'bg-zinc-700 text-zinc-300'
                                                 }`}>
                                                 {user.role}
                                             </span>

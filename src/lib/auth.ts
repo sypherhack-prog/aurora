@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
         strategy: "jwt"
     },
     pages: {
-        signIn: "/login",
+        signIn: "/auth/login",
     },
     providers: [
         CredentialsProvider({
@@ -20,31 +20,24 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                try {
-                    console.log("LOGIN CHECK:", credentials?.email)
-                    if (!credentials?.email || !credentials?.password) {
-                        console.log("LOGIN FAIL: Missing credentials")
-                        return null
-                    }
+                if (!credentials?.email || !credentials?.password) {
+                    return null
+                }
 
+                try {
                     const user = await prisma.user.findUnique({
                         where: {
                             email: credentials.email
                         }
                     })
 
-                    console.log("LOGIN USER FOUND:", !!user)
-
                     if (!user) {
-                        console.log("LOGIN FAIL: User not found in DB")
                         return null
                     }
 
                     const isPasswordValid = await compare(credentials.password, user.password)
-                    console.log("LOGIN PASSWORD VALID:", isPasswordValid)
 
                     if (!isPasswordValid) {
-                        console.log("LOGIN FAIL: Invalid password")
                         return null
                     }
 
@@ -55,7 +48,6 @@ export const authOptions: NextAuthOptions = {
                         role: user.role,
                     }
                 } catch (e) {
-                    console.error("LOGIN ERROR:", e)
                     return null
                 }
             }
@@ -63,7 +55,7 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async session({ session, token }) {
-            if (token) {
+            if (token && session.user) {
                 session.user.id = token.id as string
                 session.user.role = token.role as string
             }
