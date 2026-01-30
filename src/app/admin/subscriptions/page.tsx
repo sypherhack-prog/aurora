@@ -1,7 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from '@/lib/db'
 import SubscriptionActions from './subscription-actions'
 import { CreditCard, Search } from 'lucide-react'
+
+// --- Types ---
+interface SubscriptionWithRelations {
+    id: string
+    plan: string
+    status: string
+    createdAt: Date
+    user: {
+        name: string | null
+        email: string | null
+    } | null
+    payments: {
+        mvolaRef: string | null
+        phoneNumber: string | null
+    }[]
+}
 
 // --- Components ---
 
@@ -59,7 +74,8 @@ function StatusBadge({ status }: { status: string }) {
     )
 }
 
-function UserCell({ user }: { user: any }) {
+function UserCell({ user }: { user: { name: string | null; email: string | null } | null }) {
+    if (!user) return <div className="text-zinc-500">Inconnu</div>
     const initial = user.email?.charAt(0).toUpperCase() || 'U'
     return (
         <div className="flex items-center gap-3">
@@ -125,7 +141,7 @@ export default async function SubscriptionsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800">
-                        {subscriptions.map((sub: any) => (
+                        {subscriptions.map((sub) => (
                             <tr key={sub.id} className="hover:bg-zinc-800/30 transition">
                                 <td className="px-6 py-4 whitespace-nowrap"><UserCell user={sub.user} /></td>
                                 <td className="px-6 py-4 whitespace-nowrap"><PlanBadge plan={sub.plan} /></td>

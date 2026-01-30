@@ -48,6 +48,17 @@ function SuccessView() {
     )
 }
 
+interface InputFieldProps {
+    id: string
+    label: string
+    icon: any
+    type: string
+    value: string
+    onChange: (val: string) => void
+    placeholder: string
+    minLength?: number
+}
+
 function InputField({
     id,
     label,
@@ -57,16 +68,7 @@ function InputField({
     onChange,
     placeholder,
     minLength,
-}: {
-    id: string
-    label: string
-    icon: any
-    type: string
-    value: string
-    onChange: (val: string) => void
-    placeholder: string
-    minLength?: number
-}) {
+}: InputFieldProps) {
     return (
         <div>
             <label htmlFor={id} className="block text-sm font-medium text-zinc-300 mb-2">

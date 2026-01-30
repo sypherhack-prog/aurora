@@ -2,7 +2,7 @@
 import { prisma } from '@/lib/db'
 
 export default async function AdminUsersPage() {
-    const fetchedUsers = await prisma.user.findMany({
+    const users = await prisma.user.findMany({
         orderBy: { createdAt: 'desc' },
         select: {
             id: true,
@@ -38,7 +38,7 @@ export default async function AdminUsersPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-800">
-                            {fetchedUsers.map((user: any) => (
+                            {users.map((user) => (
                                 <UserRow key={user.id} user={user} />
                             ))}
                         </tbody>

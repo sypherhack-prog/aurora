@@ -1,52 +1,9 @@
 import { describe, it, expect } from 'vitest'
-
-// Helper functions extracted to reduce nesting depth
-const VALID_ROLES = ['USER', 'ADMIN'] as const
-type Role = (typeof VALID_ROLES)[number]
-
-const isValidRole = (role: unknown): role is Role => {
-    return typeof role === 'string' && VALID_ROLES.includes(role as Role)
-}
-
-const VALID_STATUSES = ['PENDING', 'ACTIVE', 'EXPIRED', 'CANCELLED'] as const
-type Status = (typeof VALID_STATUSES)[number]
-
-const isValidStatus = (status: unknown): status is Status => {
-    return typeof status === 'string' && VALID_STATUSES.includes(status as Status)
-}
-
-const VALID_PLANS = ['STARTER', 'PRO', 'BUSINESS'] as const
-type Plan = (typeof VALID_PLANS)[number]
-
-const isValidPlan = (plan: unknown): plan is Plan => {
-    return typeof plan === 'string' && VALID_PLANS.includes(plan as Plan)
-}
-
-const sanitizeHtml = (input: string): string => {
-    return input
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;')
-}
-
-const isValidDate = (date: unknown): boolean => {
-    if (typeof date === 'string' || date instanceof Date) {
-        const d = new Date(date)
-        return !isNaN(d.getTime())
-    }
-    return false
-}
-
-const isExpired = (date: string | Date): boolean => new Date(date) < new Date()
-
-const isPositiveNumber = (value: unknown): boolean => {
-    return typeof value === 'number' && !isNaN(value) && value > 0
-}
-
-const isWithinRange = (value: number, min: number, max: number): boolean => {
-    return value >= min && value <= max
-}
+import {
+    isValidRole, isValidStatus, isValidPlan, isValidDate,
+    isExpired, isPositiveNumber, isWithinRange
+} from '@/lib/validation'
+import { sanitizeHtml } from '@/lib/utils'
 
 // Tests
 describe('User Role Validation', () => {

@@ -35,11 +35,12 @@ export async function POST(req: NextRequest) {
     try {
         // 1. Check Authentication
         const session = await getServerSession(authOptions)
-        const userId = session?.user?.id
 
-        if (!userId) {
+        if (!session?.user?.id) {
             return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
         }
+
+        const userId = session.user.id
 
         // 2. Check Subscription & Limits
         await validateUsageLimit(userId)
@@ -63,8 +64,8 @@ export async function POST(req: NextRequest) {
         })
 
         return NextResponse.json({ success: true, result })
-    } catch (error: any) {
-        if (error.message === 'LIMIT_REACHED') {
+    } catch (error: unknown) {
+        if (error instanceof Error && error.message === 'LIMIT_REACHED') {
             return NextResponse.json(
                 {
                     error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
+        if (error instanceof Error && (error.message === 'USER_NOT_FOUND' || (error as any).code === 'P2025')) {
             return NextResponse.json(
                 { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
                 { status: 401 }
