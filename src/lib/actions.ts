@@ -23,7 +23,7 @@ export async function verifyPayment(subscriptionId: string) {
 
     // Calculate end date based on plan
     const now = new Date()
-    let endDate = new Date(now)
+    const endDate = new Date(now)
 
     switch (subscription.plan) {
         case 'BASIC':

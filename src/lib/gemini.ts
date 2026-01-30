@@ -36,11 +36,10 @@ function resolvePrompt(action: AIAction, theme: string, docType: string): string
     if (action === 'generate-table') return PROMPTS['generate-table'](theme, docType)
     if (action === 'translate') return PROMPTS['translate'](theme)
 
-    // @ts-ignore
-    const simplePrompt = PROMPTS[action]
-    if (simplePrompt) return simplePrompt
+    const simplePrompt = PROMPTS[action as keyof typeof PROMPTS]
+    if (typeof simplePrompt === 'string') return simplePrompt
 
-    throw new Error('Unknown action')
+    throw new Error(`Unknown action: ${action}`)
 }
 
 export async function processAIRequest({ action, content, theme, documentType }: AIRequest): Promise<string> {

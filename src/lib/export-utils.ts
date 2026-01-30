@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import PptxGenJS from 'pptxgenjs'
 
 // Simple helper to estimate text height (very rough)
