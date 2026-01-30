@@ -1,3 +1,8 @@
+/**
+ * Application Constants
+ * All magic numbers and reusable constants should be defined here
+ */
+
 export const APP_CONSTANTS = {
     MAX_FREE_GENERATIONS: 5,
     PDF_CONFIG: {
@@ -7,10 +12,52 @@ export const APP_CONSTANTS = {
     },
     TIMEOUTS: {
         EXPORT: 600,
+        NOTIFICATION: 3000,
+        DEBOUNCE: 500,
     },
     PRICING: {
         BASIC: 10000,
         PRO: 20000,
         ANNUAL: 90000,
     },
-}
+} as const
+
+// Validation Constants
+export const VALIDATION = {
+    MIN_PASSWORD_LENGTH: 8,
+    MAX_PASSWORD_LENGTH: 128,
+    MAX_EMAIL_LENGTH: 255,
+    MAX_NAME_LENGTH: 100,
+} as const
+
+// User Roles
+export const USER_ROLES = {
+    USER: 'USER',
+    ADMIN: 'ADMIN',
+} as const
+
+// Subscription Constants
+export const SUBSCRIPTION = {
+    PLANS: {
+        STARTER: 'STARTER',
+        PRO: 'PRO',
+        BUSINESS: 'BUSINESS',
+    },
+    STATUSES: {
+        PENDING: 'PENDING',
+        ACTIVE: 'ACTIVE',
+        EXPIRED: 'EXPIRED',
+        CANCELLED: 'CANCELLED',
+    },
+} as const
+
+// HTTP Status Codes
+export const HTTP_STATUS = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    INTERNAL_SERVER_ERROR: 500,
+} as const

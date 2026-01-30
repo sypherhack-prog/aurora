@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 // Test environment configuration
 describe('Environment Configuration', () => {
@@ -19,9 +19,7 @@ describe('Authentication', () => {
 
     it('should validate password strength', () => {
         const isStrongPassword = (password: string) => {
-            return password.length >= 8 &&
-                /[A-Z]/.test(password) &&
-                /[0-9]/.test(password)
+            return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password)
         }
         expect(isStrongPassword('Weak1')).toBe(false)
         expect(isStrongPassword('StrongPass1')).toBe(true)
@@ -33,7 +31,7 @@ describe('Authentication', () => {
 describe('Data Validation', () => {
     it('should validate user role correctly', () => {
         const validRoles = ['USER', 'ADMIN'] as const
-        type Role = typeof validRoles[number]
+        type Role = (typeof validRoles)[number]
 
         const isValidRole = (role: string): role is Role => {
             return validRoles.includes(role as Role)
@@ -64,7 +62,7 @@ describe('Utility Functions', () => {
         const formatCurrency = (amount: number) => {
             return new Intl.NumberFormat('fr-MG', {
                 style: 'currency',
-                currency: 'MGA'
+                currency: 'MGA',
             }).format(amount)
         }
         const formatted = formatCurrency(10000)
@@ -101,10 +99,7 @@ describe('API Response Handling', () => {
 describe('Security Validations', () => {
     it('should sanitize HTML input', () => {
         const sanitizeHtml = (input: string) => {
-            return input
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
+            return input.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
         }
         expect(sanitizeHtml('<script>alert("xss")</script>')).toBe(
             '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'

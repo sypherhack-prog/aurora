@@ -12,9 +12,8 @@ const prisma = new PrismaClient({
 })
 
 async function main() {
-    console.log('Start seeding...')
     const password = await bcrypt.hash('admin123', 12)
-    const user = await prisma.user.upsert({
+    await prisma.user.upsert({
         where: { email: 'admin@autonomous-docs.com' },
         update: {},
         create: {
@@ -24,15 +23,13 @@ async function main() {
             role: 'ADMIN',
         },
     })
-    console.log('Created user:', user)
 }
 
 main()
     .then(async () => {
         await prisma.$disconnect()
     })
-    .catch(async (e) => {
-        console.error(e)
+    .catch(async () => {
         await prisma.$disconnect()
         process.exit(1)
     })

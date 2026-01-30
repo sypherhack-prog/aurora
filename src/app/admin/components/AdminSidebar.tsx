@@ -12,7 +12,7 @@ interface UserSession {
 export function AdminSidebar({ user }: { user: UserSession }) {
     const pathname = usePathname()
 
-    const sidebarItems = [
+    const SIDEBAR_ITEMS = [
         { icon: LayoutDashboard, label: 'Tableau de bord', href: '/admin' },
         { icon: CreditCard, label: 'Abonnements', href: '/admin/subscriptions' },
         { icon: Users, label: 'Utilisateurs', href: '/admin/users' },
@@ -41,7 +41,7 @@ export function AdminSidebar({ user }: { user: UserSession }) {
 
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-1">
-                {sidebarItems.map((item) => {
+                {SIDEBAR_ITEMS.map((item) => {
                     const isActive = pathname === item.href
                     return (
                         <Link
