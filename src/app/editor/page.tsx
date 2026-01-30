@@ -10,7 +10,7 @@ import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import {
     FileText,
     FolderOpen,
@@ -29,6 +29,7 @@ import {
     Undo,
     Redo,
     Wand2,
+    Shield,
     ChevronRight,
     BarChart3,
 
@@ -54,6 +55,7 @@ import {
     BookOpen,
     Lightbulb,
     Languages,
+    LogOut,
 } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { APP_CONSTANTS } from '@/lib/constants'
@@ -132,7 +134,7 @@ export default function EditorPage() {
 
     // Call AI API with context
     const callAI = useCallback(
-        async (action: string, insertMode: 'replace' | 'append' | 'insert' = 'replace') => {
+        async (action: string, insertMode: 'replace' | 'append' | 'insert' = 'replace', themeOverride?: string) => {
             if (!editor) return
             setAiLoading(action)
 
@@ -148,7 +150,7 @@ export default function EditorPage() {
                         action,
                         content,
                         selection,
-                        theme: docTheme,
+                        theme: themeOverride || docTheme,
                         documentType: docType,
                     }),
                 })
@@ -183,19 +185,9 @@ export default function EditorPage() {
         [editor, docTheme, docType]
     )
 
-    // Handle Translation
+    // Handle Translation - pass language directly to callAI
     const handleTranslate = () => {
-        // Temporarily set theme to target language just for this request
-        const originalTheme = docTheme
-        setDocTheme(translationLang)
-        callAI('translate', 'replace')
-            .then(() => {
-                setDocTheme(originalTheme)
-            })
-            .catch((e) => {
-                logger.error('Translation error', e)
-                setDocTheme(originalTheme)
-            })
+        callAI('translate', 'replace', translationLang)
     }
 
     const createNewDoc = (theme: string, type: string, initialContent?: string) => {
@@ -541,6 +533,16 @@ export default function EditorPage() {
                         <Settings className="w-5 h-5" />
                         Paramètres
                     </button>
+
+                    {session?.user?.role === 'ADMIN' && (
+                        <Link
+                            href="/admin"
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 transition-all font-medium"
+                        >
+                            <Shield className="w-5 h-5" />
+                            Administration
+                        </Link>
+                    )}
                 </nav>
 
                 {/* Sidebar Content Based on Tab */}
@@ -650,6 +652,13 @@ export default function EditorPage() {
                                     Plan Gratuit
                                 </div>
                             </div>
+                            <button
+                                onClick={() => signOut()}
+                                className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition"
+                                title="Se déconnecter"
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </button>
                         </div>
                     ) : (
                         <Link
