@@ -31,7 +31,7 @@ import {
     Wand2,
     ChevronRight,
     BarChart3,
-    RefreshCw,
+
     User,
     AlignLeft,
     AlignCenter,
