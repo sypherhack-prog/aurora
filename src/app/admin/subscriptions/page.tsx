@@ -3,20 +3,7 @@ import SubscriptionActions from './subscription-actions'
 import { CreditCard, Search } from 'lucide-react'
 
 // --- Types ---
-interface SubscriptionWithRelations {
-    id: string
-    plan: string
-    status: string
-    createdAt: Date
-    user: {
-        name: string | null
-        email: string | null
-    } | null
-    payments: {
-        mvolaRef: string | null
-        phoneNumber: string | null
-    }[]
-}
+
 
 // --- Components ---
 

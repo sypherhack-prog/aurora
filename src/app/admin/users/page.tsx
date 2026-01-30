@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from '@/lib/db'
 
 export default async function AdminUsersPage() {

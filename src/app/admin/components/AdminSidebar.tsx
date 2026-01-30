@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Sparkles } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Sparkles, LucideIcon } from 'lucide-react'
 
 interface UserSession {
     name?: string | null
@@ -90,7 +90,7 @@ function SidebarItem({
     item,
     isActive,
 }: {
-    item: { icon: any; label: string; href: string }
+    item: { icon: LucideIcon; label: string; href: string }
     isActive: boolean
 }) {
     return (

@@ -14,7 +14,7 @@ export default function AdminSettingsPage() {
                     <div className="flex items-center justify-between p-4 bg-zinc-950 rounded-lg border border-zinc-800">
                         <div>
                             <div className="font-medium text-zinc-200">Mode Maintenance</div>
-                            <div className="text-sm text-zinc-500">Désactiver l'accès public au site</div>
+                            <div className="text-sm text-zinc-500">Désactiver l&apos;accès public au site</div>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" className="sr-only peer" disabled />

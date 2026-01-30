@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Un compte existe déjà avec cet email' }, { status: 400 })
         }
 
-        const user = await createUserWithSubscription(name, email, password)
+        await createUserWithSubscription(name, email, password)
 
         return NextResponse.json({
             success: true,
@@ -42,7 +42,7 @@ async function userExists(email: string): Promise<boolean> {
 async function createUserWithSubscription(name: string, email: string, pass: string) {
     const hashedPassword = await hash(pass, 12)
 
-    return prisma.$transaction(async (tx: any) => {
+    return prisma.$transaction(async (tx) => {
         const user = await tx.user.create({
             data: { name, email, password: hashedPassword, role: 'USER' },
         })

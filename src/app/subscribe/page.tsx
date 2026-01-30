@@ -96,6 +96,19 @@ function SubscribeContent() {
                 </div>
             </div>
 
+            <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 mb-8">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white mb-2">Instructions de paiement MVOLA</h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3 block">
+                    Pour effectuer le paiement, tapez le code suivant sur votre téléphone :
+                </p>
+                <div className="bg-zinc-100 dark:bg-zinc-950 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono text-center text-blue-600 dark:text-blue-400 font-bold select-all">
+                    #111*1*2*0388670296*{plan.price.replace(/,/g, '')}*CODE_SECRET#
+                </div>
+                <p className="text-xs text-zinc-500 mt-2 text-center">
+                    Remplacez <strong>CODE_SECRET</strong> par votre code secret MVOLA
+                </p>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label
