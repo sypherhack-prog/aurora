@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
     try {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
             message: 'Compte créé avec succès'
         })
     } catch (error) {
-        console.error('Registration error:', error)
+        logger.error('Registration error:', error)
         return NextResponse.json({ error: 'Erreur lors de la création du compte' }, { status: 500 })
     }
 }

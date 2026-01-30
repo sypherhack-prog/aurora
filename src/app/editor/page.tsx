@@ -175,9 +175,14 @@ export default function EditorPage() {
         // Temporarily set theme to target language just for this request
         const originalTheme = docTheme
         setDocTheme(translationLang)
-        callAI('translate', 'replace').then(() => {
-            setDocTheme(originalTheme)
-        })
+        callAI('translate', 'replace')
+            .then(() => {
+                setDocTheme(originalTheme)
+            })
+            .catch((e) => {
+                logger.error('Translation error', e)
+                setDocTheme(originalTheme)
+            })
     }
 
     const createNewDoc = (theme: string, type: string, initialContent?: string) => {

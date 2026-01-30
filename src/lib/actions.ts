@@ -27,10 +27,19 @@ export async function verifyPayment(subscriptionId: string) {
 
     switch (subscription.plan) {
         case 'BASIC':
+            // Add 1 month safely
             endDate.setMonth(endDate.getMonth() + 1)
+            // Handle rollover (e.g. Jan 31 -> Feb 28/29)
+            if (endDate.getDate() !== now.getDate()) {
+                endDate.setDate(0)
+            }
             break
         case 'PRO':
+            // Add 3 months safely
             endDate.setMonth(endDate.getMonth() + 3)
+            if (endDate.getDate() !== now.getDate()) {
+                endDate.setDate(0)
+            }
             break
         case 'ANNUAL':
             endDate.setFullYear(endDate.getFullYear() + 1)

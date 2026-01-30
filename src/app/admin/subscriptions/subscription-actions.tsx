@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Check, X, Loader2 } from 'lucide-react'
 import { verifyPayment, blockSubscription } from '@/lib/actions'
+import { logger } from '@/lib/logger'
 
 export default function SubscriptionActions({
     subscriptionId,
@@ -18,7 +19,7 @@ export default function SubscriptionActions({
         try {
             await verifyPayment(subscriptionId)
         } catch (e) {
-            console.error(e)
+            logger.error('Verify error', e)
         } finally {
             setLoading(null)
         }
@@ -29,7 +30,7 @@ export default function SubscriptionActions({
         try {
             await blockSubscription(subscriptionId)
         } catch (e) {
-            console.error(e)
+            logger.error('Block error', e)
         } finally {
             setLoading(null)
         }

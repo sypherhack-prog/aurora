@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
+import { APP_CONSTANTS } from '@/lib/constants'
 
+// Map plan names to constant values
 const planAmounts: Record<string, number> = {
-    BASIC: 10000,
-    PRO: 20000,
-    ANNUAL: 90000,
+    BASIC: APP_CONSTANTS.PRICING.BASIC,
+    PRO: APP_CONSTANTS.PRICING.PRO,
+    ANNUAL: APP_CONSTANTS.PRICING.ANNUAL,
 }
 
 export async function POST(req: NextRequest) {
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
             }
         })
     } catch (error) {
-        console.error('Subscription error:', error)
+        logger.error('Subscription error:', error)
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
     }
 }
