@@ -14,6 +14,10 @@ export const APP_CONSTANTS = {
         EXPORT: 600,
         NOTIFICATION: 3000,
         DEBOUNCE: 500,
+        SCROLL: 100,
+    },
+    EDITOR: {
+        AVG_READING_SPEED: 200, // words per minute
     },
     PRICING: {
         BASIC: 10000,

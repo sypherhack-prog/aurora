@@ -167,7 +167,7 @@ export default function EditorPage() {
                         setTimeout(() => {
                             const scrollHeight = document.documentElement.scrollHeight
                             window.scrollTo(0, scrollHeight)
-                        }, 100)
+                        }, APP_CONSTANTS.TIMEOUTS.SCROLL)
                     } else {
                         editor.commands.insertContent(data.result)
                         showNotification('success', 'Contenu inséré!')
@@ -186,8 +186,9 @@ export default function EditorPage() {
     )
 
     // Handle Translation - pass language directly to callAI
-    const handleTranslate = () => {
-        callAI('translate', 'replace', translationLang)
+    // Handle Translation - pass language directly to callAI
+    const handleTranslate = async () => {
+        await callAI('translate', 'replace', translationLang)
     }
 
     const createNewDoc = (theme: string, type: string, initialContent?: string) => {
@@ -604,7 +605,7 @@ export default function EditorPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-zinc-400">Lecture</span>
-                                <span className="text-cyan-400 font-medium">{Math.ceil(wordCount / 200)} min</span>
+                                <span className="text-cyan-400 font-medium">{Math.ceil(wordCount / APP_CONSTANTS.EDITOR.AVG_READING_SPEED)} min</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-zinc-400">Thème</span>
