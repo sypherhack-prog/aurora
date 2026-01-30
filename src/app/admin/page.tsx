@@ -5,11 +5,9 @@ import { RecentActivity } from './components/RecentActivity'
 
 export default async function AdminDashboard() {
     // Fetch real data
-    const [usersCount, subscriptions, payments] = await Promise.all([
-        prisma.user.count(),
-        prisma.subscription.findMany({ include: { payments: true } }),
-        prisma.payment.findMany(),
-    ])
+    const usersCount = await prisma.user.count()
+    const subscriptions = await prisma.subscription.findMany({ include: { payments: true } })
+    const payments = await prisma.payment.findMany()
 
     const activeSubscriptions = subscriptions.filter((s) => s.status === 'ACTIVE').length
     const pendingPayments = subscriptions.filter((s) => s.status === 'PENDING').length
