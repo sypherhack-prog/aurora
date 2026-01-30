@@ -673,15 +673,16 @@ export default function EditorPage() {
                     </div>
 
                     {/* AI Panel */}
-                    {/* AI Panel */}
                     <AIPanel
                         isOpen={aiPanelOpen}
                         onClose={() => setAiPanelOpen(false)}
                         aiLoading={aiLoading}
                         callAI={callAI}
-                        translationLang={translationLang}
-                        setTranslationLang={setTranslationLang}
-                        handleTranslate={handleTranslate}
+                        translation={{
+                            language: translationLang,
+                            setLanguage: setTranslationLang,
+                            onTranslate: handleTranslate
+                        }}
                     />
                 </div>
             </main>
