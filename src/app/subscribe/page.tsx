@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Smartphone, ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -13,7 +13,6 @@ const planDetails: Record<string, { name: string; price: string; period: string 
 
 function SubscribeContent() {
     const searchParams = useSearchParams()
-    // const router = useRouter() // Unused but kept if needed later
     const planCode = searchParams.get('plan') || 'BASIC'
     const plan = planDetails[planCode] || planDetails.BASIC
 

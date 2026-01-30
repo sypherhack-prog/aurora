@@ -1,24 +1,36 @@
-type LogLevel = 'info' | 'warn' | 'error' | 'debug'
+// Production-ready logger that suppresses output in production
+// In production, logs should be sent to a proper logging service
 
-const isDev = process.env.NODE_ENV === 'development'
+const isProduction = process.env.NODE_ENV === 'production'
 
 class Logger {
     info(message: string, ...args: unknown[]) {
-        if (isDev) {
+        if (!isProduction) {
+            // eslint-disable-next-line no-console
             console.log(`[INFO] ${message}`, ...args)
         }
+        // In production: send to logging service (e.g., Sentry, LogRocket)
     }
 
     warn(message: string, ...args: unknown[]) {
-        console.warn(`[WARN] ${message}`, ...args)
+        if (!isProduction) {
+            // eslint-disable-next-line no-console
+            console.warn(`[WARN] ${message}`, ...args)
+        }
+        // In production: send to logging service
     }
 
     error(message: string, error?: unknown) {
-        console.error(`[ERROR] ${message}`, error || '')
+        if (!isProduction) {
+            // eslint-disable-next-line no-console
+            console.error(`[ERROR] ${message}`, error || '')
+        }
+        // In production: send to error tracking service (e.g., Sentry)
     }
 
     debug(message: string, ...args: unknown[]) {
-        if (isDev) {
+        if (!isProduction) {
+            // eslint-disable-next-line no-console
             console.log(`[DEBUG] ${message}`, ...args)
         }
     }

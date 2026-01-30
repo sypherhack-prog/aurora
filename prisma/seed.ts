@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 async function main() {
     const password = await hash('admin123', 12)
-    const user = await prisma.user.upsert({
+    await prisma.user.upsert({
         where: { email: 'admin@autonomous-docs.com' },
         update: {},
         create: {
@@ -15,13 +15,12 @@ async function main() {
             role: 'ADMIN',
         },
     })
-    console.log({ user })
 }
 
 main()
     .then(() => prisma.$disconnect())
     .catch(async (e) => {
-        console.error(e)
+        process.stderr.write(String(e))
         await prisma.$disconnect()
         process.exit(1)
     })
