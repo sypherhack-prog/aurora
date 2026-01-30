@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db'
 
 export default async function AdminUsersPage() {
-    const users = await prisma.user.findMany({
+    const fetchedUsers = await prisma.user.findMany({
         orderBy: { createdAt: 'desc' },
         select: {
             id: true,
@@ -33,11 +33,11 @@ export default async function AdminUsersPage() {
                                 <th className="p-4 font-semibold text-zinc-400">Email</th>
                                 <th className="p-4 font-semibold text-zinc-400">Rôle</th>
                                 <th className="p-4 font-semibold text-zinc-400">Abonnement</th>
-                                <th className="p-4 font-semibold text-zinc-400">Date d'inscription</th>
+                                <th className="p-4 font-semibold text-zinc-400">Date d&apos;inscription</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-800">
-                            {users.map((user: any) => (
+                            {fetchedUsers.map((user: any) => (
                                 <UserRow key={user.id} user={user} />
                             ))}
                         </tbody>

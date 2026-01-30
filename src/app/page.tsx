@@ -73,7 +73,9 @@ export default function LandingPage() {
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl" />
                     <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-cyan-500/10 to-blue-600/10 rounded-full blur-3xl" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]
+                        bg-gradient-to-r from-cyan-500/10 to-blue-600/10 rounded-full blur-3xl"
+                    />
                 </div>
 
                 <div className="max-w-5xl mx-auto text-center relative z-10">
@@ -97,7 +99,9 @@ export default function LandingPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link
                             href="/editor"
-                            className="group flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
+                            className="group flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600
+                            hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl
+                            font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
                         >
                             <Play className="w-5 h-5" />
                             Commencer Maintenant
@@ -146,7 +150,8 @@ export default function LandingPage() {
                         {features.map((feature) => (
                             <div
                                 key={feature.title}
-                                className="group bg-zinc-800/50 border border-zinc-700/50 rounded-2xl p-6 hover:border-cyan-500/50 hover:bg-zinc-800 transition-all duration-300"
+                                className="group bg-zinc-800/50 border border-zinc-700/50 rounded-2xl p-6
+                                hover:border-cyan-500/50 hover:bg-zinc-800 transition-all duration-300"
                             >
                                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:from-cyan-500/30 group-hover:to-blue-600/30 transition">
                                     <feature.icon className="w-6 h-6 text-cyan-400" />
@@ -234,7 +239,9 @@ export default function LandingPage() {
                         </p>
                         <Link
                             href="/pricing"
-                            className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500
+                            to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8
+                            py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
                         >
                             Commencer Gratuitement
                             <ArrowRight className="w-5 h-5" />
@@ -256,12 +263,10 @@ export default function LandingPage() {
                         <Link href="/pricing" className="hover:text-white transition">
                             Tarifs
                         </Link>
-                        <Link href="/login" className="hover:text-white transition">
+                        <Link href="/auth/login" className="hover:text-white transition">
                             Connexion
                         </Link>
-                        <Link href="/admin" className="hover:text-white transition">
-                            Admin
-                        </Link>
+                        {/* Admin link hidden for security */}
                     </div>
                     <div className="text-sm text-zinc-500">© 2025 Aurora AI. Tous droits réservés.</div>
                 </div>

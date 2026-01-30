@@ -6,40 +6,42 @@ import { processAIRequest, AIAction } from '@/lib/gemini'
 import prisma from '@/lib/db'
 import { logger } from '@/lib/logger'
 
+
+async function validateUsageLimit(userId: string) {
+    const plan = await getUserPlan(userId)
+    if (plan !== 'FREE') return
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { aiUsageCount: true },
+    })
+
+    if (!user) {
+        throw new Error('USER_NOT_FOUND')
+    }
+
+    if (user.aiUsageCount >= 5) {
+        throw new Error('LIMIT_REACHED')
+    }
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: { aiUsageCount: { increment: 1 } },
+    })
+}
+
 export async function POST(req: NextRequest) {
     try {
-        // 1. Check Authentication & Subscription
+        // 1. Check Authentication
         const session = await getServerSession(authOptions)
+        const userId = session?.user?.id
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
         }
 
-        const plan = await getUserPlan(session.user.id)
-
-        // Check Free Tier Limits
-        if (plan === 'FREE') {
-            const user = await prisma.user.findUnique({
-                where: { id: session.user.id },
-                select: { aiUsageCount: true },
-            })
-
-            if ((user?.aiUsageCount || 0) >= 5) {
-                return NextResponse.json(
-                    {
-                        error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
-                        code: 'LIMIT_REACHED',
-                    },
-                    { status: 403 }
-                )
-            }
-
-            // Increment usage
-            await prisma.user.update({
-                where: { id: session.user.id },
-                data: { aiUsageCount: { increment: 1 } },
-            })
-        }
+        // 2. Check Subscription & Limits
+        await validateUsageLimit(userId)
 
         const { action, content, selection, theme, documentType } = await req.json()
 
@@ -60,7 +62,24 @@ export async function POST(req: NextRequest) {
         })
 
         return NextResponse.json({ success: true, result })
-    } catch (error) {
+    } catch (error: any) {
+        if (error.message === 'LIMIT_REACHED') {
+            return NextResponse.json(
+                {
+                    error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
+                    code: 'LIMIT_REACHED',
+                },
+                { status: 403 }
+            )
+        }
+
+        if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
+            return NextResponse.json(
+                { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
+                { status: 401 }
+            )
+        }
+
         logger.error('AI Processing Error:', error)
         return NextResponse.json(
             {

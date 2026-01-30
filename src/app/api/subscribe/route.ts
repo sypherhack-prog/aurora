@@ -15,7 +15,9 @@ const planAmounts: Record<string, number> = {
 export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions)
-        if (!session?.user?.id) {
+        const userId = session?.user?.id
+
+        if (!userId) {
             return NextResponse.json({ error: 'Vous devez être connecté' }, { status: 401 })
         }
 

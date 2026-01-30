@@ -15,10 +15,10 @@ model User {
   email         String    @unique
   name          String?
   password      String
-  role          Role      @default(USER)
+  role          String    @default("USER") // SQLite does not support Enums
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  aiUsageCount  Int       @default(0) // Track AI generations for Free tier limits
+  aiUsageCount  Int       @default(0)
   subscriptions Subscription[]
 }
 
@@ -26,8 +26,8 @@ model Subscription {
   id          String      @id @default(cuid())
   userId      String
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan        Plan
-  status      SubStatus   @default(PENDING)
+  plan        String // STORED AS STRING: FREE, BASIC, PRO, ANNUAL
+  status      String      @default("PENDING") // STORED AS STRING: PENDING, ACTIVE, EXPIRED, BLOCKED
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime    @default(now())
@@ -39,29 +39,10 @@ model Payment {
   id              String       @id @default(cuid())
   subscriptionId  String
   subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  amount          Int          // Amount in Ariary
-  mvolaRef        String?      // MVola reference number provided by user
-  phoneNumber     String?      // Phone number used for payment
+  amount          Int
+  mvolaRef        String?
+  phoneNumber     String?
   verifiedAt      DateTime?
-  verifiedBy      String?      // Admin ID who verified
+  verifiedBy      String?
   createdAt       DateTime     @default(now())
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
-enum Plan {
-  FREE      // Limited free tier (5 docs/month)
-  BASIC     // 10,000 Ar / 1 month
-  PRO       // 20,000 Ar / 3 months
-  ANNUAL    // 90,000 Ar / 12 months
-}
-
-enum SubStatus {
-  PENDING   // Waiting for payment verification
-  ACTIVE    // Payment verified, subscription active
-  EXPIRED   // Subscription period ended
-  BLOCKED   // Blocked by admin
 }

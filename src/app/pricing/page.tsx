@@ -4,6 +4,7 @@ import { APP_CONSTANTS } from '@/lib/constants'
 
 // Helper to format price
 const formatPrice = (price: number) => price.toLocaleString('en-US')
+const getPlanHref = (code: string) => (code === 'FREE' ? '/auth/register' : `/subscribe?plan=${code}`)
 
 const plans = [
     {
@@ -126,8 +127,8 @@ export default function PricingPage() {
                         <div
                             key={plan.name}
                             className={`relative rounded-2xl p-6 transition-all duration-300 ${plan.highlight
-                                    ? 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-500/50 scale-105'
-                                    : 'bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700'
+                                ? 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-500/50 scale-105'
+                                : 'bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700'
                                 }`}
                         >
                             {plan.popular && (
@@ -161,12 +162,12 @@ export default function PricingPage() {
                             </ul>
 
                             <Link
-                                href={plan.planCode === 'FREE' ? '/auth/register' : `/subscribe?plan=${plan.planCode}`}
+                                href={getPlanHref(plan.planCode)}
                                 className={`block w-full text-center py-3 px-4 rounded-lg font-medium transition-all ${plan.highlight
-                                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25'
-                                        : plan.planCode === 'FREE'
-                                            ? 'bg-zinc-800 hover:bg-zinc-700 text-white'
-                                            : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700'
+                                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25'
+                                    : plan.planCode === 'FREE'
+                                        ? 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                                        : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700'
                                     }`}
                             >
                                 {plan.cta}

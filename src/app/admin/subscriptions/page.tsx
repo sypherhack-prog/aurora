@@ -59,10 +59,11 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function UserCell({ user }: { user: any }) {
+    const initial = user.email?.charAt(0).toUpperCase() || 'U'
     return (
         <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                {user.email?.charAt(0).toUpperCase()}
+                {initial}
             </div>
             <div>
                 <div className="text-sm font-medium text-white">{user.name || 'Utilisateur'}</div>
@@ -99,13 +100,27 @@ export default async function SubscriptionsPage() {
                 <table className="min-w-full divide-y divide-zinc-800">
                     <thead className="bg-zinc-800/50">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Utilisateur</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Plan</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Statut</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Réf. MVola</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Téléphone</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-4 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Utilisateur
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Plan
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Statut
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Réf. MVola
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Téléphone
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Date
+                            </th>
+                            <th className="px-6 py-4 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800">

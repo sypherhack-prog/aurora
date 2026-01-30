@@ -20,6 +20,14 @@ export const APP_CONSTANTS = {
         PRO: 20000,
         ANNUAL: 90000,
     },
+    DEFAULT_CONTENT: {
+        exam: "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>",
+        notes: '<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>',
+        report: '<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>',
+        'cover-letter': '<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>',
+        manuscript: "<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C'était une nuit sombre et orageuse...</p>",
+        blank: '',
+    },
 } as const
 
 // Validation Constants

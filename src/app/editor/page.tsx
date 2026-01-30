@@ -50,11 +50,13 @@ import {
     Briefcase,
     Mail,
     PenTool,
+    Presentation,
     BookOpen,
     Lightbulb,
     Languages,
 } from 'lucide-react'
 import { logger } from '@/lib/logger'
+import { APP_CONSTANTS } from '@/lib/constants'
 import { AIPanel } from './components/AIPanel'
 
 const DOC_TITLES: Record<string, string> = {
@@ -118,14 +120,14 @@ export default function EditorPage() {
             if (editor && editor.getText().trim().length === 0) {
                 setShowNewDocModal(true)
             }
-        }, 500)
+        }, APP_CONSTANTS.TIMEOUTS.DEBOUNCE)
         return () => clearTimeout(checkEmpty)
     }, [editor])
 
     // Show notification
     const showNotification = (type: 'success' | 'error', message: string) => {
         setNotification({ type, message })
-        setTimeout(() => setNotification(null), 3000)
+        setTimeout(() => setNotification(null), APP_CONSTANTS.TIMEOUTS.NOTIFICATION)
     }
 
     // Call AI API with context
@@ -202,89 +204,68 @@ export default function EditorPage() {
         setShowNewDocModal(false)
         showNotification('success', 'Nouveau document créé')
 
-        if (initialContent) {
-            editor?.commands.setContent(initialContent)
+        if (initialContent && editor) {
+            editor.commands.setContent(initialContent)
             return
         }
 
-        const DEFAULT_CONTENT: Record<string, string> = {
-            exam: "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>",
-            notes: '<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>',
-            report: '<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>',
-            'cover-letter': '<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>',
-            manuscript: "<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C'était une nuit sombre et orageuse...</p>",
-            blank: '',
+        if (editor) {
+            editor.commands.setContent(APP_CONSTANTS.DEFAULT_CONTENT[type as keyof typeof APP_CONSTANTS.DEFAULT_CONTENT] || '')
         }
-
-        editor?.commands.setContent(DEFAULT_CONTENT[type] || '')
     }
 
     // Export document
-    const exportDocument = async (format: 'html' | 'txt' | 'md') => {
+    const exportDocument = async (format: 'html' | 'txt' | 'md' | 'pdf' | 'pptx') => {
         if (!editor) return
         setExportLoading(true)
 
         try {
-            const content = editor.getHTML()
-            const res = await fetch('/api/export', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, format, title: 'Document Aurora AI' }),
-            })
+            const fileName = `document.${format}`
 
-            if (res.ok) {
-                const blob = await res.blob()
-                const url = window.URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `document.${format}`
-                document.body.appendChild(a)
-                a.click()
-                document.body.removeChild(a)
-                window.URL.revokeObjectURL(url)
-                showNotification('success', `Exporté en ${format.toUpperCase()}!`)
-                setShowExportModal(false)
-            } else {
-                showNotification('error', 'Erreur export')
+            if (format === 'pdf') {
+                const element = document.querySelector('.ProseMirror') as HTMLElement
+                if (element) {
+                    const { exportToPDF } = await import('@/lib/export-utils')
+                    await exportToPDF(element, fileName)
+                    showNotification('success', 'PDF exporté!')
+                }
             }
+            else if (format === 'pptx') {
+                const element = document.querySelector('.ProseMirror') as HTMLElement
+                if (element) {
+                    const { exportToPPTX } = await import('@/lib/export-utils')
+                    await exportToPPTX(element, fileName)
+                    showNotification('success', 'PowerPoint exporté!')
+                }
+            }
+            else {
+                // Standard text exports via API
+                const content = editor.getHTML()
+                const res = await fetch('/api/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content, format, title: 'Document Aurora AI' }),
+                })
+
+                if (res.ok) {
+                    const blob = await res.blob()
+                    const url = window.URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = fileName
+                    document.body.appendChild(a)
+                    a.click()
+                    document.body.removeChild(a)
+                    window.URL.revokeObjectURL(url)
+                    showNotification('success', `Exporté en ${format.toUpperCase()}!`)
+                } else {
+                    showNotification('error', 'Erreur export')
+                }
+            }
+            setShowExportModal(false)
         } catch (e) {
             logger.error('Export error:', e)
             showNotification('error', 'Erreur export')
-        } finally {
-            setExportLoading(false)
-        }
-    }
-
-    // Export PDF using html2pdf
-    const exportPDF = async () => {
-        if (!editor) return
-        setExportLoading(true)
-        try {
-            // Dynamically load html2pdf
-            // @ts-ignore
-            if (typeof window.html2pdf === 'undefined') {
-                const script = document.createElement('script')
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
-                document.head.appendChild(script)
-                await new Promise((resolve) => (script.onload = resolve))
-            }
-
-            const element = document.querySelector('.ProseMirror')
-            const opt = {
-                margin: 1,
-                filename: 'document.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-            }
-
-            // @ts-ignore
-            await window.html2pdf().set(opt).from(element).save()
-            showNotification('success', 'PDF exporté!')
-            setShowExportModal(false)
-        } catch (e) {
-            logger.error('PDF Export', e)
-            showNotification('error', 'Erreur PDF')
         } finally {
             setExportLoading(false)
         }
@@ -467,7 +448,7 @@ export default function EditorPage() {
                             </button>
 
                             <button
-                                onClick={exportPDF}
+                                onClick={() => exportDocument('pdf')}
                                 disabled={exportLoading}
                                 className="w-full flex items-center justify-between p-4 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 group"
                             >
@@ -478,6 +459,22 @@ export default function EditorPage() {
                                     <div className="text-left">
                                         <div className="font-medium group-hover:text-white transition-colors">PDF</div>
                                         <div className="text-xs text-zinc-400">Document imprimable</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button
+                                onClick={() => exportDocument('pptx')}
+                                disabled={exportLoading}
+                                className="w-full flex items-center justify-between p-4 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded bg-orange-500/20 flex items-center justify-center">
+                                        <Presentation className="w-4 h-4 text-orange-400" />
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="font-medium group-hover:text-white transition-colors">PowerPoint</div>
+                                        <div className="text-xs text-zinc-400">Présentation slides</div>
                                     </div>
                                 </div>
                             </button>
@@ -846,7 +843,7 @@ function ToolbarButton({
     onClick,
     active,
 }: {
-    icon: any
+    icon: React.ElementType
     tooltip: string
     onClick?: () => void
     active?: boolean
@@ -872,7 +869,7 @@ function AIButton({
     loading,
     onClick,
 }: {
-    icon: any
+    icon: React.ElementType
     label: string
     loading?: boolean
     onClick: () => void

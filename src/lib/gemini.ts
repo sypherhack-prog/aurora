@@ -15,9 +15,7 @@ export type AIAction =
     | 'suggest-ideas'
     | 'summarize'
     | 'generate-table'
-    | 'generate-table'
     | 'improve-paragraph'
-    | 'smart-heading'
     | 'smart-heading'
     | 'improve-spacing'
     | 'translate'
@@ -31,32 +29,33 @@ interface AIRequest {
 
 import { EXTENSIVE_SYSTEM_PROMPT, PROMPTS } from './ai-prompts'
 
+
+function resolvePrompt(action: AIAction, theme: string, docType: string): string {
+    if (action === 'continue-writing') return PROMPTS['continue-writing'](theme, docType)
+    if (action === 'suggest-ideas') return PROMPTS['suggest-ideas'](theme)
+    if (action === 'generate-table') return PROMPTS['generate-table'](theme, docType)
+    if (action === 'translate') return PROMPTS['translate'](theme)
+
+    // @ts-ignore
+    const simplePrompt = PROMPTS[action]
+    if (simplePrompt) return simplePrompt
+
+    throw new Error('Unknown action')
+}
+
 export async function processAIRequest({ action, content, theme, documentType }: AIRequest): Promise<string> {
+    const validTheme = theme || 'general'
+    const validDocType = documentType || 'document'
+
     const context = `
     ACTION: ${action}
-    THEME: ${theme || 'general'}
-    DOCUMENT TYPE: ${documentType || 'document'}
+    THEME: ${validTheme}
+    DOCUMENT TYPE: ${validDocType}
     CONTENT:
     "${content}"
     `
 
-    let prompt = ''
-
-    if (action === 'continue-writing') {
-        prompt = PROMPTS['continue-writing'](theme || 'general', documentType || 'professional')
-    } else if (action === 'suggest-ideas') {
-        prompt = PROMPTS['suggest-ideas'](theme || 'general')
-    } else if (action === 'generate-table') {
-        prompt = PROMPTS['generate-table'](theme || 'general', documentType || 'document')
-    } else if (action === 'translate') {
-        prompt = PROMPTS['translate'](theme || 'English')
-    } else if (action in PROMPTS) {
-        // @ts-ignore
-        prompt = PROMPTS[action]
-    } else {
-        throw new Error('Unknown action')
-    }
-
+    const prompt = resolvePrompt(action, validTheme, validDocType)
     const fullPrompt = `${EXTENSIVE_SYSTEM_PROMPT}\n\n${prompt}\n\n${context}`
 
     try {
