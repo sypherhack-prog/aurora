@@ -57,6 +57,14 @@ import {
 import { logger } from '@/lib/logger'
 import { AIPanel } from './components/AIPanel'
 
+const DOC_TITLES: Record<string, string> = {
+    exam: "Sujet d'Examen",
+    notes: 'Notes de Cours',
+    report: 'Rapport de Stage',
+    'cover-letter': 'Lettre de Motivation',
+    manuscript: 'Manuscrit',
+}
+
 export default function EditorPage() {
     const { data: session } = useSession()
     const [mounted, setMounted] = useState(false)
@@ -194,32 +202,21 @@ export default function EditorPage() {
         setShowNewDocModal(false)
         showNotification('success', 'Nouveau document créé')
 
-        // Set specific content based on type if not provided
         if (initialContent) {
             editor?.commands.setContent(initialContent)
-        } else {
-            if (type === 'exam')
-                editor?.commands.setContent(
-                    "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>"
-                )
-            if (type === 'notes')
-                editor?.commands.setContent(
-                    '<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>'
-                )
-            if (type === 'report')
-                editor?.commands.setContent(
-                    '<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>'
-                )
-            if (type === 'cover-letter')
-                editor?.commands.setContent(
-                    '<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>'
-                )
-            if (type === 'manuscript')
-                editor?.commands.setContent(
-                    "<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C'était une nuit sombre et orageuse...</p>"
-                )
-            if (type === 'blank') editor?.commands.setContent('')
+            return
         }
+
+        const DEFAULT_CONTENT: Record<string, string> = {
+            exam: "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>",
+            notes: '<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>',
+            report: '<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>',
+            'cover-letter': '<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>',
+            manuscript: "<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C'était une nuit sombre et orageuse...</p>",
+            blank: '',
+        }
+
+        editor?.commands.setContent(DEFAULT_CONTENT[type] || '')
     }
 
     // Export document
@@ -306,11 +303,10 @@ export default function EditorPage() {
             {/* Notification */}
             {notification && (
                 <div
-                    className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg border ${
-                        notification.type === 'success'
-                            ? 'bg-zinc-900 border-green-500/30 text-green-400'
-                            : 'bg-zinc-900 border-red-500/30 text-red-400'
-                    }`}
+                    className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg border ${notification.type === 'success'
+                        ? 'bg-zinc-900 border-green-500/30 text-green-400'
+                        : 'bg-zinc-900 border-red-500/30 text-red-400'
+                        }`}
                 >
                     {notification.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     {notification.message}
@@ -510,44 +506,40 @@ export default function EditorPage() {
                 <nav className="flex-1 p-4 space-y-1">
                     <button
                         onClick={() => setActiveTab('documents')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
-                            activeTab === 'documents'
-                                ? 'bg-zinc-800 text-white'
-                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'documents'
+                            ? 'bg-zinc-800 text-white'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                            }`}
                     >
                         <FileText className="w-5 h-5" />
                         Documents Récents
                     </button>
                     <button
                         onClick={() => setActiveTab('templates')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
-                            activeTab === 'templates'
-                                ? 'bg-zinc-800 text-white'
-                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'templates'
+                            ? 'bg-zinc-800 text-white'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                            }`}
                     >
                         <FolderOpen className="w-5 h-5" />
                         Modèles
                     </button>
                     <button
                         onClick={() => setActiveTab('insights')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
-                            activeTab === 'insights'
-                                ? 'bg-zinc-800 text-white'
-                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'insights'
+                            ? 'bg-zinc-800 text-white'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                            }`}
                     >
                         <BarChart3 className="w-5 h-5" />
                         Insights IA
                     </button>
                     <button
                         onClick={() => setActiveTab('settings')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
-                            activeTab === 'settings'
-                                ? 'bg-zinc-800 text-white'
-                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'settings'
+                            ? 'bg-zinc-800 text-white'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                            }`}
                     >
                         <Settings className="w-5 h-5" />
                         Paramètres
@@ -691,16 +683,7 @@ export default function EditorPage() {
                             {docType === 'manuscript' && <PenTool className="w-4 h-4 text-orange-400" />}
                             {docType === 'document' && <FileText className="w-4 h-4 text-zinc-400" />}
                             {docType === 'blank' && <FileText className="w-4 h-4 text-zinc-400" />}
-                            {(() => {
-                                const titles: Record<string, string> = {
-                                    exam: "Sujet d'Examen",
-                                    notes: 'Notes de Cours',
-                                    report: 'Rapport de Stage',
-                                    'cover-letter': 'Lettre de Motivation',
-                                    manuscript: 'Manuscrit',
-                                }
-                                return titles[docType] || 'Document sans titre'
-                            })()}
+                            {DOC_TITLES[docType] || 'Document sans titre'}
                         </span>
                     </div>
                     <div className="flex items-center gap-4">
