@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { APP_CONSTANTS } from '@/lib/constants'
 
 // Mock logger
 const mockLogger = {
@@ -128,7 +129,7 @@ describe('Slug Generation', () => {
 
 describe('Currency Formatting', () => {
     it('should format currency', () => {
-        const formatted = formatCurrency(10000)
+        const formatted = formatCurrency(APP_CONSTANTS.PRICING.BASIC)
         expect(formatted).toContain('10')
     })
 })

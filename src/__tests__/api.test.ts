@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { APP_CONSTANTS } from '@/lib/constants'
 
 // Helper functions extracted to reduce nesting depth
 interface ApiResponse<T = unknown> {

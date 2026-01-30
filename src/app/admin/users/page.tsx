@@ -37,42 +37,53 @@ export default async function AdminUsersPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-zinc-800">
-                            {users.map((user) => {
-                                const activeSub = user.subscriptions.find((s) => s.status === 'ACTIVE')
-                                return (
-                                    <tr key={user.id} className="hover:bg-zinc-800/50 transition-colors">
-                                        <td className="p-4 text-zinc-200 font-medium">{user.name || 'Sans nom'}</td>
-                                        <td className="p-4 text-zinc-400">{user.email}</td>
-                                        <td className="p-4">
-                                            <span
-                                                className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                                    user.role === 'ADMIN'
-                                                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                                        : 'bg-zinc-700 text-zinc-300'
-                                                }`}
-                                            >
-                                                {user.role}
-                                            </span>
-                                        </td>
-                                        <td className="p-4">
-                                            {activeSub ? (
-                                                <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
-                                                    {activeSub.plan}
-                                                </span>
-                                            ) : (
-                                                <span className="text-zinc-500 italic">Aucun</span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-zinc-500 text-sm">
-                                            {new Date(user.createdAt).toLocaleDateString('fr-FR')}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
+                            {users.map((user: any) => (
+                                <UserRow key={user.id} user={user} />
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+    )
+}
+
+interface UserWithSubs {
+    id: string
+    name: string | null
+    email: string | null
+    role: string
+    createdAt: Date
+    subscriptions: { status: string; plan: string }[]
+}
+
+function UserRow({ user }: { user: UserWithSubs }) {
+    const activeSub = user.subscriptions.find((s) => s.status === 'ACTIVE')
+
+    return (
+        <tr className="hover:bg-zinc-800/50 transition-colors">
+            <td className="p-4 text-zinc-200 font-medium">{user.name || 'Sans nom'}</td>
+            <td className="p-4 text-zinc-400">{user.email}</td>
+            <td className="p-4">
+                <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'ADMIN'
+                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                        : 'bg-zinc-700 text-zinc-300'
+                        }`}
+                >
+                    {user.role}
+                </span>
+            </td>
+            <td className="p-4">
+                {activeSub ? (
+                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
+                        {activeSub.plan}
+                    </span>
+                ) : (
+                    <span className="text-zinc-500 italic">Aucun</span>
+                )}
+            </td>
+            <td className="p-4 text-zinc-500 text-sm">{new Date(user.createdAt).toLocaleDateString('fr-FR')}</td>
+        </tr>
     )
 }

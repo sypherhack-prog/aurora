@@ -9,32 +9,27 @@ interface StatItem {
     color: string
 }
 
+const TREND_CONFIG = {
+    up: { icon: ArrowUpRight, color: 'text-green-400' },
+    down: { icon: ArrowDownRight, color: 'text-red-400' },
+    warning: { icon: Clock, color: 'text-amber-400' },
+} as const
+
 function TrendIndicator({ trend, change }: { trend: string; change: string }) {
-    switch (trend) {
-        case 'up':
-            return (
-                <div className="flex items-center gap-1 text-green-400 text-xs">
-                    <ArrowUpRight className="w-3 h-3" />
-                    {change}
-                </div>
-            )
-        case 'down':
-            return (
-                <div className="flex items-center gap-1 text-red-400 text-xs">
-                    <ArrowDownRight className="w-3 h-3" />
-                    {change}
-                </div>
-            )
-        case 'warning':
-            return (
-                <div className="flex items-center gap-1 text-amber-400 text-xs">
-                    <Clock className="w-3 h-3" />
-                    {change}
-                </div>
-            )
-        default:
-            return <div className="text-zinc-500 text-xs">{change}</div>
+    const config = TREND_CONFIG[trend as keyof typeof TREND_CONFIG]
+
+    if (!config) {
+        return <div className="text-zinc-500 text-xs">{change}</div>
     }
+
+    const Icon = config.icon
+
+    return (
+        <div className={`flex items-center gap-1 ${config.color} text-xs`}>
+            <Icon className="w-3 h-3" />
+            {change}
+        </div>
+    )
 }
 
 function StatCard({ stat }: { stat: StatItem }) {

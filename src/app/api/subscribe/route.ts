@@ -15,7 +15,6 @@ const planAmounts: Record<string, number> = {
 export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions)
-
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Vous devez être connecté' }, { status: 401 })
         }
@@ -27,45 +26,19 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Tous les champs sont requis' }, { status: 400 })
         }
 
-        if (!planAmounts[plan]) {
+        const planAmount = planAmounts[plan]
+        if (!planAmount) {
             return NextResponse.json({ error: 'Plan invalide' }, { status: 400 })
         }
 
-        // Check for existing pending subscription
-        const existingPending = await prisma.subscription.findFirst({
-            where: {
-                userId: session.user.id,
-                status: 'PENDING',
-            },
-        })
-
-        if (existingPending) {
+        if (await hasPendingSubscription(session.user.id)) {
             return NextResponse.json(
-                {
-                    error: 'Vous avez déjà une demande en attente de vérification',
-                },
+                { error: 'Vous avez déjà une demande en attente de vérification' },
                 { status: 400 }
             )
         }
 
-        // Create subscription with payment record
-        const subscription = await prisma.subscription.create({
-            data: {
-                userId: session.user.id,
-                plan: plan as 'BASIC' | 'PRO' | 'ANNUAL',
-                status: 'PENDING',
-                payments: {
-                    create: {
-                        amount: planAmounts[plan],
-                        mvolaRef,
-                        phoneNumber,
-                    },
-                },
-            },
-            include: {
-                payments: true,
-            },
-        })
+        const subscription = await createSubscription(session.user.id, plan, planAmount, mvolaRef, phoneNumber)
 
         return NextResponse.json({
             success: true,
@@ -79,4 +52,35 @@ export async function POST(req: NextRequest) {
         logger.error('Subscription error:', error)
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
     }
+}
+
+async function hasPendingSubscription(userId: string) {
+    const existing = await prisma.subscription.findFirst({
+        where: { userId, status: 'PENDING' },
+    })
+    return !!existing
+}
+
+async function createSubscription(
+    userId: string,
+    plan: string,
+    amount: number,
+    mvolaRef: string,
+    phoneNumber: string
+) {
+    return prisma.subscription.create({
+        data: {
+            userId,
+            plan: plan as 'BASIC' | 'PRO' | 'ANNUAL',
+            status: 'PENDING',
+            payments: {
+                create: {
+                    amount,
+                    mvolaRef,
+                    phoneNumber,
+                },
+            },
+        },
+        include: { payments: true },
+    })
 }

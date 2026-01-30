@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { APP_CONSTANTS } from '@/lib/constants'
 
 // Helper functions extracted to reduce nesting depth
 const formatDate = (date: Date): number => date.getFullYear()
@@ -31,7 +32,7 @@ describe('Date Formatting', () => {
 
 describe('Currency Formatting', () => {
     it('should format MGA currency', () => {
-        const formatted = formatCurrency(10000)
+        const formatted = formatCurrency(APP_CONSTANTS.PRICING.BASIC)
         expect(formatted).toContain('10')
         expect(formatted).toContain('000')
     })
