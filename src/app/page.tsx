@@ -1,43 +1,34 @@
 import Link from 'next/link'
-import {
-  Sparkles,
-  Zap,
-  Layout,
-  Type,
-  Image as ImageIcon,
-  Table2,
-  ArrowRight,
-  Play,
-  Star
-} from 'lucide-react'
+import { Sparkles, Zap, Layout, Type, Image as ImageIcon, Table2, ArrowRight, Play, Star } from 'lucide-react'
 
 const features = [
   {
     icon: Layout,
-    title: "Auto-Layout",
-    description: "L'IA structure automatiquement votre document avec des marges, espacements et alignements parfaits."
+    title: 'Auto-Layout',
+    description:
+      'Laissez notre IA intelligente optimiser la présentation de vos documents en un clic.',
   },
   {
     icon: Type,
-    title: "Style Intelligent",
-    description: "Titres, sous-titres, gras et italique appliqués intelligemment selon le contexte."
+    title: 'Style Intelligent',
+    description: 'Titres, sous-titres, gras et italique appliqués intelligemment selon le contexte.',
   },
   {
     icon: Table2,
-    title: "Tableaux Automatiques",
-    description: "Transformez vos données en tableaux formatés en un clic."
+    title: 'Tableaux Automatiques',
+    description: 'Transformez vos données en tableaux formatés en un clic.',
   },
   {
     icon: ImageIcon,
     title: "Placement d'Images",
-    description: "L'IA positionne vos images de manière optimale dans le document."
-  }
+    description: "L'IA positionne vos images de manière optimale dans le document.",
+  },
 ]
 
 const testimonials = [
-  { name: "Marie L.", role: "Rédactrice", quote: "Je gagne 3 heures par jour sur mes rapports.", rating: 5 },
-  { name: "Pierre D.", role: "Directeur", quote: "Nos documents n'ont jamais été aussi professionnels.", rating: 5 },
-  { name: "Sarah K.", role: "Étudiante", quote: "Mes mémoires sont formatés parfaitement à chaque fois.", rating: 5 },
+  { name: 'Marie L.', role: 'Rédactrice', quote: 'Je gagne 3 heures par jour sur mes rapports.', rating: 5 },
+  { name: 'Pierre D.', role: 'Directeur', quote: "Nos documents n'ont jamais été aussi professionnels.", rating: 5 },
+  { name: 'Sarah K.', role: 'Étudiante', quote: 'Mes mémoires sont formatés parfaitement à chaque fois.', rating: 5 },
 ]
 
 export default function LandingPage() {
@@ -53,13 +44,24 @@ export default function LandingPage() {
             <span className="font-bold text-xl">Aurora AI</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-zinc-400 hover:text-white transition">Fonctionnalités</Link>
-            <Link href="/pricing" className="text-zinc-400 hover:text-white transition">Tarifs</Link>
-            <Link href="#testimonials" className="text-zinc-400 hover:text-white transition">Témoignages</Link>
+            <Link href="#features" className="text-zinc-400 hover:text-white transition">
+              Fonctionnalités
+            </Link>
+            <Link href="/pricing" className="text-zinc-400 hover:text-white transition">
+              Tarifs
+            </Link>
+            <Link href="#testimonials" className="text-zinc-400 hover:text-white transition">
+              Témoignages
+            </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/auth/login" className="text-zinc-400 hover:text-white transition">Connexion</Link>
-            <Link href="/auth/register" className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-cyan-500/25">
+            <Link href="/auth/login" className="text-zinc-400 hover:text-white transition">
+              Connexion
+            </Link>
+            <Link
+              href="/auth/register"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-cyan-500/25"
+            >
               Essayer Gratuit
             </Link>
           </div>
@@ -89,17 +91,23 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-10">
-            Aurora AI formate, structure et optimise vos documents instantanément.
-            Plus jamais de mise en page manuelle.
+            Aurora AI formate, structure et optimise vos documents instantanément. Plus jamais de mise en
+            page manuelle.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/editor" className="group flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30">
+            <Link
+              href="/editor"
+              className="group flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
+            >
               <Play className="w-5 h-5" />
               Commencer Maintenant
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link href="#demo" className="flex items-center gap-2 text-zinc-400 hover:text-white px-6 py-4 transition">
+            <Link
+              href="#demo"
+              className="flex items-center gap-2 text-zinc-400 hover:text-white px-6 py-4 transition"
+            >
               <Play className="w-5 h-5" />
               Voir la Démo
             </Link>
@@ -163,9 +171,21 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: "01", title: "Écrivez", desc: "Rédigez votre contenu sans vous soucier du format." },
-              { step: "02", title: "L'IA Analyse", desc: "Aurora comprend la structure et le contexte de votre texte." },
-              { step: "03", title: "C'est Prêt", desc: "Document parfaitement formaté, prêt à l'export." },
+              {
+                step: '01',
+                title: 'Écrivez',
+                desc: 'Rédigez votre contenu sans vous soucier du format.',
+              },
+              {
+                step: '02',
+                title: "L'IA Analyse",
+                desc: 'Aurora comprend la structure et le contexte de votre texte.',
+              },
+              {
+                step: '03',
+                title: "C'est Prêt",
+                desc: "Document parfaitement formaté, prêt à l'export.",
+              },
             ].map((item) => (
               <div key={item.step} className="relative">
                 <div className="text-6xl font-bold text-zinc-800 mb-4">{item.step}</div>
@@ -209,13 +229,14 @@ export default function LandingPage() {
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-cyan-500/20 rounded-3xl p-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Prêt à transformer vos documents ?
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Prêt à transformer vos documents ?</h2>
             <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-              Rejoignez des milliers d&apos;utilisateurs qui gagnent du temps chaque jour.
+              Commencez gratuitement et découvrez une nouvelle façon de créer vos documents.
             </p>
-            <Link href="/pricing" className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30">
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all shadow-2xl shadow-cyan-500/30"
+            >
               Commencer Gratuitement
               <ArrowRight className="w-5 h-5" />
             </Link>
@@ -233,13 +254,17 @@ export default function LandingPage() {
             <span className="font-semibold">Aurora AI</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-500">
-            <Link href="/pricing" className="hover:text-white transition">Tarifs</Link>
-            <Link href="/login" className="hover:text-white transition">Connexion</Link>
-            <Link href="/admin" className="hover:text-white transition">Admin</Link>
+            <Link href="/pricing" className="hover:text-white transition">
+              Tarifs
+            </Link>
+            <Link href="/login" className="hover:text-white transition">
+              Connexion
+            </Link>
+            <Link href="/admin" className="hover:text-white transition">
+              Admin
+            </Link>
           </div>
-          <div className="text-sm text-zinc-500">
-            © 2025 Aurora AI. Tous droits réservés.
-          </div>
+          <div className="text-sm text-zinc-500">© 2025 Aurora AI. Tous droits réservés.</div>
         </div>
       </footer>
     </div>

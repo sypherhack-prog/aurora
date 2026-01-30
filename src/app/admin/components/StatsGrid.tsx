@@ -1,4 +1,4 @@
-import { ArrowUpRight, ArrowDownRight, Clock, LucideIcon } from "lucide-react"
+import { ArrowUpRight, ArrowDownRight, Clock, LucideIcon } from 'lucide-react'
 
 interface StatItem {
     title: string
@@ -21,27 +21,25 @@ export function StatsGrid({ stats }: { stats: StatItem[] }) {
                         <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color}`}>
                             <stat.icon className="w-5 h-5 text-white" />
                         </div>
-                        {stat.trend === "up" && (
+                        {stat.trend === 'up' && (
                             <div className="flex items-center gap-1 text-green-400 text-xs">
                                 <ArrowUpRight className="w-3 h-3" />
                                 {stat.change}
                             </div>
                         )}
-                        {stat.trend === "down" && (
+                        {stat.trend === 'down' && (
                             <div className="flex items-center gap-1 text-red-400 text-xs">
                                 <ArrowDownRight className="w-3 h-3" />
                                 {stat.change}
                             </div>
                         )}
-                        {stat.trend === "warning" && (
+                        {stat.trend === 'warning' && (
                             <div className="flex items-center gap-1 text-amber-400 text-xs">
                                 <Clock className="w-3 h-3" />
                                 {stat.change}
                             </div>
                         )}
-                        {stat.trend === "neutral" && (
-                            <div className="text-zinc-500 text-xs">{stat.change}</div>
-                        )}
+                        {stat.trend === 'neutral' && <div className="text-zinc-500 text-xs">{stat.change}</div>}
                     </div>
                     <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
                     <div className="text-sm text-zinc-400">{stat.title}</div>

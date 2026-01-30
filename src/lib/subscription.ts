@@ -1,16 +1,16 @@
-import prisma from "@/lib/db";
+import prisma from '@/lib/db'
 
 export async function getUserPlan(userId: string): Promise<string> {
-    if (!userId) return 'FREE';
+    if (!userId) return 'FREE'
 
     // 1. Check if user is admin (equivalent to unlimited/highest plan)
     const user = await prisma.user.findUnique({
         where: { id: userId },
-        select: { role: true }
-    });
+        select: { role: true },
+    })
 
     if (user?.role === 'ADMIN') {
-        return 'ADMIN';
+        return 'ADMIN'
     }
 
     // 2. Check for ACTIVE subscription that hasn't expired
@@ -19,10 +19,10 @@ export async function getUserPlan(userId: string): Promise<string> {
             userId: userId,
             status: 'ACTIVE',
             endDate: {
-                gt: new Date() // End date must be in the future
-            }
-        }
-    });
+                gt: new Date(), // End date must be in the future
+            },
+        },
+    })
 
-    return activeSub ? activeSub.plan : 'FREE';
+    return activeSub ? activeSub.plan : 'FREE'
 }

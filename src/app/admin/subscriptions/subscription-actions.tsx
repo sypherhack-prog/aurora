@@ -5,13 +5,7 @@ import { Check, X, Loader2 } from 'lucide-react'
 import { verifyPayment, blockSubscription } from '@/lib/actions'
 import { logger } from '@/lib/logger'
 
-export default function SubscriptionActions({
-    subscriptionId,
-    status
-}: {
-    subscriptionId: string
-    status: string
-}) {
+export default function SubscriptionActions({ subscriptionId, status }: { subscriptionId: string; status: string }) {
     const [loading, setLoading] = useState<string | null>(null)
 
     const handleVerify = async () => {
@@ -48,11 +42,7 @@ export default function SubscriptionActions({
                 title="Valider le paiement"
                 className="p-2 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 transition disabled:opacity-50"
             >
-                {loading === 'verify' ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                    <Check className="h-4 w-4" />
-                )}
+                {loading === 'verify' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
             </button>
             <button
                 onClick={handleBlock}
@@ -60,11 +50,7 @@ export default function SubscriptionActions({
                 title="Rejeter / Bloquer"
                 className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 transition disabled:opacity-50"
             >
-                {loading === 'block' ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                    <X className="h-4 w-4" />
-                )}
+                {loading === 'block' ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
             </button>
         </div>
     )

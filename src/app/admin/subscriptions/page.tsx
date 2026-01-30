@@ -1,14 +1,14 @@
-import prisma from "@/lib/db"
-import SubscriptionActions from "./subscription-actions"
-import { CreditCard, Search } from "lucide-react"
+import prisma from '@/lib/db'
+import SubscriptionActions from './subscription-actions'
+import { CreditCard, Search } from 'lucide-react'
 
 export default async function SubscriptionsPage() {
     const subscriptions = await prisma.subscription.findMany({
         include: {
             user: true,
-            payments: true
+            payments: true,
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
     })
 
     return (
@@ -36,13 +36,27 @@ export default async function SubscriptionsPage() {
                 <table className="min-w-full divide-y divide-zinc-800">
                     <thead className="bg-zinc-800/50">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Utilisateur</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Plan</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Statut</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Réf. MVola</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Téléphone</th>
-                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-4 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Utilisateur
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Plan
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Statut
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Réf. MVola
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Téléphone
+                            </th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Date
+                            </th>
+                            <th className="px-6 py-4 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800">
@@ -54,7 +68,9 @@ export default async function SubscriptionsPage() {
                                             {sub.user.email?.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <div className="text-sm font-medium text-white">{sub.user.name || 'Utilisateur'}</div>
+                                            <div className="text-sm font-medium text-white">
+                                                {sub.user.name || 'Utilisateur'}
+                                            </div>
                                             <div className="text-xs text-zinc-500">{sub.user.email}</div>
                                         </div>
                                     </div>
@@ -77,10 +93,7 @@ export default async function SubscriptionsPage() {
                                     {new Date(sub.createdAt).toLocaleDateString('fr-FR')}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                                    <SubscriptionActions
-                                        subscriptionId={sub.id}
-                                        status={sub.status}
-                                    />
+                                    <SubscriptionActions subscriptionId={sub.id} status={sub.status} />
                                 </td>
                             </tr>
                         ))}
@@ -107,7 +120,9 @@ function PlanBadge({ plan }: { plan: string }) {
     }
 
     return (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[plan] || styles.BASIC}`}>
+        <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[plan] || styles.BASIC}`}
+        >
             {plan}
         </span>
     )
@@ -129,7 +144,9 @@ function StatusBadge({ status }: { status: string }) {
     }
 
     return (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || styles.EXPIRED}`}>
+        <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || styles.EXPIRED}`}
+        >
             {labels[status] || status}
         </span>
     )

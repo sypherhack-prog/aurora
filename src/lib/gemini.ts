@@ -65,7 +65,10 @@ export async function processAIRequest({ action, content, theme, documentType }:
         let text = response.text()
 
         // Cleanup markdown code blocks if the model ignores the instruction
-        text = text.replace(/^```html/, '').replace(/```$/, '').trim()
+        text = text
+            .replace(/^```html/, '')
+            .replace(/```$/, '')
+            .trim()
 
         return text
     } catch (error) {

@@ -1,15 +1,8 @@
 'use client'
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import {
-    LayoutDashboard,
-    Users,
-    CreditCard,
-    Settings,
-    LogOut,
-    Sparkles,
-} from "lucide-react"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Sparkles } from 'lucide-react'
 
 interface UserSession {
     name?: string | null
@@ -20,10 +13,10 @@ export function AdminSidebar({ user }: { user: UserSession }) {
     const pathname = usePathname()
 
     const sidebarItems = [
-        { icon: LayoutDashboard, label: "Tableau de bord", href: "/admin" },
-        { icon: CreditCard, label: "Abonnements", href: "/admin/subscriptions" },
-        { icon: Users, label: "Utilisateurs", href: "/admin/users" },
-        { icon: Settings, label: "Paramètres", href: "/admin/settings" },
+        { icon: LayoutDashboard, label: 'Tableau de bord', href: '/admin' },
+        { icon: CreditCard, label: 'Abonnements', href: '/admin/subscriptions' },
+        { icon: Users, label: 'Utilisateurs', href: '/admin/users' },
+        { icon: Settings, label: 'Paramètres', href: '/admin/settings' },
     ]
 
     return (
@@ -54,10 +47,11 @@ export function AdminSidebar({ user }: { user: UserSession }) {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${isActive
-                                ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30'
-                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                                }`}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
+                                isActive
+                                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30'
+                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                            }`}
                         >
                             <item.icon className="w-5 h-5" />
                             {item.label}

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
         // Check if user exists
         const existingUser = await prisma.user.findUnique({
-            where: { email }
+            where: { email },
         })
 
         if (existingUser) {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
                 email,
                 password: hashedPassword,
                 role: 'USER',
-            }
+            },
         })
 
         // Create free tier subscription (BASIC plan with no end date = free trial)
@@ -44,12 +44,12 @@ export async function POST(req: NextRequest) {
                 status: 'ACTIVE',
                 startDate: new Date(),
                 endDate: null,
-            }
+            },
         })
 
         return NextResponse.json({
             success: true,
-            message: 'Compte créé avec succès'
+            message: 'Compte créé avec succès',
         })
     } catch (error) {
         logger.error('Registration error:', error)

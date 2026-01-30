@@ -121,11 +121,13 @@ export default function UserLoginPage() {
 
                 {/* Login Form */}
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 backdrop-blur-sm">
-                    <Suspense fallback={
-                        <div className="flex justify-center p-8">
-                            <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
-                        </div>
-                    }>
+                    <Suspense
+                        fallback={
+                            <div className="flex justify-center p-8">
+                                <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+                            </div>
+                        }
+                    >
                         <LoginForm />
                     </Suspense>
 

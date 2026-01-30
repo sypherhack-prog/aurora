@@ -1,7 +1,19 @@
 import { LucideIcon } from 'lucide-react'
 import {
-    Sparkles, X, Zap, Wand2, Pencil, RefreshCw, FileEdit, Type,
-    Plus, Loader2, Table as TableIcon, BarChart3, Languages, Lightbulb
+    Sparkles,
+    X,
+    Zap,
+    Wand2,
+    Pencil,
+    RefreshCw,
+    FileEdit,
+    Type,
+    Plus,
+    Loader2,
+    Table as TableIcon,
+    BarChart3,
+    Languages,
+    Lightbulb,
 } from 'lucide-react'
 
 interface AIButtonProps {
@@ -53,13 +65,7 @@ const TRANSLATION_OPTIONS = [
     { value: 'Russe', label: 'Russe' },
 ]
 
-export function AIPanel({
-    isOpen,
-    onClose,
-    aiLoading,
-    callAI,
-    translation
-}: AIPanelProps) {
+export function AIPanel({ isOpen, onClose, aiLoading, callAI, translation }: AIPanelProps) {
     if (!isOpen) return null
 
     return (
@@ -82,9 +88,24 @@ export function AIPanel({
                         Formatage Intelligent
                     </h4>
                     <div className="space-y-2">
-                        <AIButton icon={Wand2} label="Auto-formatter tout" loading={aiLoading === 'auto-format'} onClick={() => callAI('auto-format', 'replace')} />
-                        <AIButton icon={Pencil} label="Corriger les erreurs" loading={aiLoading === 'fix-errors'} onClick={() => callAI('fix-errors', 'replace')} />
-                        <AIButton icon={RefreshCw} label="Améliorer espacements" loading={aiLoading === 'improve-spacing'} onClick={() => callAI('improve-spacing', 'replace')} />
+                        <AIButton
+                            icon={Wand2}
+                            label="Auto-formatter tout"
+                            loading={aiLoading === 'auto-format'}
+                            onClick={() => callAI('auto-format', 'replace')}
+                        />
+                        <AIButton
+                            icon={Pencil}
+                            label="Corriger les erreurs"
+                            loading={aiLoading === 'fix-errors'}
+                            onClick={() => callAI('fix-errors', 'replace')}
+                        />
+                        <AIButton
+                            icon={RefreshCw}
+                            label="Améliorer espacements"
+                            loading={aiLoading === 'improve-spacing'}
+                            onClick={() => callAI('improve-spacing', 'replace')}
+                        />
                     </div>
                 </section>
 
@@ -95,9 +116,24 @@ export function AIPanel({
                         Assistant Rédaction
                     </h4>
                     <div className="space-y-2">
-                        <AIButton icon={RefreshCw} label="Continuer l'écriture" loading={aiLoading === 'continue-writing'} onClick={() => callAI('continue-writing', 'append')} />
-                        <AIButton icon={Type} label="Convertir en titre" loading={aiLoading === 'smart-heading'} onClick={() => callAI('smart-heading', 'insert')} />
-                        <AIButton icon={FileEdit} label="Améliorer paragraphe" loading={aiLoading === 'improve-paragraph'} onClick={() => callAI('improve-paragraph', 'replace')} />
+                        <AIButton
+                            icon={RefreshCw}
+                            label="Continuer l'écriture"
+                            loading={aiLoading === 'continue-writing'}
+                            onClick={() => callAI('continue-writing', 'append')}
+                        />
+                        <AIButton
+                            icon={Type}
+                            label="Convertir en titre"
+                            loading={aiLoading === 'smart-heading'}
+                            onClick={() => callAI('smart-heading', 'insert')}
+                        />
+                        <AIButton
+                            icon={FileEdit}
+                            label="Améliorer paragraphe"
+                            loading={aiLoading === 'improve-paragraph'}
+                            onClick={() => callAI('improve-paragraph', 'replace')}
+                        />
                     </div>
                 </section>
 
@@ -108,8 +144,18 @@ export function AIPanel({
                         Insérer
                     </h4>
                     <div className="space-y-2">
-                        <AIButton icon={TableIcon} label="Tableau formaté" loading={aiLoading === 'generate-table'} onClick={() => callAI('generate-table', 'insert')} />
-                        <AIButton icon={BarChart3} label="Résumé statistiques" loading={aiLoading === 'summarize'} onClick={() => callAI('summarize', 'insert')} />
+                        <AIButton
+                            icon={TableIcon}
+                            label="Tableau formaté"
+                            loading={aiLoading === 'generate-table'}
+                            onClick={() => callAI('generate-table', 'insert')}
+                        />
+                        <AIButton
+                            icon={BarChart3}
+                            label="Résumé statistiques"
+                            loading={aiLoading === 'summarize'}
+                            onClick={() => callAI('summarize', 'insert')}
+                        />
                     </div>
                 </section>
 
@@ -126,10 +172,17 @@ export function AIPanel({
                             className="w-full bg-zinc-900 border border-zinc-700 rounded-lg text-sm text-zinc-300 p-2 focus:outline-none focus:border-cyan-500 mb-2"
                         >
                             {TRANSLATION_OPTIONS.map((opt) => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
                             ))}
                         </select>
-                        <AIButton icon={Languages} label="Traduire le document" loading={aiLoading === 'translate'} onClick={translation.onTranslate} />
+                        <AIButton
+                            icon={Languages}
+                            label="Traduire le document"
+                            loading={aiLoading === 'translate'}
+                            onClick={translation.onTranslate}
+                        />
                     </div>
                 </section>
 
@@ -139,7 +192,12 @@ export function AIPanel({
                         <Lightbulb className="w-4 h-4 text-yellow-400" />
                         Idées
                     </h4>
-                    <AIButton icon={Lightbulb} label="Suggérer un plan" loading={aiLoading === 'suggest-ideas'} onClick={() => callAI('suggest-ideas', 'insert')} />
+                    <AIButton
+                        icon={Lightbulb}
+                        label="Suggérer un plan"
+                        loading={aiLoading === 'suggest-ideas'}
+                        onClick={() => callAI('suggest-ideas', 'insert')}
+                    />
                 </section>
             </div>
         </aside>

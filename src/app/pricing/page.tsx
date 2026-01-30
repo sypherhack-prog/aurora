@@ -1,77 +1,69 @@
-import Link from "next/link"
-import { Check, Sparkles, Zap, ArrowRight } from "lucide-react"
+import Link from 'next/link'
+import { Check, Sparkles, Zap, ArrowRight } from 'lucide-react'
 
 const plans = [
     {
-        name: "Gratuit",
-        price: "0",
-        period: "pour toujours",
-        description: "Parfait pour découvrir Aurora AI",
-        features: [
-            "5 documents par mois",
-            "Formatage IA basique",
-            "Export PDF uniquement",
-            "Filigrane Aurora AI",
-        ],
-        limitations: [
-            "Pas de support prioritaire",
-            "Fonctionnalités limitées",
-        ],
-        planCode: "FREE",
+        name: 'Gratuit',
+        price: '0',
+        period: 'pour toujours',
+        description: 'Parfait pour découvrir Aurora AI',
+        features: ['5 documents par mois', 'Formatage IA basique', 'Export PDF uniquement', 'Filigrane Aurora AI'],
+        limitations: ['Pas de support prioritaire', 'Fonctionnalités limitées'],
+        planCode: 'FREE',
         highlight: false,
-        cta: "Commencer Gratuitement",
+        cta: 'Commencer Gratuitement',
         popular: false,
     },
     {
-        name: "Basic",
-        price: "10,000",
-        period: "1 mois",
-        description: "Pour les utilisateurs réguliers",
+        name: 'Basic',
+        price: '10,000',
+        period: '1 mois',
+        description: 'Pour les utilisateurs réguliers',
         features: [
-            "50 documents par mois",
-            "Formatage IA complet",
-            "Export PDF, Word, HTML",
-            "Sans filigrane",
-            "Support email",
+            '50 documents par mois',
+            'Formatage IA complet',
+            'Export PDF, Word, HTML',
+            'Sans filigrane',
+            'Support email',
         ],
-        planCode: "BASIC",
+        planCode: 'BASIC',
         highlight: false,
-        cta: "Souscrire",
+        cta: 'Souscrire',
         popular: false,
     },
     {
-        name: "Pro",
-        price: "20,000",
-        period: "3 mois",
-        description: "Pour les professionnels exigeants",
+        name: 'Pro',
+        price: '20,000',
+        period: '3 mois',
+        description: 'Pour les professionnels exigeants',
         features: [
-            "Documents illimités",
-            "IA avancée (GPT-4)",
+            'Documents illimités',
+            'IA avancée (GPT-4)',
             "Tous les formats d'export",
-            "Support prioritaire 24/7",
-            "Templates premium",
-            "Collaboration équipe",
+            'Support prioritaire 24/7',
+            'Templates premium',
+            'Collaboration équipe',
         ],
-        planCode: "PRO",
+        planCode: 'PRO',
         highlight: true,
-        cta: "Choisir Pro",
+        cta: 'Choisir Pro',
         popular: true,
     },
     {
-        name: "Annuel",
-        price: "90,000",
-        period: "12 mois",
-        description: "Économisez 2 mois",
+        name: 'Annuel',
+        price: '90,000',
+        period: '12 mois',
+        description: 'Économisez 2 mois',
         features: [
-            "Tout du Pro inclus",
-            "2 mois gratuits",
-            "Accès anticipé aux nouveautés",
-            "Support dédié",
-            "Formation personnalisée",
+            'Tout du Pro inclus',
+            '2 mois gratuits',
+            'Accès anticipé aux nouveautés',
+            'Support dédié',
+            'Formation personnalisée',
         ],
-        planCode: "ANNUAL",
+        planCode: 'ANNUAL',
         highlight: false,
-        cta: "Économiser 25%",
+        cta: 'Économiser 25%',
         popular: false,
     },
 ]
@@ -89,8 +81,12 @@ export default function PricingPage() {
                         <span className="font-bold text-xl">Aurora AI</span>
                     </Link>
                     <div className="flex items-center gap-4">
-                        <Link href="/editor" className="text-zinc-400 hover:text-white transition">Éditeur</Link>
-                        <Link href="/auth/login" className="text-zinc-400 hover:text-white transition">Connexion</Link>
+                        <Link href="/editor" className="text-zinc-400 hover:text-white transition">
+                            Éditeur
+                        </Link>
+                        <Link href="/auth/login" className="text-zinc-400 hover:text-white transition">
+                            Connexion
+                        </Link>
                     </div>
                 </div>
             </nav>
@@ -108,7 +104,10 @@ export default function PricingPage() {
                         <span className="text-sm text-cyan-300">Essai gratuit • Sans carte bancaire</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        Choisissez votre <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">plan</span>
+                        Choisissez votre{' '}
+                        <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                            plan
+                        </span>
                     </h1>
                     <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
                         Commencez gratuitement, évoluez selon vos besoins. Paiement simple via MVola.
@@ -122,10 +121,11 @@ export default function PricingPage() {
                     {plans.map((plan) => (
                         <div
                             key={plan.name}
-                            className={`relative rounded-2xl p-6 transition-all duration-300 ${plan.highlight
-                                ? "bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-500/50 scale-105"
-                                : "bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700"
-                                }`}
+                            className={`relative rounded-2xl p-6 transition-all duration-300 ${
+                                plan.highlight
+                                    ? 'bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border-2 border-cyan-500/50 scale-105'
+                                    : 'bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700'
+                            }`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">
@@ -149,7 +149,9 @@ export default function PricingPage() {
                             <ul className="space-y-3 mb-6">
                                 {plan.features.map((feature) => (
                                     <li key={feature} className="flex items-start gap-2">
-                                        <Check className={`w-5 h-5 flex-shrink-0 ${plan.highlight ? 'text-cyan-400' : 'text-green-500'}`} />
+                                        <Check
+                                            className={`w-5 h-5 flex-shrink-0 ${plan.highlight ? 'text-cyan-400' : 'text-green-500'}`}
+                                        />
                                         <span className="text-sm text-zinc-300">{feature}</span>
                                     </li>
                                 ))}
@@ -157,12 +159,13 @@ export default function PricingPage() {
 
                             <Link
                                 href={plan.planCode === 'FREE' ? '/auth/register' : `/subscribe?plan=${plan.planCode}`}
-                                className={`block w-full text-center py-3 px-4 rounded-lg font-medium transition-all ${plan.highlight
-                                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25"
-                                    : plan.planCode === 'FREE'
-                                        ? "bg-zinc-800 hover:bg-zinc-700 text-white"
-                                        : "bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
-                                    }`}
+                                className={`block w-full text-center py-3 px-4 rounded-lg font-medium transition-all ${
+                                    plan.highlight
+                                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25'
+                                        : plan.planCode === 'FREE'
+                                          ? 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                                          : 'bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700'
+                                }`}
                             >
                                 {plan.cta}
                             </Link>

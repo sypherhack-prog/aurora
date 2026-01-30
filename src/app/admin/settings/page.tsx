@@ -1,4 +1,3 @@
-
 import { AlertCircle } from 'lucide-react'
 
 export default function AdminSettingsPage() {
@@ -40,7 +39,8 @@ export default function AdminSettingsPage() {
                     <div>
                         <h4 className="text-yellow-400 font-medium">Note</h4>
                         <p className="text-yellow-200/70 text-sm mt-1">
-                            Ces paramètres sont actuellement statiques (démo). Une table `GlobalSettings` sera nécessaire pour les rendre fonctionnels.
+                            Ces paramètres sont actuellement statiques (démo). Une table `GlobalSettings` sera
+                            nécessaire pour les rendre fonctionnels.
                         </p>
                     </div>
                 </div>

@@ -21,20 +21,23 @@ export async function POST(req: NextRequest) {
         if (plan === 'FREE') {
             const user = await prisma.user.findUnique({
                 where: { id: session.user.id },
-                select: { aiUsageCount: true }
+                select: { aiUsageCount: true },
             })
 
             if ((user?.aiUsageCount || 0) >= 5) {
-                return NextResponse.json({
-                    error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
-                    code: 'LIMIT_REACHED'
-                }, { status: 403 })
+                return NextResponse.json(
+                    {
+                        error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
+                        code: 'LIMIT_REACHED',
+                    },
+                    { status: 403 }
+                )
             }
 
             // Increment usage
             await prisma.user.update({
                 where: { id: session.user.id },
-                data: { aiUsageCount: { increment: 1 } }
+                data: { aiUsageCount: { increment: 1 } },
             })
         }
 
@@ -53,16 +56,18 @@ export async function POST(req: NextRequest) {
             action: action as AIAction,
             content: textToProcess,
             theme,
-            documentType
+            documentType,
         })
 
         return NextResponse.json({ success: true, result })
     } catch (error) {
         logger.error('AI Processing Error:', error)
-        return NextResponse.json({
-            error: 'Erreur lors du traitement AI',
-            details: error instanceof Error ? error.message : 'Unknown error'
-        }, { status: 500 })
+        return NextResponse.json(
+            {
+                error: 'Erreur lors du traitement AI',
+                details: error instanceof Error ? error.message : 'Unknown error',
+            },
+            { status: 500 }
+        )
     }
 }
-

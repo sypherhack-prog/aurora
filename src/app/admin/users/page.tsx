@@ -1,4 +1,3 @@
-
 import { prisma } from '@/lib/db'
 
 export default async function AdminUsersPage() {
@@ -13,10 +12,10 @@ export default async function AdminUsersPage() {
             subscriptions: {
                 select: {
                     status: true,
-                    plan: true
-                }
-            }
-        }
+                    plan: true,
+                },
+            },
+        },
     })
 
     return (
@@ -39,16 +38,19 @@ export default async function AdminUsersPage() {
                         </thead>
                         <tbody className="divide-y divide-zinc-800">
                             {users.map((user) => {
-                                const activeSub = user.subscriptions.find(s => s.status === 'ACTIVE')
+                                const activeSub = user.subscriptions.find((s) => s.status === 'ACTIVE')
                                 return (
                                     <tr key={user.id} className="hover:bg-zinc-800/50 transition-colors">
                                         <td className="p-4 text-zinc-200 font-medium">{user.name || 'Sans nom'}</td>
                                         <td className="p-4 text-zinc-400">{user.email}</td>
                                         <td className="p-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.role === 'ADMIN'
-                                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                                : 'bg-zinc-700 text-zinc-300'
-                                                }`}>
+                                            <span
+                                                className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                                    user.role === 'ADMIN'
+                                                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                                        : 'bg-zinc-700 text-zinc-300'
+                                                }`}
+                                            >
                                                 {user.role}
                                             </span>
                                         </td>

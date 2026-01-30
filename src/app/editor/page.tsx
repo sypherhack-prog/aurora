@@ -52,7 +52,7 @@ import {
     PenTool,
     BookOpen,
     Lightbulb,
-    Languages
+    Languages,
 } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import { AIPanel } from './components/AIPanel'
@@ -68,7 +68,7 @@ export default function EditorPage() {
     const [showExportModal, setShowExportModal] = useState(false)
     const [showNewDocModal, setShowNewDocModal] = useState(false)
     const [exportLoading, setExportLoading] = useState(false)
-    const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+    const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [docTheme, setDocTheme] = useState('general')
     const [docType, setDocType] = useState('document')
     const [translationLang, setTranslationLang] = useState('Anglais')
@@ -80,7 +80,7 @@ export default function EditorPage() {
                 types: ['heading', 'paragraph'],
             }),
             Placeholder.configure({
-                placeholder: 'Commencez à écrire... L\'IA formatera automatiquement.',
+                placeholder: "Commencez à écrire... L'IA formatera automatiquement.",
             }),
             Table.configure({
                 resizable: true,
@@ -98,7 +98,7 @@ export default function EditorPage() {
         immediatelyRender: false,
         onUpdate: ({ editor }) => {
             const text = editor.getText()
-            setWordCount(text.split(/\s+/).filter(w => w.length > 0).length)
+            setWordCount(text.split(/\s+/).filter((w) => w.length > 0).length)
             setCharCount(text.length)
         },
     })
@@ -121,54 +121,57 @@ export default function EditorPage() {
     }
 
     // Call AI API with context
-    const callAI = useCallback(async (action: string, insertMode: 'replace' | 'append' | 'insert' = 'replace') => {
-        if (!editor) return
-        setAiLoading(action)
+    const callAI = useCallback(
+        async (action: string, insertMode: 'replace' | 'append' | 'insert' = 'replace') => {
+            if (!editor) return
+            setAiLoading(action)
 
-        try {
-            const content = editor.getHTML()
-            const { from, to } = editor.state.selection
-            const selection = from !== to ? editor.state.doc.textBetween(from, to) : null
+            try {
+                const content = editor.getHTML()
+                const { from, to } = editor.state.selection
+                const selection = from !== to ? editor.state.doc.textBetween(from, to) : null
 
-            const res = await fetch('/api/ai/format', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action,
-                    content,
-                    selection,
-                    theme: docTheme,
-                    documentType: docType
-                }),
-            })
+                const res = await fetch('/api/ai/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action,
+                        content,
+                        selection,
+                        theme: docTheme,
+                        documentType: docType,
+                    }),
+                })
 
-            const data = await res.json()
+                const data = await res.json()
 
-            if (data.success && data.result) {
-                if (action === 'auto-format' || action === 'fix-errors' || action === 'improve-spacing') {
-                    editor.commands.setContent(data.result)
-                    showNotification('success', 'Document formaté avec succès!')
-                } else if (insertMode === 'append') {
-                    editor.commands.insertContentAt(editor.state.doc.content.size, data.result)
-                    // Scroll to bottom
-                    setTimeout(() => {
-                        const scrollHeight = document.documentElement.scrollHeight
-                        window.scrollTo(0, scrollHeight)
-                    }, 100)
+                if (data.success && data.result) {
+                    if (action === 'auto-format' || action === 'fix-errors' || action === 'improve-spacing') {
+                        editor.commands.setContent(data.result)
+                        showNotification('success', 'Document formaté avec succès!')
+                    } else if (insertMode === 'append') {
+                        editor.commands.insertContentAt(editor.state.doc.content.size, data.result)
+                        // Scroll to bottom
+                        setTimeout(() => {
+                            const scrollHeight = document.documentElement.scrollHeight
+                            window.scrollTo(0, scrollHeight)
+                        }, 100)
+                    } else {
+                        editor.commands.insertContent(data.result)
+                        showNotification('success', 'Contenu inséré!')
+                    }
                 } else {
-                    editor.commands.insertContent(data.result)
-                    showNotification('success', 'Contenu inséré!')
+                    showNotification('error', data.error || 'Erreur AI')
                 }
-            } else {
-                showNotification('error', data.error || 'Erreur AI')
+            } catch (e) {
+                logger.error('AI error:', e)
+                showNotification('error', 'Erreur de connexion')
+            } finally {
+                setAiLoading(null)
             }
-        } catch (e) {
-            logger.error('AI error:', e)
-            showNotification('error', 'Erreur de connexion')
-        } finally {
-            setAiLoading(null)
-        }
-    }, [editor, docTheme, docType])
+        },
+        [editor, docTheme, docType]
+    )
 
     // Handle Translation
     const handleTranslate = () => {
@@ -195,11 +198,26 @@ export default function EditorPage() {
         if (initialContent) {
             editor?.commands.setContent(initialContent)
         } else {
-            if (type === 'exam') editor?.commands.setContent('<h1>Sujet d\'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>')
-            if (type === 'notes') editor?.commands.setContent('<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>')
-            if (type === 'report') editor?.commands.setContent('<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>')
-            if (type === 'cover-letter') editor?.commands.setContent('<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>')
-            if (type === 'manuscript') editor?.commands.setContent('<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C\'était une nuit sombre et orageuse...</p>')
+            if (type === 'exam')
+                editor?.commands.setContent(
+                    "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>"
+                )
+            if (type === 'notes')
+                editor?.commands.setContent(
+                    '<h1>Notes de Cours</h1><p><strong>Date :</strong> ...</p><h2>Introduction</h2><p>...</p>'
+                )
+            if (type === 'report')
+                editor?.commands.setContent(
+                    '<h1>Rapport de Stage</h1><p><strong>Entreprise :</strong> ...</p><p><strong>Période :</strong> ...</p><h2>Introduction</h2><p>Ce rapport présente...</p><h2>Missions effectuées</h2><p>...</p><h2>Bilan</h2><p>...</p>'
+                )
+            if (type === 'cover-letter')
+                editor?.commands.setContent(
+                    '<p>Prénom Nom</p><p>Adresse</p><p>Tél</p><br><p>Entreprise</p><p>Adresse</p><br><p><strong>Objet : Candidature au poste de...</strong></p><br><p>Madame, Monsieur,</p><p>...</p><br><p>Cordialement,</p>'
+                )
+            if (type === 'manuscript')
+                editor?.commands.setContent(
+                    "<h1>Titre du Roman</h1><h2>Chapitre 1</h2><p>C'était une nuit sombre et orageuse...</p>"
+                )
             if (type === 'blank') editor?.commands.setContent('')
         }
     }
@@ -251,7 +269,7 @@ export default function EditorPage() {
                 const script = document.createElement('script')
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
                 document.head.appendChild(script)
-                await new Promise(resolve => script.onload = resolve)
+                await new Promise((resolve) => (script.onload = resolve))
             }
 
             const element = document.querySelector('.ProseMirror')
@@ -260,7 +278,7 @@ export default function EditorPage() {
                 filename: 'document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
             }
 
             // @ts-ignore
@@ -287,10 +305,13 @@ export default function EditorPage() {
         <div className="min-h-screen bg-zinc-950 text-white flex">
             {/* Notification */}
             {notification && (
-                <div className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg border ${notification.type === 'success'
-                    ? 'bg-zinc-900 border-green-500/30 text-green-400'
-                    : 'bg-zinc-900 border-red-500/30 text-red-400'
-                    }`}>
+                <div
+                    className={`fixed top-4 right-4 z-[60] flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg border ${
+                        notification.type === 'success'
+                            ? 'bg-zinc-900 border-green-500/30 text-green-400'
+                            : 'bg-zinc-900 border-red-500/30 text-red-400'
+                    }`}
+                >
                     {notification.type === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                     {notification.message}
                 </div>
@@ -307,10 +328,15 @@ export default function EditorPage() {
                             <Sparkles className="w-6 h-6 text-cyan-400" />
                             Nouveau Document
                         </h2>
-                        <p className="text-zinc-400 mb-8 relative z-10">Choisissez un modèle pour optimiser l&apos;assistance IA selon votre besoin.</p>
+                        <p className="text-zinc-400 mb-8 relative z-10">
+                            Choisissez un modèle pour optimiser l&apos;assistance IA selon votre besoin.
+                        </p>
 
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8 relative z-10">
-                            <button onClick={() => createNewDoc('general', 'blank')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('general', 'blank')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-zinc-700">
                                     <Plus className="w-5 h-5 text-white" />
                                 </div>
@@ -318,7 +344,10 @@ export default function EditorPage() {
                                 <div className="text-xs text-zinc-400 mt-1">Partir de zéro</div>
                             </button>
 
-                            <button onClick={() => createNewDoc('academic', 'exam')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('academic', 'exam')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-blue-500/20">
                                     <GraduationCap className="w-5 h-5 text-blue-400" />
                                 </div>
@@ -326,7 +355,10 @@ export default function EditorPage() {
                                 <div className="text-xs text-zinc-400 mt-1">Structure académique</div>
                             </button>
 
-                            <button onClick={() => createNewDoc('academic', 'notes')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('academic', 'notes')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-purple-500/20">
                                     <BookOpen className="w-5 h-5 text-purple-400" />
                                 </div>
@@ -334,7 +366,10 @@ export default function EditorPage() {
                                 <div className="text-xs text-zinc-400 mt-1">Organisation claire</div>
                             </button>
 
-                            <button onClick={() => createNewDoc('business', 'report')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('business', 'report')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-cyan-500/20">
                                     <Briefcase className="w-5 h-5 text-cyan-400" />
                                 </div>
@@ -342,7 +377,10 @@ export default function EditorPage() {
                                 <div className="text-xs text-zinc-400 mt-1">Structure professionnelle</div>
                             </button>
 
-                            <button onClick={() => createNewDoc('letter', 'cover-letter')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('letter', 'cover-letter')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-green-500/20">
                                     <Mail className="w-5 h-5 text-green-400" />
                                 </div>
@@ -350,7 +388,10 @@ export default function EditorPage() {
                                 <div className="text-xs text-zinc-400 mt-1">Format professionnel</div>
                             </button>
 
-                            <button onClick={() => createNewDoc('creative', 'manuscript')} className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group">
+                            <button
+                                onClick={() => createNewDoc('creative', 'manuscript')}
+                                className="p-4 bg-zinc-800 hover:bg-zinc-700/80 border border-zinc-700 hover:border-cyan-500/50 rounded-xl transition text-left group"
+                            >
                                 <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition border border-orange-500/20">
                                     <PenTool className="w-5 h-5 text-orange-400" />
                                 </div>
@@ -359,7 +400,10 @@ export default function EditorPage() {
                             </button>
                         </div>
 
-                        <button onClick={() => setShowNewDocModal(false)} className="mx-auto block text-zinc-500 hover:text-white text-sm transition relative z-10">
+                        <button
+                            onClick={() => setShowNewDocModal(false)}
+                            className="mx-auto block text-zinc-500 hover:text-white text-sm transition relative z-10"
+                        >
                             Fermer sans choisir
                         </button>
                     </div>
@@ -401,7 +445,9 @@ export default function EditorPage() {
                                         <FileDown className="w-4 h-4 text-purple-400" />
                                     </div>
                                     <div className="text-left">
-                                        <div className="font-medium group-hover:text-white transition-colors">Markdown</div>
+                                        <div className="font-medium group-hover:text-white transition-colors">
+                                            Markdown
+                                        </div>
                                         <div className="text-xs text-zinc-400">Format universel</div>
                                     </div>
                                 </div>
@@ -416,7 +462,9 @@ export default function EditorPage() {
                                         <FileDown className="w-4 h-4 text-zinc-400" />
                                     </div>
                                     <div className="text-left">
-                                        <div className="font-medium group-hover:text-white transition-colors">Texte brut</div>
+                                        <div className="font-medium group-hover:text-white transition-colors">
+                                            Texte brut
+                                        </div>
                                         <div className="text-xs text-zinc-400">Sans formatage</div>
                                     </div>
                                 </div>
@@ -445,9 +493,8 @@ export default function EditorPage() {
                             Annuler
                         </button>
                     </div>
-                </div >
-            )
-            }
+                </div>
+            )}
 
             {/* Sidebar */}
             <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800 flex flex-col hidden md:flex">
@@ -463,32 +510,44 @@ export default function EditorPage() {
                 <nav className="flex-1 p-4 space-y-1">
                     <button
                         onClick={() => setActiveTab('documents')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'documents' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                            }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
+                            activeTab === 'documents'
+                                ? 'bg-zinc-800 text-white'
+                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                        }`}
                     >
                         <FileText className="w-5 h-5" />
                         Documents Récents
                     </button>
                     <button
                         onClick={() => setActiveTab('templates')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'templates' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                            }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
+                            activeTab === 'templates'
+                                ? 'bg-zinc-800 text-white'
+                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                        }`}
                     >
                         <FolderOpen className="w-5 h-5" />
                         Modèles
                     </button>
                     <button
                         onClick={() => setActiveTab('insights')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'insights' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                            }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
+                            activeTab === 'insights'
+                                ? 'bg-zinc-800 text-white'
+                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                        }`}
                     >
                         <BarChart3 className="w-5 h-5" />
                         Insights IA
                     </button>
                     <button
                         onClick={() => setActiveTab('settings')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${activeTab === 'settings' ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
-                            }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all ${
+                            activeTab === 'settings'
+                                ? 'bg-zinc-800 text-white'
+                                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                        }`}
                     >
                         <Settings className="w-5 h-5" />
                         Paramètres
@@ -500,26 +559,43 @@ export default function EditorPage() {
                     {activeTab === 'documents' && (
                         <div className="space-y-2 text-sm">
                             <div className="text-zinc-500 text-xs mb-2">Documents récents</div>
-                            <div className="p-2 bg-zinc-800 rounded-lg text-zinc-300 truncate border border-zinc-700">📄 Nouveau Document</div>
+                            <div className="p-2 bg-zinc-800 rounded-lg text-zinc-300 truncate border border-zinc-700">
+                                📄 Nouveau Document
+                            </div>
                             <div className="text-xs text-zinc-500 text-center py-2">Pas d&apos;autres documents</div>
                         </div>
                     )}
                     {activeTab === 'templates' && (
                         <div className="space-y-2 text-sm">
                             <div className="text-zinc-500 text-xs mb-2">Modèles disponibles</div>
-                            <button onClick={() => createNewDoc('academic', 'exam')} className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2">
+                            <button
+                                onClick={() => createNewDoc('academic', 'exam')}
+                                className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2"
+                            >
                                 <GraduationCap className="w-4 h-4 text-blue-400" /> Sujet d&apos;examen
                             </button>
-                            <button onClick={() => createNewDoc('academic', 'notes')} className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2">
+                            <button
+                                onClick={() => createNewDoc('academic', 'notes')}
+                                className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2"
+                            >
                                 <BookOpen className="w-4 h-4 text-purple-400" /> Notes de cours
                             </button>
-                            <button onClick={() => createNewDoc('business', 'report')} className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2">
+                            <button
+                                onClick={() => createNewDoc('business', 'report')}
+                                className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2"
+                            >
                                 <Briefcase className="w-4 h-4 text-cyan-400" /> Rapport de Stage
                             </button>
-                            <button onClick={() => createNewDoc('letter', 'cover-letter')} className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2">
+                            <button
+                                onClick={() => createNewDoc('letter', 'cover-letter')}
+                                className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2"
+                            >
                                 <Mail className="w-4 h-4 text-green-400" /> Lettre de motivation
                             </button>
-                            <button onClick={() => createNewDoc('creative', 'manuscript')} className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2">
+                            <button
+                                onClick={() => createNewDoc('creative', 'manuscript')}
+                                className="w-full p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-left transition flex items-center gap-2"
+                            >
                                 <PenTool className="w-4 h-4 text-orange-400" /> Manuscrit
                             </button>
                         </div>
@@ -527,10 +603,22 @@ export default function EditorPage() {
                     {activeTab === 'insights' && (
                         <div className="space-y-3 text-sm">
                             <div className="text-zinc-500 text-xs mb-2">Analyse du document</div>
-                            <div className="flex justify-between"><span className="text-zinc-400">Mots</span><span className="text-cyan-400 font-medium">{wordCount}</span></div>
-                            <div className="flex justify-between"><span className="text-zinc-400">Caractères</span><span className="text-cyan-400 font-medium">{charCount}</span></div>
-                            <div className="flex justify-between"><span className="text-zinc-400">Lecture</span><span className="text-cyan-400 font-medium">{Math.ceil(wordCount / 200)} min</span></div>
-                            <div className="flex justify-between"><span className="text-zinc-400">Thème</span><span className="text-green-400 font-medium capitalize">{docTheme}</span></div>
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">Mots</span>
+                                <span className="text-cyan-400 font-medium">{wordCount}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">Caractères</span>
+                                <span className="text-cyan-400 font-medium">{charCount}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">Lecture</span>
+                                <span className="text-cyan-400 font-medium">{Math.ceil(wordCount / 200)} min</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">Thème</span>
+                                <span className="text-green-400 font-medium capitalize">{docTheme}</span>
+                            </div>
                         </div>
                     )}
                     {activeTab === 'settings' && (
@@ -538,7 +626,12 @@ export default function EditorPage() {
                             <div className="text-zinc-500 text-xs mb-2">Préférences</div>
                             <label className="flex items-center justify-between cursor-pointer">
                                 <span className="text-zinc-400">Panneau IA</span>
-                                <input type="checkbox" checked={aiPanelOpen} onChange={() => setAiPanelOpen(!aiPanelOpen)} className="w-4 h-4 rounded bg-zinc-800 border-zinc-600 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-zinc-900" />
+                                <input
+                                    type="checkbox"
+                                    checked={aiPanelOpen}
+                                    onChange={() => setAiPanelOpen(!aiPanelOpen)}
+                                    className="w-4 h-4 rounded bg-zinc-800 border-zinc-600 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-zinc-900"
+                                />
                             </label>
                             <div className="text-xs text-zinc-500 pt-2">Version: Aurora AI 1.1</div>
                         </div>
@@ -570,7 +663,10 @@ export default function EditorPage() {
                             </div>
                         </div>
                     ) : (
-                        <Link href="/auth/login" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition">
+                        <Link
+                            href="/auth/login"
+                            className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition"
+                        >
                             <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center">
                                 <User className="w-4 h-4" />
                             </div>
@@ -597,11 +693,11 @@ export default function EditorPage() {
                             {docType === 'blank' && <FileText className="w-4 h-4 text-zinc-400" />}
                             {(() => {
                                 const titles: Record<string, string> = {
-                                    'exam': "Sujet d'Examen",
-                                    'notes': "Notes de Cours",
-                                    'report': "Rapport de Stage",
-                                    'cover-letter': "Lettre de Motivation",
-                                    'manuscript': "Manuscrit"
+                                    exam: "Sujet d'Examen",
+                                    notes: 'Notes de Cours',
+                                    report: 'Rapport de Stage',
+                                    'cover-letter': 'Lettre de Motivation',
+                                    manuscript: 'Manuscrit',
                                 }
                                 return titles[docType] || 'Document sans titre'
                             })()}
@@ -632,25 +728,92 @@ export default function EditorPage() {
                     <div className="flex-1 flex flex-col min-w-0">
                         {/* Toolbar */}
                         <div className="border-b border-zinc-800 px-6 py-3 flex items-center gap-1 flex-wrap bg-zinc-900/30">
-                            <ToolbarButton icon={Bold} tooltip="Gras" onClick={() => editor?.chain().focus().toggleBold().run()} active={editor?.isActive('bold')} />
-                            <ToolbarButton icon={Italic} tooltip="Italique" onClick={() => editor?.chain().focus().toggleItalic().run()} active={editor?.isActive('italic')} />
+                            <ToolbarButton
+                                icon={Bold}
+                                tooltip="Gras"
+                                onClick={() => editor?.chain().focus().toggleBold().run()}
+                                active={editor?.isActive('bold')}
+                            />
+                            <ToolbarButton
+                                icon={Italic}
+                                tooltip="Italique"
+                                onClick={() => editor?.chain().focus().toggleItalic().run()}
+                                active={editor?.isActive('italic')}
+                            />
                             <ToolbarDivider />
-                            <ToolbarButton icon={Heading1} tooltip="Titre 1" onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} active={editor?.isActive('heading', { level: 1 })} />
-                            <ToolbarButton icon={Heading2} tooltip="Titre 2" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} active={editor?.isActive('heading', { level: 2 })} />
-                            <ToolbarButton icon={Heading3} tooltip="Titre 3" onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()} active={editor?.isActive('heading', { level: 3 })} />
+                            <ToolbarButton
+                                icon={Heading1}
+                                tooltip="Titre 1"
+                                onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                                active={editor?.isActive('heading', { level: 1 })}
+                            />
+                            <ToolbarButton
+                                icon={Heading2}
+                                tooltip="Titre 2"
+                                onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                                active={editor?.isActive('heading', { level: 2 })}
+                            />
+                            <ToolbarButton
+                                icon={Heading3}
+                                tooltip="Titre 3"
+                                onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
+                                active={editor?.isActive('heading', { level: 3 })}
+                            />
                             <ToolbarDivider />
-                            <ToolbarButton icon={AlignLeft} tooltip="Gauche" onClick={() => editor?.chain().focus().setTextAlign('left').run()} />
-                            <ToolbarButton icon={AlignCenter} tooltip="Centrer" onClick={() => editor?.chain().focus().setTextAlign('center').run()} />
-                            <ToolbarButton icon={AlignRight} tooltip="Droite" onClick={() => editor?.chain().focus().setTextAlign('right').run()} />
+                            <ToolbarButton
+                                icon={AlignLeft}
+                                tooltip="Gauche"
+                                onClick={() => editor?.chain().focus().setTextAlign('left').run()}
+                            />
+                            <ToolbarButton
+                                icon={AlignCenter}
+                                tooltip="Centrer"
+                                onClick={() => editor?.chain().focus().setTextAlign('center').run()}
+                            />
+                            <ToolbarButton
+                                icon={AlignRight}
+                                tooltip="Droite"
+                                onClick={() => editor?.chain().focus().setTextAlign('right').run()}
+                            />
                             <ToolbarDivider />
-                            <ToolbarButton icon={List} tooltip="Liste" onClick={() => editor?.chain().focus().toggleBulletList().run()} />
-                            <ToolbarButton icon={ListOrdered} tooltip="Liste n°" onClick={() => editor?.chain().focus().toggleOrderedList().run()} />
-                            <ToolbarButton icon={Quote} tooltip="Citation" onClick={() => editor?.chain().focus().toggleBlockquote().run()} />
-                            <ToolbarButton icon={Code} tooltip="Code" onClick={() => editor?.chain().focus().toggleCodeBlock().run()} />
+                            <ToolbarButton
+                                icon={List}
+                                tooltip="Liste"
+                                onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                            />
+                            <ToolbarButton
+                                icon={ListOrdered}
+                                tooltip="Liste n°"
+                                onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                            />
+                            <ToolbarButton
+                                icon={Quote}
+                                tooltip="Citation"
+                                onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+                            />
+                            <ToolbarButton
+                                icon={Code}
+                                tooltip="Code"
+                                onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+                            />
                             <ToolbarDivider />
-                            <ToolbarButton icon={TableIcon} tooltip="Tableau" onClick={() => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} />
-                            <ToolbarButton icon={Undo} tooltip="Annuler" onClick={() => editor?.chain().focus().undo().run()} />
-                            <ToolbarButton icon={Redo} tooltip="Rétablir" onClick={() => editor?.chain().focus().redo().run()} />
+                            <ToolbarButton
+                                icon={TableIcon}
+                                tooltip="Tableau"
+                                onClick={() =>
+                                    editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+                                }
+                            />
+                            <ToolbarButton
+                                icon={Undo}
+                                tooltip="Annuler"
+                                onClick={() => editor?.chain().focus().undo().run()}
+                            />
+                            <ToolbarButton
+                                icon={Redo}
+                                tooltip="Rétablir"
+                                onClick={() => editor?.chain().focus().redo().run()}
+                            />
                             <div className="flex-1" />
 
                             {/* AI Button */}
@@ -659,7 +822,11 @@ export default function EditorPage() {
                                 disabled={aiLoading === 'auto-format'}
                                 className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 transition disabled:opacity-50 shadow-lg shadow-cyan-500/20"
                             >
-                                {aiLoading === 'auto-format' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                                {aiLoading === 'auto-format' ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Wand2 className="w-4 h-4" />
+                                )}
                                 Auto-Format IA
                             </button>
                         </div>
@@ -681,18 +848,32 @@ export default function EditorPage() {
                         translation={{
                             language: translationLang,
                             setLanguage: setTranslationLang,
-                            onTranslate: handleTranslate
+                            onTranslate: handleTranslate,
                         }}
                     />
                 </div>
             </main>
-        </div >
+        </div>
     )
 }
 
-function ToolbarButton({ icon: Icon, tooltip, onClick, active }: { icon: any; tooltip: string; onClick?: () => void; active?: boolean }) {
+function ToolbarButton({
+    icon: Icon,
+    tooltip,
+    onClick,
+    active,
+}: {
+    icon: any
+    tooltip: string
+    onClick?: () => void
+    active?: boolean
+}) {
     return (
-        <button onClick={onClick} title={tooltip} className={`p-2 rounded-lg transition ${active ? 'bg-cyan-500/20 text-cyan-400' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
+        <button
+            onClick={onClick}
+            title={tooltip}
+            className={`p-2 rounded-lg transition ${active ? 'bg-cyan-500/20 text-cyan-400' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
+        >
             <Icon className="w-4 h-4" />
         </button>
     )
@@ -702,14 +883,28 @@ function ToolbarDivider() {
     return <div className="w-px h-6 bg-zinc-700 mx-1" />
 }
 
-function AIButton({ icon: Icon, label, loading, onClick }: { icon: any; label: string; loading?: boolean; onClick: () => void }) {
+function AIButton({
+    icon: Icon,
+    label,
+    loading,
+    onClick,
+}: {
+    icon: any
+    label: string
+    loading?: boolean
+    onClick: () => void
+}) {
     return (
         <button
             onClick={onClick}
             disabled={loading}
             className="w-full text-left text-xs text-zinc-300 hover:text-white hover:bg-zinc-700/50 p-2.5 rounded-lg transition flex items-center gap-2 disabled:opacity-50 group"
         >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Icon className="w-4 h-4 text-zinc-500 group-hover:text-cyan-400 transition" />}
+            {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+                <Icon className="w-4 h-4 text-zinc-500 group-hover:text-cyan-400 transition" />
+            )}
             <span className="group-hover:translate-x-1 transition-transform">{label}</span>
         </button>
     )

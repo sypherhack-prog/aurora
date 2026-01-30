@@ -40,9 +40,12 @@ export async function POST(req: NextRequest) {
         })
 
         if (existingPending) {
-            return NextResponse.json({
-                error: 'Vous avez déjà une demande en attente de vérification'
-            }, { status: 400 })
+            return NextResponse.json(
+                {
+                    error: 'Vous avez déjà une demande en attente de vérification',
+                },
+                { status: 400 }
+            )
         }
 
         // Create subscription with payment record
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
                 id: subscription.id,
                 plan: subscription.plan,
                 status: subscription.status,
-            }
+            },
         })
     } catch (error) {
         logger.error('Subscription error:', error)

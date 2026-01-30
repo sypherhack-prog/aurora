@@ -14,7 +14,7 @@ export async function verifyPayment(subscriptionId: string) {
 
     const subscription = await prisma.subscription.findUnique({
         where: { id: subscriptionId },
-        include: { payments: true }
+        include: { payments: true },
     })
 
     if (!subscription) {
@@ -53,7 +53,7 @@ export async function verifyPayment(subscriptionId: string) {
             status: 'ACTIVE',
             startDate: now,
             endDate: endDate,
-        }
+        },
     })
 
     // Mark payment as verified
@@ -63,7 +63,7 @@ export async function verifyPayment(subscriptionId: string) {
             data: {
                 verifiedAt: now,
                 verifiedBy: session.user.id,
-            }
+            },
         })
     }
 
@@ -80,7 +80,7 @@ export async function blockSubscription(subscriptionId: string) {
 
     await prisma.subscription.update({
         where: { id: subscriptionId },
-        data: { status: 'BLOCKED' }
+        data: { status: 'BLOCKED' },
     })
 
     revalidatePath('/admin/subscriptions')

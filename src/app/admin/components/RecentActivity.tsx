@@ -1,4 +1,4 @@
-import { TrendingUp, CreditCard, Users } from "lucide-react"
+import { TrendingUp, CreditCard, Users } from 'lucide-react'
 
 interface Subscription {
     id: string
@@ -18,18 +18,21 @@ export function RecentActivity({ subscriptions }: { subscriptions: Subscription[
                 </h3>
                 <div className="space-y-3">
                     {subscriptions.slice(0, 5).map((sub) => (
-                        <div key={sub.id} className="flex items-center justify-between py-2 border-b border-zinc-800 last:border-0">
+                        <div
+                            key={sub.id}
+                            className="flex items-center justify-between py-2 border-b border-zinc-800 last:border-0"
+                        >
                             <div>
                                 <div className="text-sm font-medium">{sub.plan}</div>
-                                <div className="text-xs text-zinc-500">{new Date(sub.createdAt).toLocaleDateString('fr-FR')}</div>
+                                <div className="text-xs text-zinc-500">
+                                    {new Date(sub.createdAt).toLocaleDateString('fr-FR')}
+                                </div>
                             </div>
                             <StatusBadge status={sub.status} />
                         </div>
                     ))}
                     {subscriptions.length === 0 && (
-                        <div className="text-center text-zinc-500 py-8">
-                            Aucun abonnement pour le moment
-                        </div>
+                        <div className="text-center text-zinc-500 py-8">Aucun abonnement pour le moment</div>
                     )}
                 </div>
             </div>
@@ -74,7 +77,9 @@ function StatusBadge({ status }: { status: string }) {
     }
 
     return (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || styles.EXPIRED}`}>
+        <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[status] || styles.EXPIRED}`}
+        >
             {labels[status] || status}
         </span>
     )

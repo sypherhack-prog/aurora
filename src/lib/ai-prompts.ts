@@ -55,7 +55,7 @@ export const PROMPTS = {
         - Style it with borders and padding (border-collapse: collapse; width: 100%).
         - Fill with realistic dummy data appropriate for the context.
     `,
-    'summarize': `
+    summarize: `
         Provide a concise summary and analysis of the content.
         - Create a beautiful "Analysis Card" using a <div> with a gradient border/background.
         - Include: Word count, Estimated reading time, key points.
@@ -83,11 +83,11 @@ export const PROMPTS = {
         - Apply line-height: 1.8 to paragraphs.
         - Do not change the text content, only the HTML structure and styles for spacing.
     `,
-    'translate': (theme: string) => `
+    translate: (theme: string) => `
         Translate the provided content into the language specified by the THEME parameter (${theme}).
         - Maintain ALL original HTML structure, tags, attributes, and inline styles exactly as they are.
         - Only translate the visible text content.
         - Ensure the tone is professional.
         - If the target language is not clear, default to English.
-    `
+    `,
 }
