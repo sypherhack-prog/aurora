@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 class Logger {
     info(message: string, ...args: unknown[]) {
-        if (!isProduction) {
+        if (process.env.NODE_ENV !== 'production') {
             // eslint-disable-next-line no-console
             console.log(`[INFO] ${message}`, ...args)
         }
@@ -13,7 +13,7 @@ class Logger {
     }
 
     warn(message: string, ...args: unknown[]) {
-        if (!isProduction) {
+        if (process.env.NODE_ENV !== 'production') {
             // eslint-disable-next-line no-console
             console.warn(`[WARN] ${message}`, ...args)
         }
@@ -21,7 +21,7 @@ class Logger {
     }
 
     error(message: string, error?: unknown) {
-        if (!isProduction) {
+        if (process.env.NODE_ENV !== 'production') {
             // eslint-disable-next-line no-console
             console.error(`[ERROR] ${message}`, error || '')
         }
@@ -29,7 +29,7 @@ class Logger {
     }
 
     debug(message: string, ...args: unknown[]) {
-        if (!isProduction) {
+        if (process.env.NODE_ENV !== 'production') {
             // eslint-disable-next-line no-console
             console.log(`[DEBUG] ${message}`, ...args)
         }
