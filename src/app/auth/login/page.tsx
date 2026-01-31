@@ -21,17 +21,27 @@ function LoginForm() {
         setLoading(true)
         setError('')
 
-        const result = await signIn('credentials', {
-            email,
-            password,
-            redirect: false,
-        })
+        try {
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            })
 
-        if (result?.error) {
-            setError('Email ou mot de passe incorrect')
+            if (result?.error) {
+                setError('Email ou mot de passe incorrect')
+                setLoading(false)
+            } else if (result?.ok) {
+                router.push(callbackUrl)
+                router.refresh()
+            } else {
+                setError("Erreur de connexion. Veuillez réessayer.")
+                setLoading(false)
+            }
+        } catch (err) {
+            console.error("Login error:", err)
+            setError("Une erreur inattendue est survenue.")
             setLoading(false)
-        } else {
-            router.push(callbackUrl)
         }
     }
 
