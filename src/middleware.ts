@@ -2,10 +2,7 @@ import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 
 export default withAuth(
-    function middleware(req) {
-        // authorized() callback below handles the logic, 
-        // but we can add custom logic here if needed.
-        // For example, additional headers or logging.
+    function middleware() {
         return NextResponse.next()
     },
     {
@@ -18,7 +15,8 @@ export default withAuth(
                     path === '/' ||
                     path.startsWith('/auth') ||
                     path.startsWith('/pricing') ||
-                    path.startsWith('/api/auth') ||
+                    path.startsWith('/subscribe') ||
+                    path.startsWith('/api') || // API routes handle their own auth
                     path.startsWith('/_next') ||
                     path.startsWith('/favicon.ico') ||
                     path.startsWith('/images')
@@ -26,7 +24,7 @@ export default withAuth(
                     return true
                 }
 
-                // Protected Routes verification
+                // Protected Routes require authentication
                 if (!token) {
                     return false // Redirect to login
                 }
@@ -49,12 +47,12 @@ export default withAuth(
 export const config = {
     matcher: [
         /*
-         * Match all request paths except for the ones starting with:
+         * Match all request paths except for:
          * - _next/static (static files)
          * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public folder
+         * - favicon.ico
+         * - api routes (they handle their own auth)
          */
-        '/((?!_next/static|_next/image|favicon.ico).*)',
+        '/((?!_next/static|_next/image|favicon.ico|api).*)',
     ],
 }
