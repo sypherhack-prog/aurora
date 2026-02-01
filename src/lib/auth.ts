@@ -56,6 +56,7 @@ const credentialsOptions = {
 }
 
 export const authOptions: NextAuthOptions = {
+    debug: true,
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: 'jwt',
