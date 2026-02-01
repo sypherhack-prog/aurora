@@ -79,8 +79,15 @@ export async function POST(req: NextRequest) {
         })
 
         return NextResponse.json({ success: true, result })
-    } catch (error: unknown) {
-        if (error instanceof Error && error.message === 'LIMIT_REACHED') {
+    } catch (error: any) {
+        console.error('❌ AI ROUTE ERROR:', {
+            message: error.message,
+            stack: error.stack,
+            cause: error.cause,
+            name: error.name
+        })
+
+        if (error.message === 'LIMIT_REACHED') {
             return NextResponse.json(
                 {
                     error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
@@ -90,17 +97,16 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        if (error instanceof Error && (error.message === 'USER_NOT_FOUND' || (error as any).code === 'P2025')) {
+        if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
             return NextResponse.json(
                 { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
                 { status: 401 }
             )
         }
 
-        logger.error('AI Processing Error:', error)
-        // Don't expose error details in production
+        // Return the actual error message in dev mode for debugging
         return NextResponse.json(
-            { error: 'Erreur lors du traitement AI' },
+            { error: `Erreur interne: ${error.message}` },
             { status: 500 }
         )
     }
