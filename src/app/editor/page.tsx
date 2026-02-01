@@ -146,11 +146,12 @@ export default function EditorPage() {
                         showNotification('success', 'Contenu inséré!')
                     }
                 } else {
-                    showNotification('error', data.error || 'Erreur AI')
+                    console.error('AI Processing Failed:', data.error)
+                    showNotification('error', data.error || 'Une erreur est survenue lors de la génération.')
                 }
-            } catch (e) {
+            } catch (e: any) {
                 logger.error('AI error:', e)
-                showNotification('error', 'Erreur de connexion')
+                showNotification('error', `Erreur connexion: ${e.message || 'Inconnue'}`)
             } finally {
                 setAiLoading(null)
             }
