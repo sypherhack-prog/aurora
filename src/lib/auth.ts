@@ -42,6 +42,7 @@ const credentialsOptions = {
                 role: user.role,
             }
         } catch (e) {
+            console.error('❌ LOGIN ERROR:', e)
             return null
         }
     },
