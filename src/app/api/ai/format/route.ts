@@ -2,11 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { getUserPlan } from '@/lib/subscription'
 import { processAIRequest, AIAction } from '@/lib/gemini'
-import prisma from '@/lib/db'
 import { logger } from '@/lib/logger'
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
+import { validateUsageLimit } from '@/lib/usage'
 
 // Valid AI actions whitelist
 const VALID_ACTIONS = [
@@ -21,29 +20,6 @@ const VALID_ACTIONS = [
     'improve-spacing',
     'translate',
 ] as const
-
-async function validateUsageLimit(userId: string) {
-    const plan = await getUserPlan(userId)
-    if (plan !== 'FREE') return
-
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { aiUsageCount: true },
-    })
-
-    if (!user) {
-        throw new Error('USER_NOT_FOUND')
-    }
-
-    if (user.aiUsageCount >= 5) {
-        throw new Error('LIMIT_REACHED')
-    }
-
-    await prisma.user.update({
-        where: { id: userId },
-        data: { aiUsageCount: { increment: 1 } },
-    })
-}
 
 export async function POST(req: NextRequest) {
     try {
@@ -129,4 +105,5 @@ export async function POST(req: NextRequest) {
         )
     }
 }
+
 

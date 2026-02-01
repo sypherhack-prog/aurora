@@ -1,0 +1,26 @@
+import prisma from '@/lib/db'
+import { getUserPlan } from '@/lib/subscription'
+
+export async function validateUsageLimit(userId: string) {
+    const plan = await getUserPlan(userId)
+    if (plan !== 'FREE') return
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { aiUsageCount: true },
+    })
+
+    if (!user) {
+        throw new Error('USER_NOT_FOUND')
+    }
+
+    // Hardcoded limit for FREE plan (can be moved to constants)
+    if (user.aiUsageCount >= 5) {
+        throw new Error('LIMIT_REACHED')
+    }
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: { aiUsageCount: { increment: 1 } },
+    })
+}
