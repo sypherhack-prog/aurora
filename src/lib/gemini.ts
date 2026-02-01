@@ -69,8 +69,9 @@ export async function processAIRequest({ action, content, theme, documentType }:
             .trim()
 
         return text
-    } catch (error) {
+    } catch (error: any) {
         logger.error('Gemini API Error:', error)
-        throw new Error('Failed to process with AI')
+        // Throw the real error message to be caught by the route handler
+        throw new Error(error.message || 'Gemini API Error')
     }
 }
