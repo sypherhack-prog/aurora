@@ -6,7 +6,21 @@ import { getUserPlan } from '@/lib/subscription'
 import { processAIRequest, AIAction } from '@/lib/gemini'
 import prisma from '@/lib/db'
 import { logger } from '@/lib/logger'
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 
+// Valid AI actions whitelist
+const VALID_ACTIONS = [
+    'auto-format',
+    'fix-errors',
+    'continue-writing',
+    'suggest-ideas',
+    'summarize',
+    'generate-table',
+    'improve-paragraph',
+    'smart-heading',
+    'improve-spacing',
+    'translate',
+] as const
 
 async function validateUsageLimit(userId: string) {
     const plan = await getUserPlan(userId)
@@ -33,6 +47,23 @@ async function validateUsageLimit(userId: string) {
 
 export async function POST(req: NextRequest) {
     try {
+        // 0. Rate limiting
+        const ip = getClientIP(req)
+        const rateLimit = checkRateLimit(`ai:${ip}`, RATE_LIMITS.AI)
+
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                { error: 'Trop de requêtes. Réessayez plus tard.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': rateLimit.resetIn.toString(),
+                        'X-RateLimit-Remaining': '0',
+                    }
+                }
+            )
+        }
+
         // 1. Check Authentication
         const session = await getServerSession(authOptions)
 
@@ -47,13 +78,21 @@ export async function POST(req: NextRequest) {
 
         const { action, content, selection, theme, documentType } = await req.json()
 
+        // Validate action is in whitelist
+        if (!VALID_ACTIONS.includes(action)) {
+            return NextResponse.json({ error: 'Action invalide' }, { status: 400 })
+        }
+
         // Validate input
         if (!content && !selection && action !== 'generate-table' && action !== 'suggest-ideas') {
             return NextResponse.json({ error: 'Contenu requis' }, { status: 400 })
         }
 
-        // Determine the content to process (selection takes precedence)
+        // Limit content size to prevent abuse
         const textToProcess = selection || content || ''
+        if (textToProcess.length > 50000) {
+            return NextResponse.json({ error: 'Contenu trop long (max 50000 caractères)' }, { status: 400 })
+        }
 
         // Call Gemini API
         const result = await processAIRequest({
@@ -83,12 +122,11 @@ export async function POST(req: NextRequest) {
         }
 
         logger.error('AI Processing Error:', error)
+        // Don't expose error details in production
         return NextResponse.json(
-            {
-                error: 'Erreur lors du traitement AI',
-                details: error instanceof Error ? error.message : 'Unknown error',
-            },
+            { error: 'Erreur lors du traitement AI' },
             { status: 500 }
         )
     }
 }
+

@@ -1,10 +1,50 @@
-export const getHtmlTemplate = (title: string, content: string) => `
-<!DOCTYPE html>
+/**
+ * HTML entity escaping for XSS prevention
+ */
+export function escapeHtml(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+/**
+ * Sanitize HTML content - allows safe tags but escapes dangerous ones
+ * For more robust sanitization, consider using DOMPurify
+ */
+export function sanitizeHtmlContent(html: string): string {
+  // Remove script tags and their content
+  let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+
+  // Remove event handlers (onclick, onerror, etc.)
+  sanitized = sanitized.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '')
+  sanitized = sanitized.replace(/\s*on\w+\s*=\s*[^\s>]*/gi, '')
+
+  // Remove javascript: URLs
+  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
+
+  // Remove data: URLs in src (can be used for XSS)
+  sanitized = sanitized.replace(/src\s*=\s*["']data:[^"']*["']/gi, 'src=""')
+
+  return sanitized
+}
+
+export const getHtmlTemplate = (title: string, content: string) => {
+  // Escape the title to prevent XSS
+  const safeTitle = escapeHtml(title || 'Document Aurora AI')
+
+  // Sanitize the content (allows HTML but removes dangerous elements)
+  const safeContent = sanitizeHtmlContent(content || '')
+
+  return `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title || 'Document Aurora AI'}</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:;">
+  <title>${safeTitle}</title>
   <style>
     :root { color-scheme: light; }
     body {
@@ -54,9 +94,10 @@ export const getHtmlTemplate = (title: string, content: string) => `
   </style>
 </head>
 <body>
-  ${content}
+  ${safeContent}
   <div class="footer">
     Créé avec Aurora AI — auroraai.com
   </div>
 </body>
 </html>`
+}

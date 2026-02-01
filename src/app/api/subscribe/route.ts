@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/db'
 import { logger } from '@/lib/logger'
 import { APP_CONSTANTS } from '@/lib/constants'
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 
 // Map plan names to constant values
 const planAmounts: Record<string, number> = {
@@ -14,6 +15,22 @@ const planAmounts: Record<string, number> = {
 
 export async function POST(req: NextRequest) {
     try {
+        // Rate limiting
+        const ip = getClientIP(req)
+        const rateLimit = checkRateLimit(`subscribe:${ip}`, RATE_LIMITS.API)
+
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                { error: 'Trop de requêtes. Réessayez plus tard.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': rateLimit.resetIn.toString(),
+                    }
+                }
+            )
+        }
+
         const session = await getServerSession(authOptions)
         const userId = session?.user?.id
 

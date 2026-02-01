@@ -1,10 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { logger } from '@/lib/logger'
 import { getHtmlTemplate } from '@/lib/templates'
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 
 // Export document in various formats
 export async function POST(req: NextRequest) {
     try {
+        // Rate limiting
+        const ip = getClientIP(req)
+        const rateLimit = checkRateLimit(`export:${ip}`, RATE_LIMITS.API)
+
+        if (!rateLimit.success) {
+            return NextResponse.json(
+                { error: 'Trop de requêtes. Réessayez plus tard.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': rateLimit.resetIn.toString(),
+                        'X-RateLimit-Remaining': '0',
+                    }
+                }
+            )
+        }
+
+        // Authentication check
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+        }
+
         const { content, format, title } = await req.json()
 
         if (!content) {

@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
- 
-import PptxGenJS from 'pptxgenjs'
 
 // Simple helper to estimate text height (very rough)
 function estimateHeight(text: string, fontSize: number, widthInches: number): number {
@@ -18,32 +16,36 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
     // Clone the element to manipulate styles for printing (Light Mode)
     const clone = element.cloneNode(true) as HTMLElement
 
+    // Remove dark mode classes specifically
+    clone.classList.remove('prose-invert')
+    clone.classList.add('prose') // Force light mode typography
+
     // Reset styles for the clone to ensure black text on white background
     clone.style.width = '800px' // Fixed width for A4 consistency
     clone.style.padding = '40px'
     clone.style.backgroundColor = 'white'
     clone.style.color = 'black'
+    clone.style.display = 'block' // Ensure it's visible
 
     // Force all children to use black text if they inherited white
     const allDescendants = clone.getElementsByTagName('*')
     for (let i = 0; i < allDescendants.length; i++) {
         const child = allDescendants[i] as HTMLElement
-        // If element has 'text-white' or light colors, force reset logic
-        // But simpler is to unset explicit color styles and let it inherit black
-        // However, Tailwind classes need to be overridden.
-        // We can just set style.color = 'black' on text nodes.
-        // Or strip classes.
-        // Let's try appending a style block or setting inline styles.
+        // Strip text colors to fall back to black
+        child.classList.remove('text-white', 'text-zinc-200', 'text-zinc-300', 'text-zinc-400')
         child.style.color = '#000000'
-        if (child.style.backgroundColor) {
-            // Keep background but ensure it's not dark?
+
+        // Ensure background is transparent or white
+        if (getComputedStyle(child).backgroundColor !== 'rgba(0, 0, 0, 0)') {
+            // Optional: could force white/transparent if needed, but keeping some bg is fine (like tables)
         }
     }
 
-    // Position off-screen
+    // Position "visible" but hidden behind content
     clone.style.position = 'absolute'
-    clone.style.left = '-9999px'
+    clone.style.left = '0'
     clone.style.top = '0'
+    clone.style.zIndex = '-9999'
     document.body.appendChild(clone)
 
     const opt = {
@@ -55,19 +57,25 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
             useCORS: true,
             logging: false,
             letterRendering: true,
-            windowWidth: 800 // Improve layout consistency
+            windowWidth: 800,
+            scrollY: 0
         },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' as const }
     }
 
     try {
+        // Small delay to ensure rendering
+        await new Promise(resolve => setTimeout(resolve, 100))
         await html2pdf().set(opt).from(clone).save()
     } finally {
-        document.body.removeChild(clone)
+        if (document.body.contains(clone)) {
+            document.body.removeChild(clone)
+        }
     }
 }
 
 export const exportToPPTX = async (element: HTMLElement, filename: string) => {
+    const PptxGenJS = (await import('pptxgenjs')).default
     const pptx = new PptxGenJS()
     pptx.layout = 'LAYOUT_16x9'
     pptx.author = 'Aurora AI'
