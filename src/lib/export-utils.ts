@@ -13,63 +13,84 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
     // @ts-ignore
     const html2pdf = (await import('html2pdf.js')).default
 
-    // Clone the element to manipulate styles for printing (Light Mode)
+    // Create a container that is definitely visible on top of everything
+    // This solves issues where hidden/off-screen elements aren't rendered by html2canvas
+    const container = document.createElement('div')
+    container.style.position = 'fixed'
+    container.style.top = '0'
+    container.style.left = '0'
+    container.style.width = '100%'
+    container.style.height = '100vh'
+    container.style.zIndex = '99999' // Topmost
+    container.style.backgroundColor = '#ffffff' // White background
+    container.style.overflowY = 'auto' // Allow full content to be rendered
+    container.style.padding = '40px'
+    container.style.display = 'flex'
+    container.style.justifyContent = 'center'
+
+    // Clone the element
     const clone = element.cloneNode(true) as HTMLElement
 
-    // Remove dark mode classes specifically
+    // Force Light Mode & Reset Styles
     clone.classList.remove('prose-invert')
-    clone.classList.add('prose') // Force light mode typography
+    clone.classList.add('prose') // Use standard prose
 
-    // Reset styles for the clone to ensure black text on white background
-    clone.style.width = '800px' // Fixed width for A4 consistency
-    clone.style.padding = '40px'
-    clone.style.backgroundColor = 'white'
-    clone.style.color = 'black'
-    clone.style.display = 'block' // Ensure it's visible
+    // Explicit styles for the document content
+    clone.style.width = '800px' // A4 width approx
+    clone.style.maxWidth = '100%'
+    clone.style.margin = '0 auto' // Center
+    clone.style.color = '#000000'
+    clone.style.backgroundColor = '#ffffff'
+    clone.style.display = 'block'
 
-    // Force all children to use black text if they inherited white
+    // Aggressive clean-up of children
     const allDescendants = clone.getElementsByTagName('*')
     for (let i = 0; i < allDescendants.length; i++) {
         const child = allDescendants[i] as HTMLElement
-        // Strip text colors to fall back to black
-        child.classList.remove('text-white', 'text-zinc-200', 'text-zinc-300', 'text-zinc-400')
+        // Strip dark mode color classes
+        child.classList.remove(
+            'text-white', 'text-zinc-50', 'text-zinc-100', 'text-zinc-200', 'text-zinc-300', 'text-zinc-400', 'text-zinc-500',
+            'bg-zinc-800', 'bg-zinc-900', 'bg-zinc-950', 'bg-black'
+        )
+        // Force text color
         child.style.color = '#000000'
 
-        // Ensure background is transparent or white
-        if (getComputedStyle(child).backgroundColor !== 'rgba(0, 0, 0, 0)') {
-            // Optional: could force white/transparent if needed, but keeping some bg is fine (like tables)
+        // Handle backgrounds - mainly keep transparent or white
+        const bg = getComputedStyle(child).backgroundColor
+        if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && bg !== 'rgb(255, 255, 255)') {
+            child.style.backgroundColor = 'transparent' // Reset backgrounds to be safe, or set to white
         }
     }
 
-    // Position "visible" but hidden behind content
-    clone.style.position = 'absolute'
-    clone.style.left = '0'
-    clone.style.top = '0'
-    clone.style.zIndex = '-9999'
-    document.body.appendChild(clone)
+    container.appendChild(clone)
+    document.body.appendChild(container)
 
     const opt = {
-        margin: 0.5,
+        margin: [0.5, 0.5] as [number, number], // Top/Bot, Left/Right
         filename: filename,
         image: { type: 'jpeg' as const, quality: 0.98 },
         html2canvas: {
             scale: 2,
             useCORS: true,
-            logging: false,
+            logging: true, // Enable logging for debug
             letterRendering: true,
-            windowWidth: 800,
+            windowWidth: 1024,
             scrollY: 0
         },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' as const }
     }
 
     try {
-        // Small delay to ensure rendering
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // Longer wait to ensure rendering
+        // User will see a white screen briefly (flash), which acts as feedback
+        await new Promise(resolve => setTimeout(resolve, 500))
         await html2pdf().set(opt).from(clone).save()
+    } catch (e) {
+        console.error('PDF Export Error:', e)
+        throw e // Re-throw to be handled by caller
     } finally {
-        if (document.body.contains(clone)) {
-            document.body.removeChild(clone)
+        if (document.body.contains(container)) {
+            document.body.removeChild(container)
         }
     }
 }
