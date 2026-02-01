@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'", // Required for Tailwind
               "img-src 'self' data: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://generativelanguage.googleapis.com",
+              "connect-src 'self' https://generativelanguage.googleapis.com https://api.groq.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
