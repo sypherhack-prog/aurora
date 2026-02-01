@@ -84,10 +84,11 @@ export const PROMPTS = {
         - Do not change the text content, only the HTML structure and styles for spacing.
     `,
     translate: (theme: string) => `
-        Translate the provided content into the language specified by the THEME parameter (${theme}).
+        Translate the provided text content STRICTLY into this language: ${theme}.
+        - Do NOT translate into English unless the target is English.
         - Maintain ALL original HTML structure, tags, attributes, and inline styles exactly as they are.
         - Only translate the visible text content.
         - Ensure the tone is professional.
-        - If the target language is not clear, default to English.
+        - CRITICAL: Output MUST be in ${theme}.
     `,
 }
