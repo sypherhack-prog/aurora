@@ -14,6 +14,7 @@ import {
     Plus,
     LogOut,
     User,
+    List,
 } from 'lucide-react'
 import { APP_CONSTANTS } from '@/lib/constants'
 import { signOut } from 'next-auth/react'
@@ -39,6 +40,10 @@ interface EditorSidebarProps {
         aiPanelOpen: boolean
         setAiPanelOpen: (open: boolean) => void
     }
+    navigation: {
+        headings: { level: number; text: string; pos: number }[]
+        onScrollToHeading: (pos: number) => void
+    }
 }
 
 export function EditorSidebar({
@@ -49,6 +54,7 @@ export function EditorSidebar({
     onOpenNewDocModal,
     stats,
     settings,
+    navigation,
 }: EditorSidebarProps) {
     return (
         <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800 flex flex-col hidden md:flex">
@@ -79,6 +85,12 @@ export function EditorSidebar({
                     onClick={() => setActiveTab('insights')}
                     icon={BarChart3}
                     label="Insights IA"
+                />
+                <SidebarButton
+                    active={activeTab === 'navigation'}
+                    onClick={() => setActiveTab('navigation')}
+                    icon={List}
+                    label="Navigation"
                 />
                 <SidebarButton
                     active={activeTab === 'settings'}
@@ -170,6 +182,26 @@ export function EditorSidebar({
                             />
                         </label>
                         <div className="text-xs text-zinc-500 pt-2">Version: Aurora AI 1.1</div>
+                    </div>
+                )}
+                {activeTab === 'navigation' && (
+                    <div className="space-y-1 text-sm">
+                        <div className="text-zinc-500 text-xs mb-2">Table des matières</div>
+                        {navigation.headings.length === 0 ? (
+                            <div className="text-xs text-zinc-600 italic py-2 text-center">Aucun titre détecté</div>
+                        ) : (
+                            navigation.headings.map((heading, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => navigation.onScrollToHeading(heading.pos)}
+                                    className={`w-full text-left truncate py-1.5 px-2 rounded hover:bg-zinc-800 transition text-zinc-400 hover:text-cyan-400 ${heading.level === 1 ? 'font-medium pl-2' : ''
+                                        } ${heading.level === 2 ? 'pl-4 text-xs' : ''} ${heading.level >= 3 ? 'pl-6 text-xs' : ''
+                                        }`}
+                                >
+                                    {heading.text || 'Sans titre'}
+                                </button>
+                            ))
+                        )}
                     </div>
                 )}
             </div>

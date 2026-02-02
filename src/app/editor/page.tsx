@@ -58,6 +58,8 @@ export default function EditorPage() {
     const [docType, setDocType] = useState('document')
     const [translationLang, setTranslationLang] = useState('Anglais')
 
+    const [headings, setHeadings] = useState<{ level: number; text: string; pos: number }[]>([])
+
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -85,8 +87,39 @@ export default function EditorPage() {
             const text = editor.getText()
             setWordCount(text.split(/\s+/).filter((w) => w.length > 0).length)
             setCharCount(text.length)
+
+            // Extract headings for ToC
+            const newHeadings: { level: number; text: string; pos: number }[] = []
+            editor.state.doc.descendants((node, pos) => {
+                if (node.type.name === 'heading') {
+                    newHeadings.push({
+                        level: node.attrs.level,
+                        text: node.textContent,
+                        pos: pos,
+                    })
+                }
+            })
+            setHeadings(newHeadings)
         },
     })
+
+    // Navigation Helper
+    const scrollToHeading = (pos: number) => {
+        if (!editor) return
+        editor.chain().focus().setTextSelection(pos).run()
+        const dom = editor.view.domAtPos(pos).node as HTMLElement
+        if (dom && dom.scrollIntoView) {
+            dom.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    }
+
+    const scrollPage = (direction: 'up' | 'down') => {
+        const scrollAmount = window.innerHeight * 0.8
+        window.scrollBy({
+            top: direction === 'down' ? scrollAmount : -scrollAmount,
+            behavior: 'smooth',
+        })
+    }
 
     useEffect(() => {
         setMounted(true)
@@ -288,6 +321,10 @@ export default function EditorPage() {
                     aiPanelOpen,
                     setAiPanelOpen,
                 }}
+                navigation={{
+                    headings,
+                    onScrollToHeading: scrollToHeading,
+                }}
             />
 
             {/* Main Content */}
@@ -358,6 +395,23 @@ export default function EditorPage() {
                             onTranslate: handleTranslate,
                         }}
                     />
+                </div>
+                {/* Floating Navigation Buttons */}
+                <div className="fixed bottom-8 right-8 flex flex-col gap-2 z-50">
+                    <button
+                        onClick={() => scrollPage('up')}
+                        className="p-3 bg-zinc-800/80 hover:bg-zinc-700 backdrop-blur-sm text-zinc-300 rounded-full shadow-lg border border-zinc-700 transition-all hover:scale-110"
+                        title="Page précédente"
+                    >
+                        <ChevronRight className="w-5 h-5 -rotate-90" />
+                    </button>
+                    <button
+                        onClick={() => scrollPage('down')}
+                        className="p-3 bg-cyan-600/80 hover:bg-cyan-500 backdrop-blur-sm text-white rounded-full shadow-lg shadow-cyan-500/20 border border-cyan-500/50 transition-all hover:scale-110"
+                        title="Page suivante"
+                    >
+                        <ChevronRight className="w-5 h-5 rotate-90" />
+                    </button>
                 </div>
             </main>
         </div>
