@@ -38,15 +38,27 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
     // Create explicit styles for clean PDF export
     const style = document.createElement('style')
     style.textContent = `
-            .pdf-export-content {
+            .pdf-export-content,
+            .pdf-export-content * {
                 color: #000000 !important;
+                -webkit-text-fill-color: #000000 !important;
+            }
+            .pdf-export-content {
                 background-color: #ffffff !important;
                 font-family: Arial, sans-serif !important;
             }
-            .pdf-export-content h1, .pdf-export-content h2, .pdf-export-content h3 {
+            .pdf-export-content h1, .pdf-export-content h2, .pdf-export-content h3,
+            .pdf-export-content h4, .pdf-export-content h5, .pdf-export-content h6 {
                 color: #000000 !important;
                 background: none !important;
-                -webkit-text-fill-color: initial !important;
+                -webkit-text-fill-color: #000000 !important;
+            }
+            .pdf-export-content p, .pdf-export-content li, .pdf-export-content span,
+            .pdf-export-content strong, .pdf-export-content b, .pdf-export-content em,
+            .pdf-export-content a, .pdf-export-content u, .pdf-export-content mark {
+                color: #000000 !important;
+                -webkit-text-fill-color: #000000 !important;
+                background: transparent !important;
             }
             .pdf-export-content table {
                 border-collapse: collapse !important;
@@ -70,26 +82,35 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
             .pdf-export-content tr:nth-child(even) td {
                 background-color: #f9f9f9 !important;
             }
-            .pdf-export-content p, .pdf-export-content li {
-                color: #000000 !important;
-            }
         `
     container.appendChild(style)
     clone.classList.add('pdf-export-content')
 
-    // Remove dark mode classes
+    // Force ALL elements to black text - critical for colored/white text
     const allElements = clone.querySelectorAll('*')
     allElements.forEach((el) => {
         if (el instanceof HTMLElement) {
             // Strip all tailwind color classes that might interfere
-            el.className = el.className.replace(/text-[a-z]+-\d+/g, '').replace(/bg-[a-z]+-\d+/g, '')
-            el.style.color = ''
-            el.style.backgroundColor = ''
+            el.className = el.className
+                .replace(/text-[a-z]+-\d+/g, '')
+                .replace(/bg-[a-z]+-\d+/g, '')
+                .replace(/text-white/g, '')
+                .replace(/text-zinc-\d+/g, '')
+                .replace(/text-cyan-\d+/g, '')
+                .replace(/text-blue-\d+/g, '')
 
-            // Explicitly clear gradient backgrounds from headings if inline styles exist
-            if (el.tagName === 'H1' || el.tagName === 'H2') {
+            // Force black text color directly via inline style
+            el.style.color = '#000000'
+            el.style.setProperty('-webkit-text-fill-color', '#000000', 'important')
+
+            // Clear any background that might hide text
+            if (el.tagName !== 'TH' && el.tagName !== 'TD') {
+                el.style.backgroundColor = 'transparent'
+            }
+
+            // Explicitly clear gradient backgrounds from headings
+            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(el.tagName)) {
                 el.style.background = 'none'
-                el.style.webkitTextFillColor = 'initial'
             }
         }
     })
