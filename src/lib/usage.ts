@@ -1,4 +1,5 @@
 import prisma from '@/lib/db'
+import { APP_CONSTANTS } from '@/lib/constants'
 import { getUserPlan } from '@/lib/subscription'
 
 export async function validateUsageLimit(userId: string) {
@@ -15,7 +16,7 @@ export async function validateUsageLimit(userId: string) {
     }
 
     // Hardcoded limit for FREE plan (can be moved to constants)
-    if (user.aiUsageCount >= 5) {
+    if (user.aiUsageCount >= APP_CONSTANTS.MAX_FREE_GENERATIONS) {
         throw new Error('LIMIT_REACHED')
     }
 
