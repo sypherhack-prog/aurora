@@ -197,6 +197,10 @@ export default function EditorPage() {
         await callAI('translate', 'replace', translationLang)
     }
 
+    const handleTranslateSelection = async () => {
+        await callAI('translate-selection', 'replace', translationLang)
+    }
+
     const createNewDoc = (theme: string, type: string, initialContent?: string) => {
         setDocTheme(theme)
         setDocType(type)
@@ -393,6 +397,7 @@ export default function EditorPage() {
                             language: translationLang,
                             setLanguage: setTranslationLang,
                             onTranslate: handleTranslate,
+                            onTranslateSelection: handleTranslateSelection,
                         }}
                     />
                 </div>

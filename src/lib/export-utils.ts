@@ -35,32 +35,64 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
     clone.classList.remove('prose-invert')
     clone.classList.add('prose') // Use standard prose
 
-    // Explicit styles for the document content
-    clone.style.width = '800px' // A4 width approx
-    clone.style.maxWidth = '100%'
-    clone.style.margin = '0 auto' // Center
-    clone.style.color = '#000000'
-    clone.style.backgroundColor = '#ffffff'
-    clone.style.display = 'block'
+    // Create explicit styles for clean PDF export
+    const style = document.createElement('style')
+    style.textContent = `
+            .pdf-export-content {
+                color: #000000 !important;
+                background-color: #ffffff !important;
+                font-family: Arial, sans-serif !important;
+            }
+            .pdf-export-content h1, .pdf-export-content h2, .pdf-export-content h3 {
+                color: #000000 !important;
+                background: none !important;
+                -webkit-text-fill-color: initial !important;
+            }
+            .pdf-export-content table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+                border: 1px solid #000000 !important;
+            }
+            .pdf-export-content th {
+                background-color: #e8f5e9 !important; /* Light green header */
+                color: #000000 !important;
+                border: 1px solid #000000 !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                padding: 8px !important;
+            }
+            .pdf-export-content td {
+                border: 1px solid #000000 !important;
+                padding: 8px !important;
+                color: #000000 !important;
+                background-color: #ffffff !important;
+            }
+            .pdf-export-content tr:nth-child(even) td {
+                background-color: #f9f9f9 !important;
+            }
+            .pdf-export-content p, .pdf-export-content li {
+                color: #000000 !important;
+            }
+        `
+    container.appendChild(style)
+    clone.classList.add('pdf-export-content')
 
-    // Aggressive clean-up of children
-    const allDescendants = clone.getElementsByTagName('*')
-    for (let i = 0; i < allDescendants.length; i++) {
-        const child = allDescendants[i] as HTMLElement
-        // Strip dark mode color classes
-        child.classList.remove(
-            'text-white', 'text-zinc-50', 'text-zinc-100', 'text-zinc-200', 'text-zinc-300', 'text-zinc-400', 'text-zinc-500',
-            'bg-zinc-800', 'bg-zinc-900', 'bg-zinc-950', 'bg-black'
-        )
-        // Force text color
-        child.style.color = '#000000'
+    // Remove dark mode classes
+    const allElements = clone.querySelectorAll('*')
+    allElements.forEach((el) => {
+        if (el instanceof HTMLElement) {
+            // Strip all tailwind color classes that might interfere
+            el.className = el.className.replace(/text-[a-z]+-\d+/g, '').replace(/bg-[a-z]+-\d+/g, '')
+            el.style.color = ''
+            el.style.backgroundColor = ''
 
-        // Handle backgrounds - mainly keep transparent or white
-        const bg = getComputedStyle(child).backgroundColor
-        if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && bg !== 'rgb(255, 255, 255)') {
-            child.style.backgroundColor = 'transparent' // Reset backgrounds to be safe, or set to white
+            // Explicitly clear gradient backgrounds from headings if inline styles exist
+            if (el.tagName === 'H1' || el.tagName === 'H2') {
+                el.style.background = 'none'
+                el.style.webkitTextFillColor = 'initial'
+            }
         }
-    }
+    })
 
     container.appendChild(clone)
     document.body.appendChild(container)
@@ -106,8 +138,6 @@ export const exportToPPTX = async (element: HTMLElement, filename: string) => {
     // Create Title Slide
     let slide = pptx.addSlide()
 
-    // Basic Layout Constants
-    const TYPE_AREA = { x: 0.5, y: 0.5, w: '90%', h: '85%' }
     let yPos = 0.5
 
     // Parse Content

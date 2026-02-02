@@ -10,10 +10,10 @@ OUTPUT FORMAT:
 - Ensure all HTML is safe and valid.
 
 STYLING GUIDELINES:
-- Headings: Use gradients or colors like #06b6d4 (cyan) and #3b82f6 (blue).
-- Paragraphs: line-height: 1.8; color: #a1a1aa; margin-bottom: 1rem.
-- Highlights: Use <strong style="color: #fafafa;"> for emphasis.
-- Blockquotes: border-left: 4px solid #06b6d4; background: rgba(6,182,212,0.1); padding: 1rem;
+- Headings: Use standard professional styling, dark grey or black for text.
+- Paragraphs: line-height: 1.8; color: #333333; margin-bottom: 1rem.
+- Highlights: Use <strong> for emphasis.
+- Blockquotes: border-left: 4px solid #ccc; background: rgba(0,0,0,0.05); padding: 1rem;
 `
 
 export const PROMPTS = {
@@ -28,11 +28,12 @@ export const PROMPTS = {
     `,
     'auto-format': `
         Format the provided raw text into a beautiful, structured HTML document.
-        - Detect headings (Title, H2, H3) and apply gradient styles to H1.
+        - Detect headings (Title, H2, H3).
         - Format lists (<ul>, <ol>) with proper indentation.
         - Highlight key terms in bold.
         - Add spacing between sections.
         - Do not change the core text content, just the structure and style.
+        - Use clean, professional styling.
     `,
     'continue-writing': (theme: string, type: string) => `
         Continue the text naturally based on the context and theme (${theme}).
@@ -57,9 +58,9 @@ export const PROMPTS = {
     `,
     summarize: `
         Provide a concise summary and analysis of the content.
-        - Create a beautiful "Analysis Card" using a <div> with a gradient border/background.
+        - Create a beautiful "Analysis Card" using a <div>.
         - Include: Word count, Estimated reading time, key points.
-        - Style it to look premium.
+        - Style it to look professional.
     `,
     'improve-paragraph': `
         Rewrite and improve the selected paragraph.
@@ -73,7 +74,6 @@ export const PROMPTS = {
         - If it looks like a main title, use H1.
         - If it looks like a section header, use H2.
         - If it looks like a subsection, use H3.
-        - Apply the same gradient/color styles as defined in the styling guidelines.
         - Return ONLY the HTML HTML tag.
     `,
     'improve-spacing': `
@@ -89,6 +89,13 @@ export const PROMPTS = {
         - Maintain ALL original HTML structure, tags, attributes, and inline styles exactly as they are.
         - Only translate the visible text content.
         - Ensure the tone is professional.
+        - CRITICAL: Output MUST be in ${theme}.
+    `,
+    'translate-selection': (theme: string) => `
+        Translate the provided SELECTED text STRICTLY into this language: ${theme}.
+        - Replace ONLY the selected text with its translation.
+        - Maintain the surrounding context if provided, but only output the translated selection.
+        - Ensure the tone is professional and fits the context.
         - CRITICAL: Output MUST be in ${theme}.
     `,
 }

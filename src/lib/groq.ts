@@ -16,6 +16,7 @@ export type AIAction =
     | 'smart-heading'
     | 'improve-spacing'
     | 'translate'
+    | 'translate-selection'
 
 interface AIRequest {
     action: AIAction
@@ -29,6 +30,7 @@ function resolvePrompt(action: AIAction, theme: string, docType: string): string
     if (action === 'suggest-ideas') return PROMPTS['suggest-ideas'](theme)
     if (action === 'generate-table') return PROMPTS['generate-table'](theme, docType)
     if (action === 'translate') return PROMPTS['translate'](theme)
+    if (action === 'translate-selection') return PROMPTS['translate-selection'](theme)
 
     const simplePrompt = PROMPTS[action as keyof typeof PROMPTS]
     if (typeof simplePrompt === 'string') return simplePrompt

@@ -19,6 +19,7 @@ const VALID_ACTIONS = [
     'smart-heading',
     'improve-spacing',
     'translate',
+    'translate-selection',
 ] as const
 
 export async function POST(req: NextRequest) {

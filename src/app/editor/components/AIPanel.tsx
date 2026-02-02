@@ -28,6 +28,7 @@ interface TranslationConfig {
     language: string
     setLanguage: (lang: string) => void
     onTranslate: () => void
+    onTranslateSelection: () => void
 }
 
 interface AIPanelProps {
@@ -198,6 +199,12 @@ function TranslationSection({
                     label="Traduire le document"
                     loading={aiLoading === 'translate'}
                     onClick={translation.onTranslate}
+                />
+                <AIButton
+                    icon={Type}
+                    label="Traduire la sélection"
+                    loading={aiLoading === 'translate-selection'}
+                    onClick={translation.onTranslateSelection}
                 />
             </div>
         </section>

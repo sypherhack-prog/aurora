@@ -9,7 +9,6 @@ export default withAuth(
         callbacks: {
             authorized: ({ token, req }) => {
                 const path = req.nextUrl.pathname
-                console.log(`🛡️ [Middleware] Path: ${path}, Token exists: ${!!token}`)
 
                 // Public Routes - Always allow
                 if (

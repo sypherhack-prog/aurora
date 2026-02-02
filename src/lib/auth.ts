@@ -11,17 +11,14 @@ const credentialsOptions = {
         password: { label: 'Password', type: 'password' },
     },
     async authorize(credentials: Record<string, string> | undefined) {
-        console.log('🔍 [Auth] Login attempt started')
         const email = credentials?.email
         const password = credentials?.password
 
         if (!email || !password) {
-            console.log('❌ [Auth] Missing credentials')
             return null
         }
 
         try {
-            console.log(`🔍 [Auth] Finding user: ${email}`)
             const user = await prisma.user.findUnique({
                 where: {
                     email: email,
@@ -29,18 +26,14 @@ const credentialsOptions = {
             })
 
             if (!user) {
-                console.log('❌ [Auth] User not found in DB')
                 return null
             }
-            console.log('✅ [Auth] User found')
 
             const isPasswordValid = await compare(password, user.password)
 
             if (!isPasswordValid) {
-                console.log('❌ [Auth] Invalid password')
                 return null
             }
-            console.log('✅ [Auth] Password valid')
 
             return {
                 id: user.id,
@@ -48,15 +41,13 @@ const credentialsOptions = {
                 name: user.name,
                 role: user.role,
             }
-        } catch (e) {
-            console.error('❌ [Auth] CRITICAL ERROR:', e)
+        } catch {
             return null
         }
     },
 }
 
 export const authOptions: NextAuthOptions = {
-    debug: true,
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: 'jwt',
@@ -84,3 +75,4 @@ export const authOptions: NextAuthOptions = {
         },
     },
 }
+
