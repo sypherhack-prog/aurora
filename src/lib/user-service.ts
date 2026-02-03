@@ -1,5 +1,6 @@
 import { hash } from 'bcryptjs'
 import prisma from '@/lib/db'
+import { APP_CONSTANTS } from '@/lib/constants'
 
 // Email validation regex (RFC 5322 simplified)
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -47,10 +48,19 @@ export async function userExists(email: string): Promise<boolean> {
     return !!existing
 }
 
+export async function getUserCount(): Promise<number> {
+    return prisma.user.count()
+}
+
 export async function createUserWithSubscription(name: string, email: string, pass: string) {
     const hashedPassword = await hash(pass, 12)
 
     return prisma.$transaction(async (tx) => {
+        const userCount = await tx.user.count()
+        if (userCount >= APP_CONSTANTS.MAX_USERS) {
+            throw new Error('MAX_USERS_REACHED')
+        }
+
         const user = await tx.user.create({
             data: {
                 name: name?.trim() || null,

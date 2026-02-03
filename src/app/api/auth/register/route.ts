@@ -40,7 +40,13 @@ export async function POST(req: NextRequest) {
             success: true,
             message: 'Compte créé avec succès',
         })
-    } catch (error) {
+    } catch (error: any) {
+        if (error.message === 'MAX_USERS_REACHED') {
+            return NextResponse.json(
+                { error: 'Le nombre maximum d\'utilisateurs a été atteint. Les inscriptions sont temporairement fermées.' },
+                { status: 403 }
+            )
+        }
         logger.error('Registration error:', error)
         return NextResponse.json({ error: 'Erreur lors de la création du compte' }, { status: 500 })
     }
