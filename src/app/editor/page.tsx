@@ -62,7 +62,7 @@ export default function EditorPage() {
     const [headings, setHeadings] = useState<{ level: number; text: string; pos: number }[]>([])
 
     // Speech Recognition
-    const { isListening, transcript, startListening, stopListening, isSupported } = useSpeechRecognition()
+    const { isListening, transcript, startListening, stopListening, isSupported, error: dictationError } = useSpeechRecognition()
     const prevTranscriptRef = useRef('')
 
     const editor = useEditor({
@@ -123,6 +123,7 @@ export default function EditorPage() {
         window.scrollBy({
             top: direction === 'down' ? scrollAmount : -scrollAmount,
             behavior: 'smooth',
+            // @ts-ignore
         })
     }
 
@@ -153,8 +154,21 @@ export default function EditorPage() {
     useEffect(() => {
         if (isListening) {
             prevTranscriptRef.current = ''
+            showNotification('success', 'Dictée activée (parlez maintenant)')
         }
     }, [isListening])
+
+    // Handle Dictation Errors
+    useEffect(() => {
+        if (dictationError) {
+            let message = 'Erreur microphone'
+            if (dictationError === 'not-allowed') message = 'Accès au micro refusé. Vérifiez vos permissions.'
+            if (dictationError === 'no-speech') message = 'Aucune parole détectée.'
+            if (dictationError === 'network') message = 'Erreur réseau (requise pour le speech-to-text).'
+
+            showNotification('error', message)
+        }
+    }, [dictationError])
 
     // Show notification
     const showNotification = (type: 'success' | 'error', message: string) => {
