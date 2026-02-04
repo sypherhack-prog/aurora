@@ -125,25 +125,7 @@ export function EditorToolbar({ editor, aiLoading, onCallAI, dictation }: Editor
             />
             {/* Microphone Dictation */}
             <ToolbarDivider />
-            <button
-                onClick={dictation.isSupported ? dictation.onToggle : undefined}
-                disabled={!dictation.isSupported}
-                title={
-                    !dictation.isSupported
-                        ? "Dictée non supportée par ce navigateur"
-                        : dictation.isListening
-                            ? "Arrêter dictée"
-                            : "Dicter"
-                }
-                className={`p-2 rounded-lg transition ${!dictation.isSupported
-                        ? 'text-zinc-600 cursor-not-allowed'
-                        : dictation.isListening
-                            ? 'bg-red-500/20 text-red-400 animate-pulse'
-                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                    }`}
-            >
-                {dictation.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            </button>
+            <DictationButton dictation={dictation} />
             <div className="flex-1" />
 
             {/* AI Button */}
@@ -187,4 +169,29 @@ function ToolbarButton({
 
 function ToolbarDivider() {
     return <div className="w-px h-6 bg-zinc-700 mx-1" />
+}
+
+function DictationButton({ dictation }: { dictation: { isListening: boolean; isSupported: boolean; onToggle: () => void } }) {
+    const getTooltip = () => {
+        if (!dictation.isSupported) return "Dictée non supportée par ce navigateur"
+        return dictation.isListening ? "Arrêter dictée" : "Dicter"
+    }
+
+    const getClassName = () => {
+        const base = "p-2 rounded-lg transition"
+        if (!dictation.isSupported) return `${base} text-zinc-600 cursor-not-allowed`
+        if (dictation.isListening) return `${base} bg-red-500/20 text-red-400 animate-pulse`
+        return `${base} text-zinc-400 hover:text-white hover:bg-zinc-800`
+    }
+
+    return (
+        <button
+            onClick={dictation.isSupported ? dictation.onToggle : undefined}
+            disabled={!dictation.isSupported}
+            title={getTooltip()}
+            className={getClassName()}
+        >
+            {dictation.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+        </button>
+    )
 }

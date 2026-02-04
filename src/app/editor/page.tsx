@@ -33,7 +33,7 @@ import { EditorSidebar } from './components/EditorSidebar'
 import { EditorToolbar } from './components/EditorToolbar'
 import { NewDocModal } from './components/NewDocModal'
 import { ExportModal } from './components/ExportModal'
-import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { useEditorDictation } from '@/hooks/useEditorDictation'
 
 const DOC_TITLES: Record<string, string> = {
     exam: "Sujet d'Examen",
@@ -60,10 +60,6 @@ export default function EditorPage() {
     const [translationLang, setTranslationLang] = useState('Anglais')
 
     const [headings, setHeadings] = useState<{ level: number; text: string; pos: number }[]>([])
-
-    // Speech Recognition
-    const { isListening, transcript, startListening, stopListening, isSupported, error: dictationError } = useSpeechRecognition()
-    const prevTranscriptRef = useRef('')
 
     const editor = useEditor({
         extensions: [
@@ -138,50 +134,14 @@ export default function EditorPage() {
         return () => clearTimeout(checkEmpty)
     }, [editor])
 
-    // Insert transcribed text into editor in real-time
-    useEffect(() => {
-        if (!editor || !transcript) return
-
-        // Calculate the new text to insert (only the delta)
-        const newText = transcript.slice(prevTranscriptRef.current.length)
-        if (newText) {
-            editor.commands.insertContent(newText)
-            prevTranscriptRef.current = transcript
-        }
-    }, [transcript, editor])
-
-    // Reset transcript ref when dictation starts
-    useEffect(() => {
-        if (isListening) {
-            prevTranscriptRef.current = ''
-            showNotification('success', 'Dictée activée (parlez maintenant)')
-        }
-    }, [isListening])
-
-    // Handle Dictation Errors
-    useEffect(() => {
-        if (dictationError) {
-            let message = 'Erreur microphone'
-
-            if (dictationError === 'not-allowed') {
-                if (typeof window !== 'undefined' && !window.isSecureContext) {
-                    message = 'Microphone requis HTTPS. Veuillez utiliser une connexion sécurisée.'
-                } else {
-                    message = 'Accès au micro refusé. Cliquez sur 🔒 dans la barre d\'adresse pour autoriser.'
-                }
-            }
-            if (dictationError === 'no-speech') message = 'Aucune parole détectée. Parlez plus fort ou vérifiez votre micro.'
-            if (dictationError === 'network') message = 'Erreur réseau (requise pour le speech-to-text).'
-
-            showNotification('error', message)
-        }
-    }, [dictationError])
-
     // Show notification
     const showNotification = (type: 'success' | 'error', message: string) => {
         setNotification({ type, message })
         setTimeout(() => setNotification(null), APP_CONSTANTS.TIMEOUTS.NOTIFICATION)
     }
+
+    // Dictation Hook
+    const dictation = useEditorDictation(editor, showNotification)
 
     // Call AI API with context
     const callAI = useCallback(
@@ -423,15 +383,9 @@ export default function EditorPage() {
                             aiLoading={aiLoading}
                             onCallAI={callAI}
                             dictation={{
-                                isListening,
-                                isSupported,
-                                onToggle: () => {
-                                    if (isListening) {
-                                        stopListening()
-                                    } else {
-                                        startListening()
-                                    }
-                                },
+                                isListening: dictation.isListening,
+                                isSupported: dictation.isSupported,
+                                onToggle: dictation.toggleDictation,
                             }}
                         />
 
