@@ -36,6 +36,7 @@ declare global {
 interface UseSpeechRecognitionReturn {
     isListening: boolean
     transcript: string
+    lastFinalTranscript: string
     interimText: string
     startListening: () => void
     stopListening: () => void
@@ -46,6 +47,7 @@ interface UseSpeechRecognitionReturn {
 export function useSpeechRecognition(lang: string = 'fr-FR'): UseSpeechRecognitionReturn {
     const [isListening, setIsListening] = useState(false)
     const [transcript, setTranscript] = useState('')
+    const [lastFinalTranscript, setLastFinalTranscript] = useState('')
     const [interimText, setInterimText] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [isSupported, setIsSupported] = useState(false)
@@ -87,9 +89,13 @@ export function useSpeechRecognition(lang: string = 'fr-FR'): UseSpeechRecogniti
                     const result = event.results[i]
                     if (result.isFinal) {
                         // Add final result to accumulated transcript
-                        finalTranscriptRef.current += result[0].transcript
-                        setTranscript(finalTranscriptRef.current)
-                        setInterimText('')
+                        const newSegment = result[0].transcript.trim()
+                        if (newSegment) {
+                            finalTranscriptRef.current += ' ' + newSegment
+                            setTranscript(finalTranscriptRef.current)
+                            setLastFinalTranscript(newSegment)
+                            setInterimText('')
+                        }
                     } else {
                         currentInterim += result[0].transcript
                     }
@@ -123,6 +129,7 @@ export function useSpeechRecognition(lang: string = 'fr-FR'): UseSpeechRecogniti
     const startListening = useCallback(() => {
         if (recognitionRef.current && !isListening) {
             setTranscript('')
+            setLastFinalTranscript('')
             setInterimText('')
             finalTranscriptRef.current = ''
             setError(null)
@@ -143,6 +150,7 @@ export function useSpeechRecognition(lang: string = 'fr-FR'): UseSpeechRecogniti
     return {
         isListening,
         transcript,
+        lastFinalTranscript,
         interimText,
         startListening,
         stopListening,

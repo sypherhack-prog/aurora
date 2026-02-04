@@ -13,25 +13,20 @@ export function useEditorDictation(
     editor: Editor | null,
     showNotification: (type: 'success' | 'error', message: string) => void
 ): UseEditorDictationReturn {
-    const { isListening, transcript, startListening, stopListening, isSupported, error } = useSpeechRecognition()
-    const prevTranscriptRef = useRef('')
+    const { isListening, lastFinalTranscript, startListening, stopListening, isSupported, error } = useSpeechRecognition()
 
     // Insert transcribed text into editor in real-time
+    // We use lastFinalTranscript to avoid duplication bugs with full transcript diffing
     useEffect(() => {
-        if (!editor || !transcript) return
+        if (!editor || !lastFinalTranscript) return
 
-        // Calculate the new text to insert (only the delta)
-        const newText = transcript.slice(prevTranscriptRef.current.length)
-        if (newText) {
-            editor.commands.insertContent(newText)
-            prevTranscriptRef.current = transcript
-        }
-    }, [transcript, editor])
+        // Insert text with a leading space if needed
+        editor.commands.insertContent(` ${lastFinalTranscript}`)
+    }, [lastFinalTranscript, editor])
 
     // Reset transcript ref when dictation starts
     useEffect(() => {
         if (isListening) {
-            prevTranscriptRef.current = ''
             showNotification('success', 'Dictée activée (parlez maintenant)')
         }
     }, [isListening, showNotification])
