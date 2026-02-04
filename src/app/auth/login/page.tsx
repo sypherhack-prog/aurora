@@ -32,8 +32,8 @@ function LoginForm() {
                 setError('Email ou mot de passe incorrect')
                 setLoading(false)
             } else if (result?.ok) {
-                router.push(callbackUrl)
-                router.refresh()
+                // Use window.location for reliable navigation
+                window.location.href = callbackUrl
             } else {
                 setError("Erreur de connexion. Veuillez réessayer.")
                 setLoading(false)
