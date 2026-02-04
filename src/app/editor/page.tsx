@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -119,7 +119,6 @@ export default function EditorPage() {
         window.scrollBy({
             top: direction === 'down' ? scrollAmount : -scrollAmount,
             behavior: 'smooth',
-            // @ts-ignore
         })
     }
 
@@ -187,9 +186,10 @@ export default function EditorPage() {
                     console.error('AI Processing Failed:', data.error)
                     showNotification('error', data.error || 'Une erreur est survenue lors de la génération.')
                 }
-            } catch (e: any) {
+            } catch (e: unknown) {
+                const errorMessage = e instanceof Error ? e.message : 'Inconnue'
                 logger.error('AI error:', e)
-                showNotification('error', `Erreur connexion: ${e.message || 'Inconnue'}`)
+                showNotification('error', `Erreur connexion: ${errorMessage}`)
             } finally {
                 setAiLoading(null)
             }

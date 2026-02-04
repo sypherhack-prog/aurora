@@ -55,11 +55,19 @@ export function useSpeechRecognition(lang: string = 'fr-FR'): UseSpeechRecogniti
 
     // Check browser support on mount
     useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+            setIsSupported(!!SpeechRecognitionAPI)
+        }
+    }, [])
+
+    // Handle recognition lifecycle
+    useEffect(() => {
         // Skip on server-side
         if (typeof window === 'undefined') return
 
         const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
-        setIsSupported(!!SpeechRecognitionAPI)
+
 
         if (SpeechRecognitionAPI) {
             const recognition = new SpeechRecognitionAPI()

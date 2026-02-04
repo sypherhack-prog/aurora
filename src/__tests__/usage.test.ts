@@ -11,11 +11,11 @@ vi.mock('../lib/db', () => ({
     __esModule: true,
     default: {
         user: {
-            findUnique: (...args: any[]) => mockFindUnique(...args),
-            update: (...args: any[]) => mockUpdate(...args),
+            findUnique: (...args: unknown[]) => mockFindUnique(...args),
+            update: (...args: unknown[]) => mockUpdate(...args),
         },
         subscription: {
-            findFirst: (...args: any[]) => mockFindFirst(...args),
+            findFirst: (...args: unknown[]) => mockFindFirst(...args),
         },
     },
 }))

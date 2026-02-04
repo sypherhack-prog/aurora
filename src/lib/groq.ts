@@ -95,8 +95,8 @@ export async function processAIRequest({ action, content, theme, documentType }:
             .trim()
 
         return text
-    } catch (error: any) {
+    } catch (error: unknown) {
         logger.error('Groq API Error:', error)
-        throw new Error(error.message || 'Failed to process with Groq AI')
+        throw new Error(error instanceof Error ? error.message : 'Failed to process with Groq AI')
     }
 }

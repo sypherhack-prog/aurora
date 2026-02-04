@@ -34,7 +34,7 @@ export function useEditorDictation(
             prevTranscriptRef.current = ''
             showNotification('success', 'Dictée activée (parlez maintenant)')
         }
-    }, [isListening])
+    }, [isListening, showNotification])
 
     // Handle Dictation Errors
     useEffect(() => {
@@ -53,7 +53,7 @@ export function useEditorDictation(
 
             showNotification('error', message)
         }
-    }, [error])
+    }, [error, showNotification])
 
     const toggleDictation = () => {
         if (isListening) {

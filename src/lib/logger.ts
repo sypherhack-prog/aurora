@@ -8,7 +8,7 @@ class Logger {
     info(message: string, ...args: unknown[]) {
         if (process.env.NODE_ENV !== 'production') {
 
-            (console as any)['log'](`[INFO] ${message}`, ...args)
+            console.log(`[INFO] ${message}`, ...args)
         }
         // In production: send to logging service (e.g., Sentry, LogRocket)
     }
@@ -16,7 +16,7 @@ class Logger {
     warn(message: string, ...args: unknown[]) {
         if (process.env.NODE_ENV !== 'production') {
 
-            (console as any)['warn'](`[WARN] ${message}`, ...args)
+            console.warn(`[WARN] ${message}`, ...args)
         }
         // In production: send to logging service
     }
@@ -24,7 +24,7 @@ class Logger {
     error(message: string, error?: unknown) {
         if (process.env.NODE_ENV !== 'production') {
 
-            (console as any)['error'](`[ERROR] ${message}`, error || '')
+            console.error(`[ERROR] ${message}`, error || '')
         }
         // In production: send to error tracking service (e.g., Sentry)
     }
@@ -32,7 +32,7 @@ class Logger {
     debug(message: string, ...args: unknown[]) {
         if (process.env.NODE_ENV !== 'production') {
 
-            (console as any)['log'](`[DEBUG] ${message}`, ...args)
+            console.log(`[DEBUG] ${message}`, ...args)
         }
     }
 }

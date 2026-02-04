@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { Sparkles, Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
 
 function LoginForm() {
-    const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl') || '/editor'
 

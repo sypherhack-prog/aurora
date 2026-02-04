@@ -1,10 +1,11 @@
+import { NextRequest } from 'next/server'
 import NextAuth from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
 // Log every request hitting this route
-const handler = async (req: any, ctx: any) => {
+const handler = async (req: NextRequest, ctx: { params: { nextauth: string[] } }) => {
     console.log(`📥 [NextAuth] Request: ${req.method} ${req.url}`)
     return NextAuth(authOptions)(req, ctx)
 }
