@@ -28,7 +28,7 @@ function LogoHeader() {
                 <span className="font-bold text-2xl text-white">Aurora AI</span>
             </Link>
             <h1 className="text-2xl font-bold text-white mb-2">Créer un compte</h1>
-            <p className="text-zinc-400">Commencez gratuitement avec 5 documents/mois</p>
+            <p className="text-zinc-400">Commencez gratuitement avec 2 exports/mois</p>
         </div>
     )
 }
@@ -95,7 +95,7 @@ function PlanInfo() {
     return (
         <div className="mt-6 bg-zinc-900/30 border border-zinc-800 rounded-xl p-4 text-center">
             <p className="text-xs text-zinc-400">
-                ✨ Le plan gratuit inclut 5 documents/mois, formatage IA basique, et export PDF.
+                ✨ Le plan gratuit inclut 2 exports/mois, formatage IA basique, et export avec filigrane.
             </p>
         </div>
     )

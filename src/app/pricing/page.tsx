@@ -12,7 +12,7 @@ const plans = [
         price: '0',
         period: 'pour toujours',
         description: 'Parfait pour découvrir Aurora AI',
-        features: ['5 documents par mois', 'Formatage IA basique', 'Export PDF uniquement', 'Filigrane Aurora AI'],
+        features: ['2 exports PDF/Word par mois', 'Formatage IA basique', 'Export en filigrane', 'Accès éditeur complet'],
         limitations: ['Pas de support prioritaire', 'Fonctionnalités limitées'],
         planCode: 'FREE',
         highlight: false,
