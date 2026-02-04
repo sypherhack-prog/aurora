@@ -10,8 +10,9 @@ const publicDir = path.join(__dirname, '../public/addin');
 // 1. Install & Build Add-in
 try {
     console.log('📦 Installing add-in dependencies...');
-    // Use --no-audit to speed up and reduce noise
-    execSync('npm install --no-audit', { cwd: addinDir, stdio: 'inherit' });
+    // Use --production=false to ensure devDependencies (webpack, etc.) are installed
+    // even if the main Vercel process sets NODE_ENV=production
+    execSync('npm install --no-audit --production=false', { cwd: addinDir, stdio: 'inherit' });
 
     console.log('🛠️ Building add-in...');
     execSync('npm run build', { cwd: addinDir, stdio: 'inherit' });
