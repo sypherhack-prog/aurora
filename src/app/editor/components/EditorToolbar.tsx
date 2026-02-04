@@ -17,15 +17,22 @@ import {
     Redo,
     Loader2,
     Wand2,
+    Mic,
+    MicOff,
 } from 'lucide-react'
 
 interface EditorToolbarProps {
     editor: Editor | null
     aiLoading: string | null
     onCallAI: (action: string, insertMode: 'replace' | 'append' | 'insert') => void
+    dictation: {
+        isListening: boolean
+        isSupported: boolean
+        onToggle: () => void
+    }
 }
 
-export function EditorToolbar({ editor, aiLoading, onCallAI }: EditorToolbarProps) {
+export function EditorToolbar({ editor, aiLoading, onCallAI, dictation }: EditorToolbarProps) {
     if (!editor) return null
 
     return (
@@ -116,6 +123,17 @@ export function EditorToolbar({ editor, aiLoading, onCallAI }: EditorToolbarProp
                 tooltip="Rétablir"
                 onClick={() => editor.chain().focus().redo().run()}
             />
+            {dictation.isSupported && (
+                <>
+                    <ToolbarDivider />
+                    <ToolbarButton
+                        icon={dictation.isListening ? MicOff : Mic}
+                        tooltip={dictation.isListening ? "Arrêter dictée" : "Dicter"}
+                        onClick={dictation.onToggle}
+                        active={dictation.isListening}
+                    />
+                </>
+            )}
             <div className="flex-1" />
 
             {/* AI Button */}

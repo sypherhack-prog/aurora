@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -33,6 +33,7 @@ import { EditorSidebar } from './components/EditorSidebar'
 import { EditorToolbar } from './components/EditorToolbar'
 import { NewDocModal } from './components/NewDocModal'
 import { ExportModal } from './components/ExportModal'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 
 const DOC_TITLES: Record<string, string> = {
     exam: "Sujet d'Examen",
@@ -59,6 +60,10 @@ export default function EditorPage() {
     const [translationLang, setTranslationLang] = useState('Anglais')
 
     const [headings, setHeadings] = useState<{ level: number; text: string; pos: number }[]>([])
+
+    // Speech Recognition
+    const { isListening, transcript, startListening, stopListening, isSupported } = useSpeechRecognition()
+    const prevTranscriptRef = useRef('')
 
     const editor = useEditor({
         extensions: [
@@ -131,6 +136,25 @@ export default function EditorPage() {
         }, APP_CONSTANTS.TIMEOUTS.DEBOUNCE)
         return () => clearTimeout(checkEmpty)
     }, [editor])
+
+    // Insert transcribed text into editor in real-time
+    useEffect(() => {
+        if (!editor || !transcript) return
+
+        // Calculate the new text to insert (only the delta)
+        const newText = transcript.slice(prevTranscriptRef.current.length)
+        if (newText) {
+            editor.commands.insertContent(newText)
+            prevTranscriptRef.current = transcript
+        }
+    }, [transcript, editor])
+
+    // Reset transcript ref when dictation starts
+    useEffect(() => {
+        if (isListening) {
+            prevTranscriptRef.current = ''
+        }
+    }, [isListening])
 
     // Show notification
     const showNotification = (type: 'success' | 'error', message: string) => {
@@ -377,6 +401,17 @@ export default function EditorPage() {
                             editor={editor}
                             aiLoading={aiLoading}
                             onCallAI={callAI}
+                            dictation={{
+                                isListening,
+                                isSupported,
+                                onToggle: () => {
+                                    if (isListening) {
+                                        stopListening()
+                                    } else {
+                                        startListening()
+                                    }
+                                },
+                            }}
                         />
 
                         {/* Editor */}
