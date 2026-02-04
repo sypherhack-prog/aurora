@@ -33,7 +33,13 @@ export async function getUserPlan(userId: string): Promise<string> {
         where: { userId },
     })
 
-    // If they had a subscription before (expired), block them
-    // If they never had one (new user), give FREE plan
-    return anySub ? 'EXPIRED' : 'FREE'
+    if (anySub) {
+        if (anySub.status === 'EXPIRED') return 'EXPIRED'
+        // If there is an end date and it's in the past, it's expired
+        // If endDate is null, it means unlimited duration (so NOT expired)
+        if (anySub.endDate && anySub.endDate < new Date()) return 'EXPIRED'
+    }
+
+    // If they never had one (new user) or have a non-active/non-expired status (e.g. PENDING), give FREE plan
+    return 'FREE'
 }

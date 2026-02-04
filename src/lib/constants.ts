@@ -24,7 +24,7 @@ export const APP_CONSTANTS = {
     PRICING: {
         BASIC: 10000,
         PRO: 20000,
-        ANNUAL: 90000,
+        ANNUAL: 100000,
     },
     DEFAULT_CONTENT: {
         exam: "<h1>Sujet d'Examen</h1><p><strong>Matière :</strong> ...</p><p><strong>Durée :</strong> ...</p><h2>Exercice 1</h2><p>...</p>",

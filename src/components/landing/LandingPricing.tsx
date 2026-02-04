@@ -18,7 +18,7 @@ export function LandingPricing() {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
                     {/* Free Plan */}
                     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 relative hover:border-zinc-700 transition-colors">
                         <div className="mb-6">
@@ -135,7 +135,45 @@ export function LandingPricing() {
                             href="/subscribe?plan=PRO"
                             className="relative block w-full py-3 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5"
                         >
-                            Devenir Pro
+                            Pack Pro
+                        </Link>
+                    </div>
+
+                    {/* Annual Plan */}
+                    <div className="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8 relative overflow-hidden group hover:border-cyan-500/50 transition-all">
+                        <div className="relative mb-6">
+                            <h3 className="text-2xl font-bold text-white mb-2">Annuel</h3>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-4xl font-bold text-white">{formatPrice(APP_CONSTANTS.PRICING.ANNUAL)}</span>
+                                <span className="text-zinc-500">Ar/an</span>
+                            </div>
+                            <p className="text-zinc-400 mt-4">Économisez 2 mois.</p>
+                        </div>
+
+                        <ul className="space-y-4 mb-8 relative">
+                            <li className="flex items-center gap-3 text-zinc-300">
+                                <Check className="w-5 h-5 text-cyan-500 shrink-0" />
+                                2 mois offerts
+                            </li>
+                            <li className="flex items-center gap-3 text-zinc-300">
+                                <Check className="w-5 h-5 text-cyan-500 shrink-0" />
+                                Documents Illimités
+                            </li>
+                            <li className="flex items-center gap-3 text-zinc-300">
+                                <Check className="w-5 h-5 text-cyan-500 shrink-0" />
+                                IA Avancée (GPT-4)
+                            </li>
+                            <li className="flex items-center gap-3 text-zinc-300">
+                                <Check className="w-5 h-5 text-cyan-500 shrink-0" />
+                                Support Prioritaire 24/7
+                            </li>
+                        </ul>
+
+                        <Link
+                            href="/subscribe?plan=ANNUAL"
+                            className="block w-full py-3 px-6 text-center rounded-xl bg-zinc-800 hover:bg-zinc-700 hover:text-white border border-zinc-700 text-zinc-300 font-semibold transition-colors"
+                        >
+                            Choisir Annuel
                         </Link>
                     </div>
                 </div>
