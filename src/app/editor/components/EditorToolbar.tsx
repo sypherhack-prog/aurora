@@ -123,17 +123,27 @@ export function EditorToolbar({ editor, aiLoading, onCallAI, dictation }: Editor
                 tooltip="Rétablir"
                 onClick={() => editor.chain().focus().redo().run()}
             />
-            {dictation.isSupported && (
-                <>
-                    <ToolbarDivider />
-                    <ToolbarButton
-                        icon={dictation.isListening ? MicOff : Mic}
-                        tooltip={dictation.isListening ? "Arrêter dictée" : "Dicter"}
-                        onClick={dictation.onToggle}
-                        active={dictation.isListening}
-                    />
-                </>
-            )}
+            {/* Microphone Dictation */}
+            <ToolbarDivider />
+            <button
+                onClick={dictation.isSupported ? dictation.onToggle : undefined}
+                disabled={!dictation.isSupported}
+                title={
+                    !dictation.isSupported
+                        ? "Dictée non supportée par ce navigateur"
+                        : dictation.isListening
+                            ? "Arrêter dictée"
+                            : "Dicter"
+                }
+                className={`p-2 rounded-lg transition ${!dictation.isSupported
+                        ? 'text-zinc-600 cursor-not-allowed'
+                        : dictation.isListening
+                            ? 'bg-red-500/20 text-red-400 animate-pulse'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                    }`}
+            >
+                {dictation.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </button>
             <div className="flex-1" />
 
             {/* AI Button */}
