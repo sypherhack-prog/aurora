@@ -162,8 +162,15 @@ export default function EditorPage() {
     useEffect(() => {
         if (dictationError) {
             let message = 'Erreur microphone'
-            if (dictationError === 'not-allowed') message = 'Accès au micro refusé. Vérifiez vos permissions.'
-            if (dictationError === 'no-speech') message = 'Aucune parole détectée.'
+
+            if (dictationError === 'not-allowed') {
+                if (typeof window !== 'undefined' && !window.isSecureContext) {
+                    message = 'Microphone requis HTTPS. Veuillez utiliser une connexion sécurisée.'
+                } else {
+                    message = 'Accès au micro refusé. Cliquez sur 🔒 dans la barre d\'adresse pour autoriser.'
+                }
+            }
+            if (dictationError === 'no-speech') message = 'Aucune parole détectée. Parlez plus fort ou vérifiez votre micro.'
             if (dictationError === 'network') message = 'Erreur réseau (requise pour le speech-to-text).'
 
             showNotification('error', message)
