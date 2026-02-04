@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aurora AI - Word Add-in</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="aurora-container">
+        <!-- Header -->
+        <header class="aurora-header">
+            <div class="aurora-logo">
+                <svg class="aurora-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L14.5 8.5L20 9.5L16 14L17.5 20L12 17L6.5 20L8 14L4 9.5L9.5 8.5L12 3Z" fill="currentColor"/>
+                </svg>
+                <span>Aurora AI</span>
+            </div>
+        </header>
+
+        <!-- Login Section -->
+        <section id="login-section" class="aurora-section">
+            <h2>Connexion</h2>
+            <p class="aurora-subtitle">Connectez-vous à votre compte Aurora AI</p>
+            
+            <div class="aurora-form">
+                <div class="aurora-input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="votre@email.com" />
+                </div>
+                <div class="aurora-input-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="••••••••" />
+                </div>
+                <button id="login-btn" class="aurora-btn aurora-btn-primary">
+                    Se connecter
+                </button>
+                <p id="login-error" class="aurora-error" style="display: none;"></p>
+            </div>
+        </section>
+
+        <!-- Main Panel (hidden until logged in) -->
+        <section id="main-panel" class="aurora-section" style="display: none;">
+            <div class="aurora-user-info">
+                <span id="user-name">Utilisateur</span>
+                <button id="logout-btn" class="aurora-btn-link">Déconnexion</button>
+            </div>
+
+            <h2>Formatage IA</h2>
+            <p class="aurora-subtitle">Sélectionnez du texte dans Word et choisissez une action</p>
+
+            <div class="aurora-actions">
+                <button class="aurora-action-btn" data-action="auto-format">
+                    <span class="action-icon">✨</span>
+                    <span class="action-label">Formatage Auto</span>
+                </button>
+                <button class="aurora-action-btn" data-action="fix-errors">
+                    <span class="action-icon">🔧</span>
+                    <span class="action-label">Corriger Erreurs</span>
+                </button>
+                <button class="aurora-action-btn" data-action="improve-paragraph">
+                    <span class="action-icon">📝</span>
+                    <span class="action-label">Améliorer Texte</span>
+                </button>
+                <button class="aurora-action-btn" data-action="summarize">
+                    <span class="action-icon">📋</span>
+                    <span class="action-label">Résumer</span>
+                </button>
+                <button class="aurora-action-btn" data-action="translate">
+                    <span class="action-icon">🌍</span>
+                    <span class="action-label">Traduire</span>
+                </button>
+                <button class="aurora-action-btn" data-action="continue-writing">
+                    <span class="action-icon">➡️</span>
+                    <span class="action-label">Continuer</span>
+                </button>
+            </div>
+
+            <div id="loading-indicator" class="aurora-loading" style="display: none;">
+                <div class="aurora-spinner"></div>
+                <span>Traitement en cours...</span>
+            </div>
+
+            <p id="action-error" class="aurora-error" style="display: none;"></p>
+            <p id="action-success" class="aurora-success" style="display: none;"></p>
+        </section>
+    </div>
+</body>
+
+</html>
