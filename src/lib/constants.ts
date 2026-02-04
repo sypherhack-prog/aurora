@@ -6,6 +6,7 @@
 export const APP_CONSTANTS = {
     MAX_USERS: 100,
     MAX_FREE_GENERATIONS: 5,
+    MAX_FREE_EXPORTS: 2,
     PDF_CONFIG: {
         MARGIN: 1,
         SCALE: 2,

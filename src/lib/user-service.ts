@@ -73,7 +73,7 @@ export async function createUserWithSubscription(name: string, email: string, pa
         await tx.subscription.create({
             data: {
                 userId: user.id,
-                plan: 'BASIC',
+                plan: 'FREE',
                 status: 'ACTIVE',
                 startDate: new Date(),
                 endDate: null,

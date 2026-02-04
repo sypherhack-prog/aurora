@@ -31,6 +31,17 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
         }
 
+        // Check export limit
+        try {
+            const { checkExportLimit } = await import('@/lib/export-service')
+            await checkExportLimit(session.user.id)
+        } catch (e: unknown) {
+            if (e instanceof Error && e.message === 'EXPORT_LIMIT_REACHED') {
+                return NextResponse.json({ error: 'Limite mensuelle atteinte (2 exports). Passez à la version PRO.' }, { status: 403 })
+            }
+            throw e
+        }
+
         const { content, format, title } = await req.json()
 
         if (!content) {

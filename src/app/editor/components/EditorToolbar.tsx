@@ -19,6 +19,7 @@ import {
     Wand2,
     Mic,
     MicOff,
+    Upload,
 } from 'lucide-react'
 
 interface EditorToolbarProps {
@@ -30,9 +31,10 @@ interface EditorToolbarProps {
         isSupported: boolean
         onToggle: () => void
     }
+    onImport: (file: File) => void
 }
 
-export function EditorToolbar({ editor, aiLoading, onCallAI, dictation }: EditorToolbarProps) {
+export function EditorToolbar({ editor, aiLoading, onCallAI, dictation, onImport }: EditorToolbarProps) {
     if (!editor) return null
 
     return (
@@ -126,6 +128,29 @@ export function EditorToolbar({ editor, aiLoading, onCallAI, dictation }: Editor
             {/* Microphone Dictation */}
             <ToolbarDivider />
             <DictationButton dictation={dictation} />
+            <ToolbarDivider />
+            <div className="relative">
+                <input
+                    type="file"
+                    id="import-doc"
+                    className="hidden"
+                    accept=".docx,.txt"
+                    onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                            onImport(file)
+                            e.target.value = '' // Reset
+                        }
+                    }}
+                />
+                <label
+                    htmlFor="import-doc"
+                    className="p-2 rounded-lg transition text-zinc-400 hover:text-white hover:bg-zinc-800 cursor-pointer flex items-center justify-center"
+                    title="Importer un document (.docx, .txt)"
+                >
+                    <Upload className="w-4 h-4" />
+                </label>
+            </div>
             <div className="flex-1" />
 
             {/* AI Button */}

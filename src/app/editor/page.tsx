@@ -222,12 +222,56 @@ export default function EditorPage() {
         }
     }
 
+    // Handle Import
+    const handleImport = async (file: File) => {
+        if (!editor) return
+        setAiLoading('import')
+
+        try {
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const res = await fetch('/api/import', {
+                method: 'POST',
+                body: formData,
+            })
+
+            const data = await res.json()
+
+            if (data.content) {
+                editor.commands.setContent(data.content)
+                showNotification('success', 'Document importé!')
+            } else {
+                showNotification('error', data.error || "Erreur lors de l'import")
+            }
+        } catch (e) {
+            logger.error('Import error:', e)
+            showNotification('error', "Erreur lors de l'import")
+        } finally {
+            setAiLoading(null)
+        }
+    }
+
     // Export document
     const exportDocument = async (format: 'html' | 'txt' | 'md' | 'pdf' | 'pptx') => {
         if (!editor) return
         setExportLoading(true)
 
         try {
+            // Check Server-Side Limit first
+            const { checkAndIncrementExportLimit } = await import('@/app/actions/export')
+            const limitResult = await checkAndIncrementExportLimit()
+
+            if (!limitResult.success) {
+                if (limitResult.error === 'LIMIT_REACHED') {
+                    showNotification('error', 'Limite mensuelle atteinte (2 exports). Passez à la version PRO.')
+                    setExportLoading(false)
+                    return
+                }
+                throw new Error(limitResult.error)
+            }
+
+            // Proceed with Export
             const fileName = `document.${format}`
 
             if (format === 'pdf') {
@@ -267,13 +311,18 @@ export default function EditorPage() {
                     window.URL.revokeObjectURL(url)
                     showNotification('success', `Exporté en ${format.toUpperCase()}!`)
                 } else {
-                    showNotification('error', 'Erreur export')
+                    const data = await res.json()
+                    showNotification('error', data.error || 'Erreur export')
                 }
             }
             setShowExportModal(false)
-        } catch (e) {
+        } catch (e: unknown) {
             logger.error('Export error:', e)
-            showNotification('error', 'Erreur export')
+            if (e instanceof Error && e.message === 'LIMIT_REACHED') {
+                showNotification('error', 'Limite mensuelle atteinte.')
+            } else {
+                showNotification('error', 'Erreur export')
+            }
         } finally {
             setExportLoading(false)
         }
@@ -387,6 +436,7 @@ export default function EditorPage() {
                                 isSupported: dictation.isSupported,
                                 onToggle: dictation.toggleDictation,
                             }}
+                            onImport={handleImport}
                         />
 
                         {/* Editor */}
