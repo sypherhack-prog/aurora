@@ -6,7 +6,7 @@ const ADDIN_CSP = [
   'style-src \'self\' \'unsafe-inline\'',
   'img-src \'self\' data: blob:',
   'font-src \'self\' data:',
-  'connect-src \'self\' https://aurora-omega.vercel.app.com https://*.office.com https://*.office365.com https://api.groq.com',
+  'connect-src \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://api.groq.com',
   'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.outlook.office.com https://*.outlook.office365.com',
   'base-uri \'self\'',
   'form-action \'self\'',
