@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/db'
-import { compare } from 'bcryptjs'
 import { signAddinToken } from '@/lib/addin-auth'
+import prisma from '@/lib/db'
+import { logger } from '@/lib/logger'
+import { compare } from 'bcryptjs'
 
 /**
  * POST /api/auth/login
@@ -52,8 +53,8 @@ export async function POST(req: NextRequest) {
         email: user.email,
       },
     })
-  } catch (e) {
-    console.error('[auth/login]', e)
+  } catch (err) {
+    logger.error('auth/login', err)
     return NextResponse.json(
       { error: 'Erreur de connexion' },
       { status: 500 }

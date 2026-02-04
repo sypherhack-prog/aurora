@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { getBearerToken, verifyAddinToken } from '@/lib/addin-auth'
 import { APP_CONSTANTS } from '@/lib/constants'
 import { processAIRequest, AIAction } from '@/lib/groq'
+import { logger } from '@/lib/logger'
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 import { validateUsageLimit } from '@/lib/usage'
 
@@ -91,12 +92,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, result })
     } catch (error: any) {
-        console.error('❌ AI ROUTE ERROR:', {
-            message: error.message,
-            stack: error.stack,
-            cause: error.cause,
-            name: error.name
-        })
+        logger.error('AI route error', { message: error.message, name: error.name })
         return formatErrorResponse(error)
     }
 }

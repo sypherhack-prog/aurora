@@ -183,7 +183,7 @@ export default function EditorPage() {
                         showNotification('success', 'Contenu inséré!')
                     }
                 } else {
-                    console.error('AI Processing Failed:', data.error)
+                    logger.error('AI processing failed', data.error)
                     showNotification('error', data.error || 'Une erreur est survenue lors de la génération.')
                 }
             } catch (e: unknown) {

@@ -73,7 +73,7 @@ function UserProfile({ user }: { user: UserSession }) {
 }
 
 export function AdminSidebar({ user }: { user: UserSession }) {
-    const currentPath = usePathname()
+    const activePath = usePathname()
 
     return (
         <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800 flex flex-col">
@@ -82,7 +82,7 @@ export function AdminSidebar({ user }: { user: UserSession }) {
 
             <nav className="flex-1 p-4 space-y-1">
                 {SIDEBAR_ITEMS.map((item) => (
-                    <SidebarItem key={item.href} item={item} isActive={currentPath === item.href} />
+                    <SidebarItem key={item.href} item={item} isActive={activePath === item.href} />
                 ))}
             </nav>
 

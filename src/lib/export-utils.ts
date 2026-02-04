@@ -124,9 +124,10 @@ export const exportToPDF = async (element: HTMLElement, filename: string) => {
     try {
         await new Promise((resolve) => setTimeout(resolve, 500))
         await html2pdf().set(opt).from(clone).save()
-    } catch (e) {
-        console.error('PDF Export Error:', e)
-        throw e
+    } catch (err) {
+        const { logger } = await import('@/lib/logger')
+        logger.error('PDF Export Error', err)
+        throw err
     } finally {
         if (document.body.contains(container)) {
             document.body.removeChild(container)

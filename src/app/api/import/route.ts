@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 import mammoth from 'mammoth'
 
 export async function POST(req: NextRequest) {
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ content })
     } catch (error: unknown) {
-        console.error('Import error:', error)
+        logger.error('Import error', error)
         return NextResponse.json({ error: 'Failed to process file' }, { status: 500 })
     }
 }

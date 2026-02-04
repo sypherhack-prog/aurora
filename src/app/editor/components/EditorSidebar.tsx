@@ -46,16 +46,18 @@ interface EditorSidebarProps {
     }
 }
 
-export function EditorSidebar({
-    session,
-    activeTab,
-    setActiveTab,
-    onCreateNewDoc,
-    onOpenNewDocModal,
-    stats,
-    settings,
-    navigation,
-}: EditorSidebarProps) {
+export function EditorSidebar(props: EditorSidebarProps) {
+    const {
+        session,
+        activeTab,
+        setActiveTab,
+        onCreateNewDoc,
+        onOpenNewDocModal,
+        stats,
+        settings,
+        navigation,
+    } = props
+
     return (
         <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800 flex flex-col hidden md:flex">
             <div className="p-6 border-b border-zinc-800">
