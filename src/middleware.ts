@@ -17,6 +17,7 @@ export default withAuth(
                     path.startsWith('/pricing') ||
                     path.startsWith('/subscribe') ||
                     path.startsWith('/api') || // API routes handle their own auth
+                    path.startsWith('/addin') || // Word Add-in taskpane (auth via Bearer token)
                     path.startsWith('/_next') ||
                     path.startsWith('/favicon.ico') ||
                     path.startsWith('/images')

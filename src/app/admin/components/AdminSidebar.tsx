@@ -41,8 +41,14 @@ function SidebarBadge() {
     )
 }
 
+function getInitials(user: UserSession): string {
+    if (user.name?.charAt(0)) return user.name.charAt(0).toUpperCase()
+    if (user.email?.charAt(0)) return user.email.charAt(0).toUpperCase()
+    return 'A'
+}
+
 function UserProfile({ user }: { user: UserSession }) {
-    const initials = user.name?.charAt(0) || user.email?.charAt(0) || 'A'
+    const initials = getInitials(user)
 
     return (
         <div className="p-4 border-t border-zinc-800">
@@ -67,17 +73,16 @@ function UserProfile({ user }: { user: UserSession }) {
 }
 
 export function AdminSidebar({ user }: { user: UserSession }) {
-    const pathname = usePathname()
+    const currentPath = usePathname()
 
     return (
         <aside className="w-64 bg-zinc-900/50 border-r border-zinc-800 flex flex-col">
             <SidebarHeader />
             <SidebarBadge />
 
-            {/* Navigation */}
             <nav className="flex-1 p-4 space-y-1">
                 {SIDEBAR_ITEMS.map((item) => (
-                    <SidebarItem key={item.href} item={item} isActive={pathname === item.href} />
+                    <SidebarItem key={item.href} item={item} isActive={currentPath === item.href} />
                 ))}
             </nav>
 

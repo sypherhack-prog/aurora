@@ -6,7 +6,7 @@
 /* global document, Office, Word */
 
 // Configuration - Update this with your production API URL
-const API_BASE_URL = 'https://aurora-ai.vercel.app'; // Change to your deployed URL
+const API_BASE_URL = 'https://aurora-omega.vercel.app.com';
 
 // State
 let authToken: string | null = null;

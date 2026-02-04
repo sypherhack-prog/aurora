@@ -15,27 +15,16 @@ export function escapeHtml(unsafe: string): string {
  * For more robust sanitization, consider using DOMPurify
  */
 export function sanitizeHtmlContent(html: string): string {
-  // Remove script tags and their content
   let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-
-  // Remove event handlers (onclick, onerror, etc.)
   sanitized = sanitized.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '')
   sanitized = sanitized.replace(/\s*on\w+\s*=\s*[^\s>]*/gi, '')
-
-  // Remove javascript: URLs
   sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"')
-
-  // Remove data: URLs in src (can be used for XSS)
   sanitized = sanitized.replace(/src\s*=\s*["']data:[^"']*["']/gi, 'src=""')
-
   return sanitized
 }
 
 export const getHtmlTemplate = (title: string, content: string) => {
-  // Escape the title to prevent XSS
   const safeTitle = escapeHtml(title || 'Document Aurora AI')
-
-  // Sanitize the content (allows HTML but removes dangerous elements)
   const safeContent = sanitizeHtmlContent(content || '')
 
   return `<!DOCTYPE html>

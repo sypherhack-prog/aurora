@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://aurora-omega.vercel.app.com"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const urlProd = "https://aurora-omega.vercel.app.com/addin/"; // Production: add-in is served at /addin/
 
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();

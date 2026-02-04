@@ -21,6 +21,9 @@ export const APP_CONSTANTS = {
     EDITOR: {
         AVG_READING_SPEED: 200, // words per minute
     },
+    LIMITS: {
+        MAX_AI_CONTENT_LENGTH: 50000,
+    },
     PRICING: {
         BASIC: 10000,
         PRO: 20000,

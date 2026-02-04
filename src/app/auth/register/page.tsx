@@ -1,6 +1,7 @@
 'use client'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import type { ComponentType } from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -48,27 +49,19 @@ function SuccessView() {
     )
 }
 
-interface InputFieldProps {
+interface InputFieldConfig {
     id: string
     label: string
-    icon: any
+    icon: ComponentType<{ className?: string }>
     type: string
     value: string
-    onChange: (val: string) => void
+    onValueChange: (val: string) => void
     placeholder: string
     minLength?: number
 }
 
-function InputField({
-    id,
-    label,
-    icon: Icon,
-    type,
-    value,
-    onChange,
-    placeholder,
-    minLength,
-}: InputFieldProps) {
+function InputField({ field }: { field: InputFieldConfig }) {
+    const { id, label, icon: Icon, type, value, onValueChange, placeholder, minLength } = field
     return (
         <div>
             <label htmlFor={id} className="block text-sm font-medium text-zinc-300 mb-2">
@@ -80,7 +73,7 @@ function InputField({
                     type={type}
                     id={id}
                     value={value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => onValueChange(e.target.value)}
                     placeholder={placeholder}
                     required
                     minLength={minLength}
@@ -122,6 +115,10 @@ export default function RegisterPage() {
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
 
+    const handleNameChange = (val: string) => setName(val)
+    const handleEmailChange = (val: string) => setEmail(val)
+    const handlePasswordChange = (val: string) => setPassword(val)
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
@@ -156,9 +153,9 @@ export default function RegisterPage() {
 
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-8 backdrop-blur-sm">
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <InputField id="name" label="Nom" icon={User} type="text" value={name} onChange={setName} placeholder="Votre nom" />
-                        <InputField id="email" label="Email" icon={Mail} type="email" value={email} onChange={setEmail} placeholder="votre@email.com" />
-                        <InputField id="password" label="Mot de passe" icon={Lock} type="password" value={password} onChange={setPassword} placeholder="••••••••" minLength={6} />
+                        <InputField field={{ id: 'name', label: 'Nom', icon: User, type: 'text', value: name, onValueChange: handleNameChange, placeholder: 'Votre nom' }} />
+                        <InputField field={{ id: 'email', label: 'Email', icon: Mail, type: 'email', value: email, onValueChange: handleEmailChange, placeholder: 'votre@email.com' }} />
+                        <InputField field={{ id: 'password', label: 'Mot de passe', icon: Lock, type: 'password', value: password, onValueChange: handlePasswordChange, placeholder: '••••••••', minLength: 6 }} />
 
                         {error && <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>}
 

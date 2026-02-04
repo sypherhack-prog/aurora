@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { getBearerToken, verifyAddinToken } from '@/lib/addin-auth'
+import { APP_CONSTANTS } from '@/lib/constants'
 import { processAIRequest, AIAction } from '@/lib/groq'
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 import { validateUsageLimit } from '@/lib/usage'
@@ -40,14 +42,19 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // 1. Check Authentication
+        // 1. Check Authentication (session from web app or Bearer token from Word Add-in)
         const session = await getServerSession(authOptions)
+        const bearerToken = getBearerToken(req.headers.get('authorization'))
+        let userId: string | null = session?.user?.id ?? null
 
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+        if (!userId && bearerToken) {
+            const addinPayload = await verifyAddinToken(bearerToken)
+            if (addinPayload) userId = addinPayload.userId
         }
 
-        const userId = session.user.id
+        if (!userId) {
+            return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+        }
 
         // 2. Check Subscription & Limits
         await validateUsageLimit(userId)
@@ -66,8 +73,12 @@ export async function POST(req: NextRequest) {
 
         // Limit content size to prevent abuse
         const textToProcess = selection || content || ''
-        if (textToProcess.length > 50000) {
-            return NextResponse.json({ error: 'Contenu trop long (max 50000 caractères)' }, { status: 400 })
+        const maxLength = APP_CONSTANTS.LIMITS.MAX_AI_CONTENT_LENGTH
+        if (textToProcess.length > maxLength) {
+            return NextResponse.json(
+                { error: `Contenu trop long (max ${maxLength} caractères)` },
+                { status: 400 }
+            )
         }
 
         // Call Gemini API
@@ -86,40 +97,39 @@ export async function POST(req: NextRequest) {
             cause: error.cause,
             name: error.name
         })
+        return formatErrorResponse(error)
+    }
+}
 
-        if (error.message === 'SUBSCRIPTION_EXPIRED') {
-            return NextResponse.json(
-                {
-                    error: 'Votre abonnement a expiré. Veuillez renouveler pour continuer.',
-                    code: 'SUBSCRIPTION_EXPIRED',
-                },
-                { status: 403 }
-            )
-        }
-
-        if (error.message === 'LIMIT_REACHED') {
-            return NextResponse.json(
-                {
-                    error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
-                    code: 'LIMIT_REACHED',
-                },
-                { status: 403 }
-            )
-        }
-
-        if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
-            return NextResponse.json(
-                { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
-                { status: 401 }
-            )
-        }
-
-        // Return the actual error message in dev mode for debugging
+function formatErrorResponse(error: any): NextResponse {
+    if (error.message === 'SUBSCRIPTION_EXPIRED') {
         return NextResponse.json(
-            { error: `Erreur interne: ${error.message}` },
-            { status: 500 }
+            {
+                error: 'Votre abonnement a expiré. Veuillez renouveler pour continuer.',
+                code: 'SUBSCRIPTION_EXPIRED',
+            },
+            { status: 403 }
         )
     }
+    if (error.message === 'LIMIT_REACHED') {
+        return NextResponse.json(
+            {
+                error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
+                code: 'LIMIT_REACHED',
+            },
+            { status: 403 }
+        )
+    }
+    if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
+        return NextResponse.json(
+            { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
+            { status: 401 }
+        )
+    }
+    return NextResponse.json(
+        { error: `Erreur interne: ${error.message}` },
+        { status: 500 }
+    )
 }
 
 

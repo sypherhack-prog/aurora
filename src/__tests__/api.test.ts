@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-
+import { describe, it, expect } from 'vitest';
+import { APP_CONSTANTS } from '@/lib/constants';
 
 // Helper functions extracted to reduce nesting depth
 interface ApiResponse<T = unknown> {
@@ -105,7 +105,7 @@ describe('Payment Request Validation', () => {
         const errors = validatePaymentRequest({
             reference: 'REF12345',
             phone: '0341234567',
-            amount: 10000,
+            amount: APP_CONSTANTS.PRICING.BASIC,
         })
         expect(errors).toHaveLength(0)
     })
@@ -114,7 +114,7 @@ describe('Payment Request Validation', () => {
         const errors = validatePaymentRequest({
             reference: 'REF12345',
             phone: '123',
-            amount: 10000,
+            amount: APP_CONSTANTS.PRICING.BASIC,
         })
         expect(errors).toContain('Invalid phone number format')
     })
