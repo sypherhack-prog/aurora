@@ -4,6 +4,12 @@ import { getUserPlan } from '@/lib/subscription'
 
 export async function validateUsageLimit(userId: string) {
     const plan = await getUserPlan(userId)
+
+    // Block expired users
+    if (plan === 'EXPIRED') {
+        throw new Error('SUBSCRIPTION_EXPIRED')
+    }
+
     if (plan !== 'FREE') return
 
     const user = await prisma.user.findUnique({

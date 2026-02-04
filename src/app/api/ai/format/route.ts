@@ -87,6 +87,16 @@ export async function POST(req: NextRequest) {
             name: error.name
         })
 
+        if (error.message === 'SUBSCRIPTION_EXPIRED') {
+            return NextResponse.json(
+                {
+                    error: 'Votre abonnement a expiré. Veuillez renouveler pour continuer.',
+                    code: 'SUBSCRIPTION_EXPIRED',
+                },
+                { status: 403 }
+            )
+        }
+
         if (error.message === 'LIMIT_REACHED') {
             return NextResponse.json(
                 {

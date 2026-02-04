@@ -24,5 +24,16 @@ export async function getUserPlan(userId: string): Promise<string> {
         },
     })
 
-    return activeSub ? activeSub.plan : 'FREE'
+    if (activeSub) {
+        return activeSub.plan
+    }
+
+    // 3. Check if user has ANY subscription (even expired)
+    const anySub = await prisma.subscription.findFirst({
+        where: { userId },
+    })
+
+    // If they had a subscription before (expired), block them
+    // If they never had one (new user), give FREE plan
+    return anySub ? 'EXPIRED' : 'FREE'
 }

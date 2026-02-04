@@ -5,6 +5,11 @@ import { getUserPlan } from '@/lib/subscription'
 export async function checkExportLimit(userId: string) {
     const plan = await getUserPlan(userId)
 
+    // Block expired users
+    if (plan === 'EXPIRED') {
+        throw new Error('SUBSCRIPTION_EXPIRED')
+    }
+
     // If not FREE, no limit (or different limit, but currently only FREE has limit mentioned)
     if (plan !== 'FREE') return
 

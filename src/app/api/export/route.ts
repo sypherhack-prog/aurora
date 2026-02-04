@@ -36,6 +36,9 @@ export async function POST(req: NextRequest) {
             const { checkExportLimit } = await import('@/lib/export-service')
             await checkExportLimit(session.user.id)
         } catch (e: unknown) {
+            if (e instanceof Error && e.message === 'SUBSCRIPTION_EXPIRED') {
+                return NextResponse.json({ error: 'Votre abonnement a expiré. Veuillez renouveler.' }, { status: 403 })
+            }
             if (e instanceof Error && e.message === 'EXPORT_LIMIT_REACHED') {
                 return NextResponse.json({ error: 'Limite mensuelle atteinte (2 exports). Passez à la version PRO.' }, { status: 403 })
             }
