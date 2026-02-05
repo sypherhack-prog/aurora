@@ -13,8 +13,9 @@ const ADDIN_CSP = [
   'img-src \'self\' data: blob: https:',
   'font-src \'self\' data:',
   `connect-src 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com`,
-  // frame-ancestors : autoriser Office et le domaine lui-même (pour certains cas d'usage)
-  `frame-ancestors 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com`,
+  // frame-ancestors : tous les domaines Office/Microsoft requis pour Word Add-in
+  // Inclure apex + wildcards (https://*.office.com ne matche pas https://office.com)
+  `frame-ancestors 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.vercel.app https://office.com https://*.office.com https://office365.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://outlook.office.com https://*.outlook.office.com https://outlook.office365.com https://*.outlook.office365.com https://outlook.live.com https://*.live.com https://*.msocdn.com https://*.sharepoint.com https://*.sharepointonline.com https://*.officeservices.live.com https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net`,
   'base-uri \'self\'',
   'form-action \'self\'',
 ].join('; ');
