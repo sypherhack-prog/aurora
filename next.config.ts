@@ -73,6 +73,15 @@ const nextConfig: NextConfig = {
         source: '/addin/manifest-prod.xml', 
         headers: addinHeaders,
       },
+      // Exception pour la racine : Word peut charger la racine pour le SupportUrl
+      // On autorise le framing depuis Office pour éviter les erreurs CSP
+      { 
+        source: '/',
+        headers: [
+          ...defaultHeaders.filter(h => h.key !== 'Content-Security-Policy'),
+          { key: 'Content-Security-Policy', value: ADDIN_CSP },
+        ],
+      },
       // Default : pour toutes les autres routes
       { 
         source: '/:path*', 
