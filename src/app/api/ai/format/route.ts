@@ -25,17 +25,33 @@ const VALID_ACTIONS = [
 
 export async function POST(req: NextRequest) {
     try {
-        // 0. Rate limiting
+        // 0. Rate limiting (per-IP + global pour ne pas dépasser la clé Groq avec 100 users)
         const ip = getClientIP(req)
-        const rateLimit = checkRateLimit(`ai:${ip}`, RATE_LIMITS.AI)
+        const perIpLimit = checkRateLimit(`ai:${ip}`, RATE_LIMITS.AI)
+        const globalLimit = checkRateLimit('ai:global', {
+            limit: APP_CONSTANTS.LIMITS.AI_GLOBAL_REQUESTS_PER_MINUTE,
+            windowSeconds: 60,
+        })
 
-        if (!rateLimit.success) {
+        if (!perIpLimit.success) {
             return NextResponse.json(
-                { error: 'Trop de requêtes. Réessayez plus tard.' },
+                { error: 'Trop de requêtes depuis votre connexion. Réessayez dans une minute.' },
                 {
                     status: 429,
                     headers: {
-                        'Retry-After': rateLimit.resetIn.toString(),
+                        'Retry-After': perIpLimit.resetIn.toString(),
+                        'X-RateLimit-Remaining': '0',
+                    }
+                }
+            )
+        }
+        if (!globalLimit.success) {
+            return NextResponse.json(
+                { error: 'Service temporairement saturé. Réessayez dans une minute.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': globalLimit.resetIn.toString(),
                         'X-RateLimit-Remaining': '0',
                     }
                 }
