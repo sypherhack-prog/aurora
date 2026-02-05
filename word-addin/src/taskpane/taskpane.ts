@@ -371,7 +371,9 @@ const handleAIAction = async (action: AuroraAction, insertMode: InsertMode): Pro
     }
 
     if (!response.ok) {
-      throw new Error(data?.error || 'Erreur lors du traitement')
+      const detail = (data as { detail?: string })?.detail
+      const msg = data?.error || 'Erreur lors du traitement'
+      throw new Error(detail ? `${msg} (${detail})` : msg)
     }
 
     if (data.result) {

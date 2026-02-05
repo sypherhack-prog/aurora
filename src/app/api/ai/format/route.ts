@@ -59,7 +59,12 @@ export async function POST(req: NextRequest) {
         }
 
         // 1. Check Authentication (session from web app or Bearer token from Word Add-in)
-        const session = await getServerSession(authOptions)
+        let session: Awaited<ReturnType<typeof getServerSession>> = null
+        try {
+            session = await getServerSession(authOptions)
+        } catch {
+            // NextAuth can throw if NEXTAUTH_SECRET/URL missing; rely on Bearer below
+        }
         const bearerToken = getBearerToken(req.headers.get('authorization'))
         let userId: string | null = session?.user?.id ?? null
 
@@ -75,10 +80,19 @@ export async function POST(req: NextRequest) {
         // 2. Check Subscription & Limits
         await validateUsageLimit(userId)
 
-        const { action, content, selection, theme, documentType } = await req.json()
+        let body: { action?: string; content?: string; selection?: string; theme?: string; documentType?: string }
+        try {
+            body = await req.json()
+        } catch {
+            return NextResponse.json(
+                { error: 'Corps de requête invalide.' },
+                { status: 400 }
+            )
+        }
+        const { action, content, selection, theme, documentType } = body
 
         // Validate action is in whitelist
-        if (!VALID_ACTIONS.includes(action)) {
+        if (!action || !VALID_ACTIONS.includes(action)) {
             return NextResponse.json({ error: 'Action invalide' }, { status: 400 })
         }
 
@@ -107,9 +121,11 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, result })
     } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error))
         logger.error('AI route error', {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            name: error instanceof Error ? error.name : 'UnknownError',
+            message: err.message,
+            name: err.name,
+            stack: err.stack,
         })
         return formatErrorResponse(error)
     }
@@ -155,8 +171,17 @@ function formatErrorResponse(error: unknown): NextResponse {
             { status: 503 }
         )
     }
+    if (/NEXTAUTH_SECRET|Prisma|P1001|P1017|connection|ECONNREFUSED/i.test(message)) {
+        return NextResponse.json(
+            { error: 'Service temporairement indisponible. Réessayez dans un instant.' },
+            { status: 503 }
+        )
+    }
     return NextResponse.json(
-        { error: 'Erreur interne. Veuillez réessayer.' },
+        {
+            error: 'Erreur interne. Veuillez réessayer.',
+            detail: message,
+        },
         { status: 500 }
     )
 }
