@@ -32,16 +32,24 @@ git push -u origin main
 1.  Import the repo on [Vercel.com](https://vercel.com).
 2.  **Environment Variables**:
     - `DATABASE_URL`: Your Postgres connection string.
-    - `NEXTAUTH_SECRET`: Random string.
-    - `NEXTAUTH_URL`: `https://<your-project>.vercel.app` (you get this after deploy, or set strictly).
-    - `GEMINI_API_KEY`: Your AI API key.
-3.  **Build Command**: default is fine (`npm run build`).
-4.  **Install Command**: default is fine (`npm install`).
+    - `NEXTAUTH_SECRET`: Random string (ex: `openssl rand -base64 32`).
+    - `NEXTAUTH_URL`: **Doit être exactement l’URL du site** (ex: `https://votre-projet.vercel.app`). Après le premier déploiement, copiez l’URL depuis la barre d’adresse et mettez-la dans NEXTAUTH_URL, puis redéployez. Sinon la connexion (login) échouera.
+    - `GROQ_API_KEY`: Clé API Groq (IA).
+    - (Optionnel) `SITE_URL`: Si vous utilisez un domaine personnalisé, définissez-le ici pour l’add-in Word.
+3.  **Build Command**: `npm run build`.
+4.  **Install Command**: `npm install`.
 
 ## 5. Finalize Database
-After deployment, go to the Vercel project Settings -> Deployments -> Redeploy OR run the migration command locally if you can connect to the remote DB:
+After deployment, apply the schema and **create an admin user** in production:
+
 ```bash
-# Apply schema to production DB
+# .env doit contenir DATABASE_URL de production
 npx prisma db push
+npx tsx prisma/create-admin.ts   # ou le script que vous utilisez pour créer l’admin
 ```
-(You need the `DATABASE_URL` in your .env to be the production one for this command).
+
+Sans utilisateur en base, la connexion sur le site déployé ne fonctionnera pas (même avec les bons identifiants locaux).
+
+## 6. Vérifier la config (connexion / add-in)
+- Ouvrez `https://votre-site.vercel.app/api/health` : vous devez voir `nextAuthUrl` égal à l’URL du site. Si ce n’est pas le cas, corrigez `NEXTAUTH_URL` sur Vercel et redéployez.
+- Pour l’add-in Word : sur Vercel, `VERCEL_URL` est défini automatiquement ; le manifest utilisera cette URL. Si vous avez un domaine personnalisé, définissez `SITE_URL` dans les variables d’environnement.

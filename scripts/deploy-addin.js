@@ -35,10 +35,13 @@ async function copyRecursive(src, dest) {
 }
 
 async function main() {
-    // 1. Install & Build Add-in
+    const env = { ...process.env }
+    if (!env.SITE_URL && env.VERCEL_URL) {
+        env.SITE_URL = 'https://' + env.VERCEL_URL
+    }
     try {
         execSync('npm install --no-audit --production=false', { cwd: addinDir, stdio: 'inherit' })
-        execSync('npm run build', { cwd: addinDir, stdio: 'inherit' })
+        execSync('npm run build', { cwd: addinDir, stdio: 'inherit', env })
     } catch (err) {
         process.exit(1)
     }

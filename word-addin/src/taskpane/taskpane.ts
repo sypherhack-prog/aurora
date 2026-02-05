@@ -5,8 +5,8 @@
 
 /* global document, Office, Word */
 
-// Configuration - Update this with your production API URL
-const API_BASE_URL = 'https://aurora-omega.vercel.app';
+// Injecté au build (webpack DefinePlugin) ; sinon fallback
+const API_BASE_URL = (typeof process !== "undefined" && (process as { env?: { API_BASE_URL?: string } }).env?.API_BASE_URL) || "https://aurora-omega.vercel.app";
 
 // State
 let authToken: string | null = null;

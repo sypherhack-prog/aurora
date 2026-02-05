@@ -1,12 +1,17 @@
 import type { NextConfig } from 'next';
 
+const siteOrigin =
+  process.env.SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  'https://aurora-omega.vercel.app';
+
 const ADDIN_CSP = [
   'default-src \'self\'',
   'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'',
   'style-src \'self\' \'unsafe-inline\'',
   'img-src \'self\' data: blob:',
   'font-src \'self\' data:',
-  'connect-src \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://api.groq.com',
+  `connect-src 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://api.groq.com`,
   'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.outlook.office.com https://*.outlook.office365.com',
   'base-uri \'self\'',
   'form-action \'self\'',

@@ -3,10 +3,15 @@
 const devCerts = require("office-addin-dev-certs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 const urlDev = "https://localhost:3000/";
 // Doit correspondre exactement à l’URL de déploiement (ex. Vercel = .vercel.app sans .com)
-const urlProd = "https://aurora-omega.vercel.app/addin/";
+const siteBase =
+  process.env.SITE_URL ||
+  (process.env.VERCEL_URL ? "https://" + process.env.VERCEL_URL : null) ||
+  "https://aurora-omega.vercel.app";
+const urlProd = siteBase.replace(/\/$/, "") + "/addin/";
 
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
@@ -52,6 +57,9 @@ module.exports = async (env, options) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        "process.env.API_BASE_URL": JSON.stringify(siteBase.replace(/\/$/, "")),
+      }),
       new HtmlWebpackPlugin({
         filename: "taskpane.html",
         template: "./src/taskpane/taskpane.html",
