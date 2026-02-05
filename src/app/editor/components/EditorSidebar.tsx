@@ -1,6 +1,6 @@
 import Link from 'next/link'
+import { AuroraIcon } from '@/components/AuroraIcon'
 import {
-    Sparkles,
     FileText,
     FolderOpen,
     BarChart3,
@@ -63,7 +63,7 @@ export function EditorSidebar(props: EditorSidebarProps) {
             <div className="p-6 border-b border-zinc-800">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                        <Sparkles className="w-4 h-4 text-white" />
+                        <AuroraIcon className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold text-lg">Aurora AI</span>
                 </Link>

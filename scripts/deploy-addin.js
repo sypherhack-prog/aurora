@@ -36,7 +36,10 @@ async function copyRecursive(src, dest) {
 
 async function main() {
     const env = { ...process.env }
-    if (!env.SITE_URL && env.VERCEL_URL) {
+    const productionUrl = 'https://aurora-omega.vercel.app'
+    if (env.VERCEL_ENV === 'production') {
+        env.SITE_URL = env.SITE_URL || productionUrl
+    } else if (!env.SITE_URL && env.VERCEL_URL) {
         env.SITE_URL = 'https://' + env.VERCEL_URL
     }
     try {

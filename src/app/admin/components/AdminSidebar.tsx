@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Sparkles, LucideIcon } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Settings, LogOut, LucideIcon } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 
 interface UserSession {
     name?: string | null
@@ -22,7 +23,7 @@ function SidebarHeader() {
         <div className="p-6 border-b border-zinc-800">
             <Link href="/" className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
+                    <AuroraIcon className="w-4 h-4 text-white" />
                 </div>
                 <span className="font-semibold text-lg">Aurora AI</span>
             </Link>

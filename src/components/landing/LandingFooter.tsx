@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 
 export function LandingFooter() {
     return (
@@ -7,7 +7,7 @@ export function LandingFooter() {
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-white" />
+                        <AuroraIcon className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-semibold">Aurora AI</span>
                 </div>

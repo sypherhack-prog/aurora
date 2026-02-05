@@ -1,5 +1,5 @@
+import { AuroraIcon } from '@/components/AuroraIcon'
 import {
-    Sparkles,
     X,
     Zap,
     Wand2,
@@ -61,7 +61,7 @@ function AIHeader({ onClose }: { onClose: () => void }) {
     return (
         <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
             <h3 className="font-semibold flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <AuroraIcon className="w-4 h-4 text-cyan-400" />
                 Assistant IA
             </h3>
             <button onClick={onClose} className="md:hidden text-zinc-400">

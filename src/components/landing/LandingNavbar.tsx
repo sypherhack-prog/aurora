@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 
 export function LandingNavbar() {
     return (
@@ -7,7 +7,7 @@ export function LandingNavbar() {
             <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-white" />
+                        <AuroraIcon className="w-5 h-5 text-white" />
                     </div>
                     <span className="font-bold text-xl">Aurora AI</span>
                 </div>

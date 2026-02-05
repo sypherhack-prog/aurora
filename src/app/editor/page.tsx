@@ -12,7 +12,6 @@ import { TableHeader } from '@tiptap/extension-table-header'
 import { useSession } from 'next-auth/react'
 import {
     FileText,
-    Sparkles,
     ChevronRight,
     Loader2,
     Download,
@@ -24,6 +23,7 @@ import {
     Mail,
     PenTool,
 } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 import { logger } from '@/lib/logger'
 import { APP_CONSTANTS } from '@/lib/constants'
 
@@ -418,7 +418,7 @@ export default function EditorPage() {
                             onClick={() => setAiPanelOpen(!aiPanelOpen)}
                             className="md:hidden p-2 text-zinc-400 hover:text-white"
                         >
-                            <Sparkles className="w-5 h-5" />
+                            <AuroraIcon className="w-5 h-5" />
                         </button>
                     </div>
                 </header>

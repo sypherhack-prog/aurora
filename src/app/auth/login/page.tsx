@@ -4,7 +4,8 @@ import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Sparkles, Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
+import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 
 function LoginForm() {
     const searchParams = useSearchParams()
@@ -119,7 +120,7 @@ export default function UserLoginPage() {
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-flex items-center gap-3 mb-6">
                         <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 text-white" />
+                            <AuroraIcon className="w-6 h-6 text-white" />
                         </div>
                         <span className="font-bold text-2xl text-white">Aurora AI</span>
                     </Link>

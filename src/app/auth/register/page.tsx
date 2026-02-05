@@ -5,7 +5,8 @@ import type { ComponentType } from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sparkles, Mail, Lock, User, Loader2, ArrowRight, Check } from 'lucide-react'
+import { Mail, Lock, User, Loader2, ArrowRight, Check } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 import { APP_CONSTANTS } from '@/lib/constants'
 
 // --- Components ---
@@ -24,7 +25,7 @@ function LogoHeader() {
         <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 text-white" />
+                    <AuroraIcon className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-bold text-2xl text-white">Aurora AI</span>
             </Link>

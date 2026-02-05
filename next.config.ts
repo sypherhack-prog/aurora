@@ -12,7 +12,7 @@ const ADDIN_CSP = [
   'img-src \'self\' data: blob:',
   'font-src \'self\' data:',
   `connect-src 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://api.groq.com`,
-  'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.outlook.office.com https://*.outlook.office365.com',
+  'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com',
   'base-uri \'self\'',
   'form-action \'self\'',
 ].join('; ');

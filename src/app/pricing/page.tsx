@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Check, Sparkles, Zap, ArrowRight } from 'lucide-react'
+import { Check, Zap, ArrowRight } from 'lucide-react'
+import { AuroraIcon } from '@/components/AuroraIcon'
 import { APP_CONSTANTS } from '@/lib/constants'
 
 // Helper to format price
@@ -81,7 +82,7 @@ export default function PricingPage() {
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center">
-                            <Sparkles className="w-5 h-5 text-white" />
+                            <AuroraIcon className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-bold text-xl">Aurora AI</span>
                     </Link>

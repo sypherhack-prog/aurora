@@ -1,5 +1,5 @@
+import { AuroraIcon } from '@/components/AuroraIcon'
 import {
-    Sparkles,
     Plus,
     GraduationCap,
     BookOpen,
@@ -24,7 +24,7 @@ export function NewDocModal({ isOpen, onClose, onCreateDoc }: NewDocModalProps) 
                 <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
                 <h2 className="text-2xl font-bold mb-2 flex items-center gap-3 relative z-10">
-                    <Sparkles className="w-6 h-6 text-cyan-400" />
+                    <AuroraIcon className="w-6 h-6 text-cyan-400" />
                     Nouveau Document
                 </h2>
                 <p className="text-zinc-400 mb-8 relative z-10">
