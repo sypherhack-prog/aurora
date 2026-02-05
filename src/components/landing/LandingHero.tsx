@@ -44,7 +44,7 @@ export function LandingHero() {
                         Essayer Gratuitement
                     </Link>
                     <Link
-                        href="/word-addin"  // Assuming you might want a page for this, or keep it generic
+                        href="/extension-word"
                         className="flex items-center gap-2 bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700 text-white px-6 py-4 rounded-xl transition-all"
                     >
                         <Zap className="w-5 h-5 text-cyan-400" />

@@ -12,6 +12,9 @@ export function LandingFooter() {
                     <span className="font-semibold">Aurora AI</span>
                 </div>
                 <div className="flex items-center gap-6 text-sm text-zinc-500">
+                    <Link href="/extension-word" className="hover:text-white transition">
+                        Extension Word
+                    </Link>
                     <Link href="/pricing" className="hover:text-white transition">
                         Tarifs
                     </Link>

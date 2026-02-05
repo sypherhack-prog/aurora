@@ -4,11 +4,14 @@ import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Smartphone, ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { APP_CONSTANTS } from '@/lib/constants'
 
-const planDetails: Record<string, { name: string; price: string; period: string }> = {
-    BASIC: { name: 'Basic', price: '10,000', period: '1 mois' },
-    PRO: { name: 'Pro', price: '20,000', period: '3 mois' },
-    ANNUAL: { name: 'Annuel', price: '90,000', period: '12 mois' },
+const formatPrice = (n: number) => n.toLocaleString('en-US')
+
+const planDetails: Record<string, { name: string; price: string; period: string; amount: number }> = {
+    BASIC: { name: 'Basic', price: formatPrice(APP_CONSTANTS.PRICING.BASIC), period: '1 mois', amount: APP_CONSTANTS.PRICING.BASIC },
+    PRO: { name: 'Pro', price: formatPrice(APP_CONSTANTS.PRICING.PRO), period: 'mois', amount: APP_CONSTANTS.PRICING.PRO },
+    ANNUAL: { name: 'Annuel', price: formatPrice(APP_CONSTANTS.PRICING.ANNUAL), period: '12 mois', amount: APP_CONSTANTS.PRICING.ANNUAL },
 }
 
 function SubscribeContent() {
@@ -102,7 +105,7 @@ function SubscribeContent() {
                     Pour effectuer le paiement, tapez le code suivant sur votre téléphone :
                 </p>
                 <div className="bg-zinc-100 dark:bg-zinc-950 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono text-center text-blue-600 dark:text-blue-400 font-bold select-all">
-                    #111*1*2*0388670296*{plan.price.replace(/,/g, '')}*CODE_SECRET#
+                    #111*1*2*0388670296*{plan.amount}*CODE_SECRET#
                 </div>
                 <p className="text-xs text-zinc-500 mt-2 text-center">
                     Remplacez <strong>CODE_SECRET</strong> par votre code secret MVOLA

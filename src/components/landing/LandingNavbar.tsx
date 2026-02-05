@@ -15,6 +15,9 @@ export function LandingNavbar() {
                     <Link href="#features" className="text-zinc-400 hover:text-white transition">
                         Fonctionnalités
                     </Link>
+                    <Link href="/extension-word" className="text-zinc-400 hover:text-white transition">
+                        Extension Word
+                    </Link>
                     <Link href="/pricing" className="text-zinc-400 hover:text-white transition">
                         Tarifs
                     </Link>

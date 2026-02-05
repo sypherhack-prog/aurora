@@ -40,15 +40,15 @@ const plans = [
     {
         name: 'Pro',
         price: formatPrice(APP_CONSTANTS.PRICING.PRO),
-        period: '3 mois',
-        description: 'Pour les professionnels exigeants',
+        period: 'par mois',
+        description: 'Extension Word incluse',
         features: [
+            'Extension Word Aurora AI incluse',
             'Documents illimités',
-            'IA avancée (GPT-4)',
+            'IA avancée',
             "Tous les formats d'export",
-            'Support prioritaire 24/7',
+            'Support prioritaire',
             'Templates premium',
-            'Collaboration équipe',
         ],
         planCode: 'PRO',
         highlight: true,
@@ -59,8 +59,9 @@ const plans = [
         name: 'Annuel',
         price: formatPrice(APP_CONSTANTS.PRICING.ANNUAL),
         period: '12 mois',
-        description: 'Économisez 2 mois',
+        description: 'Extension Word incluse · Économisez 2 mois',
         features: [
+            'Extension Word Aurora AI incluse',
             'Tout du Pro inclus',
             '2 mois gratuits',
             'Accès anticipé aux nouveautés',
@@ -87,6 +88,9 @@ export default function PricingPage() {
                         <span className="font-bold text-xl">Aurora AI</span>
                     </Link>
                     <div className="flex items-center gap-4">
+                        <Link href="/extension-word" className="text-zinc-400 hover:text-white transition">
+                            Extension Word
+                        </Link>
                         <Link href="/editor" className="text-zinc-400 hover:text-white transition">
                             Éditeur
                         </Link>
@@ -115,9 +119,15 @@ export default function PricingPage() {
                             plan
                         </span>
                     </h1>
-                    <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+                    <p className="text-xl text-zinc-400 max-w-2xl mx-auto mb-4">
                         Commencez gratuitement, évoluez selon vos besoins. Paiement simple via MVola.
                     </p>
+                    <Link
+                        href="/extension-word"
+                        className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition text-sm"
+                    >
+                        Extension Word incluse (Pro/Annuel) — Installer l&apos;extension
+                    </Link>
                 </div>
             </section>
 

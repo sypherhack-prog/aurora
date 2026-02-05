@@ -22,7 +22,7 @@ describe('Application Constants', () => {
         it('should have pricing tiers', () => {
             expect(APP_CONSTANTS.PRICING.BASIC).toBe(10000)
             expect(APP_CONSTANTS.PRICING.PRO).toBe(20000)
-            expect(APP_CONSTANTS.PRICING.ANNUAL).toBe(90000)
+            expect(APP_CONSTANTS.PRICING.ANNUAL).toBe(100000)
         })
     })
 

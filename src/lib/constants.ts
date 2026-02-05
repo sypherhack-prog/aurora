@@ -26,7 +26,7 @@ export const APP_CONSTANTS = {
     },
     PRICING: {
         BASIC: 10000,
-        PRO: 20000,
+        PRO: 20000, // 20 000 Ar/mois (extension Word incluse)
         ANNUAL: 100000,
     },
     DEFAULT_CONTENT: {

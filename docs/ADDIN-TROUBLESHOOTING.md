@@ -29,7 +29,15 @@
 
 Ces erreurs **ne viennent pas de notre add-in** : c'est Word/Office qui charge des source maps (.js.map) depuis Azure DevOps. La CSP de Microsoft les bloque. On ne peut pas les corriger et elles n'impactent pas notre add-in. Filtrez la console par `aurora-omega.vercel.app` pour voir nos erreurs.
 
+### Word Desktop vs Word sur le web (office.com)
+
+| Plateforme | Installation |
+|------------|--------------|
+| **Word Desktop** (Windows/Mac) | URL ou fichier |
+| **Word sur le web** (office.com) | Fichier uniquement : téléchargez le manifest puis Parcourir |
+
 ### Si ça ne fonctionne toujours pas
 
-- Utilisez **Word sur le web** (office.com) pour tester : l’add-in peut se comporter différemment.
+- Essayez l'autre plateforme (Web ou Desktop). Utilisez la méthode par fichier si l'URL ne marche pas.
+- L'add-in peut se comporter différemment selon la plateforme.
 - Videz le cache Office : [Procédure Microsoft](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/clear-cache)

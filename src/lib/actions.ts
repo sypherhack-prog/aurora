@@ -35,8 +35,8 @@ export async function verifyPayment(subscriptionId: string) {
             }
             break
         case 'PRO':
-            // Add 3 months safely
-            endDate.setMonth(endDate.getMonth() + 3)
+            // Add 1 month (same as BASIC)
+            endDate.setMonth(endDate.getMonth() + 1)
             if (endDate.getDate() !== now.getDate()) {
                 endDate.setDate(0)
             }
