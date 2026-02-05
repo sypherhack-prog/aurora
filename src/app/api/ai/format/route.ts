@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession, type Session } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getBearerToken, verifyAddinToken } from '@/lib/addin-auth'
 import { APP_CONSTANTS } from '@/lib/constants'
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 1. Check Authentication (session from web app or Bearer token from Word Add-in)
-        let session: Awaited<ReturnType<typeof getServerSession>> = null
+        let session: Session | null = null
         try {
             session = await getServerSession(authOptions)
         } catch {
