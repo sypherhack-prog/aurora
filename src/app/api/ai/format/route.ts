@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
 }
 
 function formatErrorResponse(error: unknown): NextResponse {
-    const message = error instanceof Error ? error.message : undefined
+    const message = error instanceof Error ? error.message : String(error)
     const code = (error as { code?: string } | null)?.code
 
     if (message === 'SUBSCRIPTION_EXPIRED') {
@@ -141,6 +141,18 @@ function formatErrorResponse(error: unknown): NextResponse {
         return NextResponse.json(
             { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
             { status: 401 }
+        )
+    }
+    if (/429|rate limit|too many requests/i.test(message)) {
+        return NextResponse.json(
+            { error: 'Service IA temporairement saturé. Réessayez dans une minute.' },
+            { status: 503 }
+        )
+    }
+    if (/Groq API Error|Failed to process with Groq|Missing GROQ_API_KEY/i.test(message)) {
+        return NextResponse.json(
+            { error: 'Service IA indisponible. Veuillez réessayer dans un moment.' },
+            { status: 503 }
         )
     }
     return NextResponse.json(

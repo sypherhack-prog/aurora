@@ -361,10 +361,17 @@ const handleAIAction = async (action: AuroraAction, insertMode: InsertMode): Pro
       }),
     })
 
-    const data: { error?: string; result?: string } = await response.json()
+    let data: { error?: string; result?: string } = {}
+    try {
+      data = await response.json()
+    } catch {
+      if (!response.ok) {
+        throw new Error('Erreur serveur. Vérifiez votre connexion ou réessayez plus tard.')
+      }
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || 'Erreur lors du traitement')
+      throw new Error(data?.error || 'Erreur lors du traitement')
     }
 
     if (data.result) {
