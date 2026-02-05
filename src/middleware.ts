@@ -1,8 +1,31 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+// CSP pour autoriser le framing depuis Office
+const ADDIN_CSP = [
+    'default-src \'self\' https://appsforoffice.microsoft.com https://aurora-omega.vercel.app',
+    'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://appsforoffice.microsoft.com https://ajax.aspnetcdn.com',
+    'style-src \'self\' \'unsafe-inline\'',
+    'img-src \'self\' data: blob: https:',
+    'font-src \'self\' data:',
+    'connect-src \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com',
+    'frame-ancestors \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com',
+    'base-uri \'self\'',
+    'form-action \'self\'',
+].join('; ')
 
 export default withAuth(
-    function middleware() {
+    function middleware(req: NextRequest) {
+        // Si c'est la racine, appliquer les headers CSP add-in pour permettre le framing depuis Office
+        // Word peut charger la racine pour le SupportUrl ou d'autres raisons
+        if (req.nextUrl.pathname === '/') {
+            const response = NextResponse.next()
+            // Remplacer le CSP par défaut par celui qui autorise Office
+            response.headers.set('Content-Security-Policy', ADDIN_CSP)
+            return response
+        }
+        
         return NextResponse.next()
     },
     {

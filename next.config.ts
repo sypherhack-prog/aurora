@@ -53,7 +53,17 @@ const defaultHeaders = [
 const nextConfig: NextConfig = {
   async headers() {
     return [
-      // Add-in routes : frame-ancestors permissif pour Office (doit être AVANT la règle par défaut)
+      // Exception pour la racine : Word peut charger la racine pour le SupportUrl
+      // On autorise le framing depuis Office pour éviter les erreurs CSP
+      // DOIT être en PREMIER pour être prioritaire sur /:path*
+      { 
+        source: '/',
+        headers: [
+          ...defaultHeaders.filter(h => h.key !== 'Content-Security-Policy'),
+          { key: 'Content-Security-Policy', value: ADDIN_CSP },
+        ],
+      },
+      // Add-in routes : frame-ancestors permissif pour Office
       // Ces routes doivent être accessibles depuis les iframes Office
       { 
         source: '/addin/:path*', 
@@ -73,16 +83,7 @@ const nextConfig: NextConfig = {
         source: '/addin/manifest-prod.xml', 
         headers: addinHeaders,
       },
-      // Exception pour la racine : Word peut charger la racine pour le SupportUrl
-      // On autorise le framing depuis Office pour éviter les erreurs CSP
-      { 
-        source: '/',
-        headers: [
-          ...defaultHeaders.filter(h => h.key !== 'Content-Security-Policy'),
-          { key: 'Content-Security-Policy', value: ADDIN_CSP },
-        ],
-      },
-      // Default : pour toutes les autres routes
+      // Default : pour toutes les autres routes (doit être en DERNIER)
       { 
         source: '/:path*', 
         headers: defaultHeaders,
