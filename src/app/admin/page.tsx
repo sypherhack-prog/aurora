@@ -9,10 +9,13 @@ export default async function AdminDashboard() {
     const subscriptions = await prisma.subscription.findMany({ include: { payments: true } })
     const payments = await prisma.payment.findMany()
 
-    interface SubWithPayment { status: string }
+    interface SubWithPayment { status: string; plan: string }
     interface Payment { verifiedAt: Date | null; amount: number }
 
-    const activeSubscriptions = (subscriptions as unknown as SubWithPayment[]).filter((s) => s.status === 'ACTIVE').length
+    // Only count paid subscriptions (exclude FREE plan) as "active subscriptions"
+    const activeSubscriptions = (subscriptions as unknown as SubWithPayment[]).filter(
+        (s) => s.status === 'ACTIVE' && s.plan !== 'FREE'
+    ).length
     const pendingPayments = (subscriptions as unknown as SubWithPayment[]).filter((s) => s.status === 'PENDING').length
     const totalRevenue = (payments as unknown as Payment[]).filter((p) => p.verifiedAt).reduce((sum, p) => sum + p.amount, 0)
 
