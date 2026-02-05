@@ -17,20 +17,20 @@ const ADDIN_CSP = [
 
 export default withAuth(
     function middleware(req: NextRequest) {
-        const response = NextResponse.next()
-        
-        // Si c'est la racine, appliquer les headers CSP add-in pour permettre le framing depuis Office
+        // Si c'est la racine, créer une réponse avec les headers CSP add-in
         // Word peut charger la racine pour le SupportUrl ou d'autres raisons
-        // On doit utiliser delete puis set pour s'assurer que le header est bien remplacé
         if (req.nextUrl.pathname === '/') {
+            const response = NextResponse.next()
+            // Supprimer tous les headers CSP existants et appliquer celui pour Office
             response.headers.delete('Content-Security-Policy')
             response.headers.set('Content-Security-Policy', ADDIN_CSP)
-            // Ajouter aussi les autres headers nécessaires pour Office
+            // S'assurer que les autres headers sont aussi présents
             response.headers.set('X-Content-Type-Options', 'nosniff')
             response.headers.set('Referrer-Policy', 'origin-when-cross-origin')
+            return response
         }
         
-        return response
+        return NextResponse.next()
     },
     {
         callbacks: {
