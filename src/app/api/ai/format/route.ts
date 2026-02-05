@@ -23,6 +23,12 @@ const VALID_ACTIONS = [
     'translate-selection',
 ] as const
 
+type ValidAction = (typeof VALID_ACTIONS)[number]
+
+function isValidAction(value: string): value is ValidAction {
+    return (VALID_ACTIONS as readonly string[]).includes(value)
+}
+
 export async function POST(req: NextRequest) {
     try {
         // 0. Rate limiting (per-IP + global pour ne pas dépasser la clé Groq avec 100 users)
@@ -92,7 +98,7 @@ export async function POST(req: NextRequest) {
         const { action, content, selection, theme, documentType } = body
 
         // Validate action is in whitelist
-        if (!action || !VALID_ACTIONS.includes(action)) {
+        if (!action || !isValidAction(action)) {
             return NextResponse.json({ error: 'Action invalide' }, { status: 400 })
         }
 
@@ -111,9 +117,9 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // Call Gemini API
+        // Call Gemini API (action narrowed by isValidAction)
         const result = await processAIRequest({
-            action: action as AIAction,
+            action,
             content: textToProcess,
             theme,
             documentType,
