@@ -52,9 +52,9 @@ const defaultHeaders = [
 const nextConfig: NextConfig = {
   async headers() {
     return [
-      // Ordre important : la dernière règle qui matche écrase les précédentes.
-      // Default d'abord, puis add-in pour que /addin/* ait les bons headers (frame-ancestors Office).
-      { source: '/:path*', headers: defaultHeaders },
+      // Default : exclure /addin pour éviter frame-ancestors 'none' sur l'add-in
+      { source: '/((?!addin).*)', headers: defaultHeaders },
+      // Add-in : frame-ancestors permissif pour Office (iframe)
       { source: '/addin/:path*', headers: addinHeaders },
       { source: '/addin', headers: addinHeaders },
     ];
