@@ -12,7 +12,7 @@ const ADDIN_CSP = [
   'style-src \'self\' \'unsafe-inline\'',
   'img-src \'self\' data: blob: https:',
   'font-src \'self\' data:',
-  `connect-src 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://api.groq.com`,
+  `connect-src 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com`,
   "frame-ancestors 'self' https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com",
   'base-uri \'self\'',
   'form-action \'self\'',
@@ -41,7 +41,7 @@ const addinHeaders = [
 const defaultHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-  { key: 'X-Frame-Options', value: 'DENY' },
+  // Pas de X-Frame-Options : on utilise frame-ancestors dans CSP (X-Frame-Options bloquait l'add-in Word)
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=(), browsing-topics=()' },
@@ -52,8 +52,11 @@ const defaultHeaders = [
 const nextConfig: NextConfig = {
   async headers() {
     return [
-      { source: '/addin/:path*', headers: addinHeaders },
+      // Ordre important : la dernière règle qui matche écrase les précédentes.
+      // Default d'abord, puis add-in pour que /addin/* ait les bons headers (frame-ancestors Office).
       { source: '/:path*', headers: defaultHeaders },
+      { source: '/addin/:path*', headers: addinHeaders },
+      { source: '/addin', headers: addinHeaders },
     ];
   },
 };
