@@ -1,4 +1,5 @@
 import { Editor } from '@tiptap/react'
+import type { AIAction } from '@/lib/groq'
 import {
     Bold,
     Italic,
@@ -25,7 +26,7 @@ import {
 interface EditorToolbarProps {
     editor: Editor | null
     aiLoading: string | null
-    onCallAI: (action: string, insertMode: 'replace' | 'append' | 'insert') => void
+    onCallAI: (action: AIAction, insertMode?: 'replace' | 'append' | 'insert') => Promise<void> | void
     dictation: {
         isListening: boolean
         isSupported: boolean
