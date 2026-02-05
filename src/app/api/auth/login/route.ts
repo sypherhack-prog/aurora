@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { signAddinToken } from '@/lib/addin-auth'
 import prisma from '@/lib/db'
 import { logger } from '@/lib/logger'
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 import { compare } from 'bcryptjs'
 
 /**
@@ -10,6 +11,21 @@ import { compare } from 'bcryptjs'
  */
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIP(req)
+    const rateLimit = checkRateLimit(`login:${ip}`, RATE_LIMITS.AUTH)
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Trop de tentatives. Réessayez dans quelques minutes.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': rateLimit.resetIn.toString(),
+            'X-RateLimit-Remaining': '0',
+          },
+        }
+      )
+    }
+
     const body = await req.json()
     const email = typeof body.email === 'string' ? body.email.trim() : ''
     const password = typeof body.password === 'string' ? body.password : ''

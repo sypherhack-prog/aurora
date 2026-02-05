@@ -7,16 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Aurora AI - Word Add-in</title>
 
-    <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 
-    <!-- Template styles -->
     <link href="taskpane.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
     <div class="aurora-container">
-        <!-- Header -->
         <header class="aurora-header">
             <div class="aurora-logo">
                 <svg class="aurora-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,11 +25,10 @@
             </div>
         </header>
 
-        <!-- Login Section -->
+        <!-- Login -->
         <section id="login-section" class="aurora-section">
             <h2>Connexion</h2>
             <p class="aurora-subtitle">Connectez-vous à votre compte Aurora AI</p>
-            
             <div class="aurora-form">
                 <div class="aurora-input-group">
                     <label for="email">Email</label>
@@ -42,48 +38,65 @@
                     <label for="password">Mot de passe</label>
                     <input type="password" id="password" placeholder="••••••••" />
                 </div>
-                <button id="login-btn" class="aurora-btn aurora-btn-primary">
-                    Se connecter
-                </button>
+                <button id="login-btn" class="aurora-btn aurora-btn-primary">Se connecter</button>
                 <p id="login-error" class="aurora-error" style="display: none;"></p>
             </div>
         </section>
 
-        <!-- Main Panel (hidden until logged in) -->
+        <!-- Main Panel (même structure que SaaS AIPanel) -->
         <section id="main-panel" class="aurora-section" style="display: none;">
             <div class="aurora-user-info">
                 <span id="user-name">Utilisateur</span>
                 <button id="logout-btn" class="aurora-btn-link">Déconnexion</button>
             </div>
 
-            <h2>Formatage IA</h2>
-            <p class="aurora-subtitle">Sélectionnez du texte dans Word et choisissez une action</p>
+            <div class="aurora-panel">
+                <!-- Formatage Intelligent -->
+                <section class="aurora-panel-section aurora-panel-formatting">
+                    <h3><span class="section-icon">⚡</span> Formatage Intelligent</h3>
+                    <p class="aurora-hint">Sans sélection : tout le document. Avec sélection : uniquement le texte choisi.</p>
+                    <button class="aurora-action-btn" data-action="auto-format" data-mode="replace">Auto-formatter tout</button>
+                    <button class="aurora-action-btn" data-action="fix-errors" data-mode="replace">Corriger les erreurs</button>
+                    <button class="aurora-action-btn" data-action="improve-spacing" data-mode="replace">Améliorer espacements</button>
+                </section>
 
-            <div class="aurora-actions">
-                <button class="aurora-action-btn" data-action="auto-format">
-                    <span class="action-icon">✨</span>
-                    <span class="action-label">Formatage Auto</span>
-                </button>
-                <button class="aurora-action-btn" data-action="fix-errors">
-                    <span class="action-icon">🔧</span>
-                    <span class="action-label">Corriger Erreurs</span>
-                </button>
-                <button class="aurora-action-btn" data-action="improve-paragraph">
-                    <span class="action-icon">📝</span>
-                    <span class="action-label">Améliorer Texte</span>
-                </button>
-                <button class="aurora-action-btn" data-action="summarize">
-                    <span class="action-icon">📋</span>
-                    <span class="action-label">Résumer</span>
-                </button>
-                <button class="aurora-action-btn" data-action="translate">
-                    <span class="action-icon">🌍</span>
-                    <span class="action-label">Traduire</span>
-                </button>
-                <button class="aurora-action-btn" data-action="continue-writing">
-                    <span class="action-icon">➡️</span>
-                    <span class="action-label">Continuer</span>
-                </button>
+                <!-- Assistant Rédaction -->
+                <section class="aurora-panel-section">
+                    <h3><span class="section-icon">✏️</span> Assistant Rédaction</h3>
+                    <button class="aurora-action-btn" data-action="continue-writing" data-mode="append">Continuer l'écriture</button>
+                    <button class="aurora-action-btn" data-action="smart-heading" data-mode="replace">Convertir en titre</button>
+                    <button class="aurora-action-btn" data-action="improve-paragraph" data-mode="replace">Améliorer paragraphe</button>
+                </section>
+
+                <!-- Insérer -->
+                <section class="aurora-panel-section">
+                    <h3><span class="section-icon">➕</span> Insérer</h3>
+                    <button class="aurora-action-btn" data-action="generate-table" data-mode="insert">Tableau formaté</button>
+                    <button class="aurora-action-btn" data-action="summarize" data-mode="insert">Résumé statistiques</button>
+                </section>
+
+                <!-- Traduction -->
+                <section class="aurora-panel-section">
+                    <h3><span class="section-icon">🌍</span> Traduction</h3>
+                    <select id="translation-lang" class="aurora-select">
+                        <option value="Anglais">Anglais</option>
+                        <option value="Français">Français</option>
+                        <option value="Espagnol">Espagnol</option>
+                        <option value="Allemand">Allemand</option>
+                        <option value="Italien">Italien</option>
+                        <option value="Chinois">Chinois</option>
+                        <option value="Japonais">Japonais</option>
+                        <option value="Russe">Russe</option>
+                    </select>
+                    <button class="aurora-action-btn" data-action="translate" data-mode="replace">Traduire le document</button>
+                    <button class="aurora-action-btn" data-action="translate-selection" data-mode="replace">Traduire la sélection</button>
+                </section>
+
+                <!-- Idées -->
+                <section class="aurora-panel-section">
+                    <h3><span class="section-icon">💡</span> Idées</h3>
+                    <button class="aurora-action-btn" data-action="suggest-ideas" data-mode="insert">Suggérer un plan</button>
+                </section>
             </div>
 
             <div id="loading-indicator" class="aurora-loading" style="display: none;">

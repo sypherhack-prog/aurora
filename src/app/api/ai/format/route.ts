@@ -127,10 +127,10 @@ function formatErrorResponse(error: unknown): NextResponse {
             { status: 401 }
         )
     }
-    const fallbackMessage =
-        message ?? 'Erreur interne inattendue'
-
-    return NextResponse.json({ error: `Erreur interne: ${fallbackMessage}` }, { status: 500 })
+    return NextResponse.json(
+        { error: 'Erreur interne. Veuillez réessayer.' },
+        { status: 500 }
+    )
 }
 
 

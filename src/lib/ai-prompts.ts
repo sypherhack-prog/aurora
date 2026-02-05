@@ -14,6 +14,10 @@ STYLING GUIDELINES:
 - Paragraphs: line-height: 1.8; color: #333333; margin-bottom: 1rem.
 - Highlights: Use <strong> for emphasis.
 - Blockquotes: border-left: 4px solid #ccc; background: rgba(0,0,0,0.05); padding: 1rem;
+
+CRITICAL - FRENCH TEXT:
+- Preserve ALL apostrophes in elisions: m'appelle, l'école, j'ai, c'est, n'est, d'abord, etc.
+- Use straight apostrophe ' (U+0027). NEVER add a space before the apostrophe.
 `
 
 export const PROMPTS = {
@@ -25,6 +29,7 @@ export const PROMPTS = {
         - If it's plain text, wrap paragraphs in <p>.
         - CRITICAL: Do NOT change the meaning. Only fix errors.
         - CRITICAL: Fix conjugation of verbs (e.g., "Il a mange" -> "Il a mangé").
+        - CRITICAL: Preserve French elisions (m'appelle, l'école, j'ai). Never add space before apostrophe. Use ' for elisions.
     `,
     'auto-format': `
         Format the provided raw text into a beautiful, structured HTML document.
@@ -34,6 +39,7 @@ export const PROMPTS = {
         - Add spacing between sections.
         - Do not change the core text content, just the structure and style.
         - Use clean, professional styling.
+        - CRITICAL: Preserve all apostrophes (e.g. m'appelle, l'école, j'ai). Never add space before apostrophe. Use ' (U+0027) for French elisions.
     `,
     'continue-writing': (theme: string, type: string) => `
         Continue the text naturally based on the context and theme (${theme}).
@@ -82,6 +88,7 @@ export const PROMPTS = {
         - Ensure proper spacing between headings and paragraphs.
         - Apply line-height: 1.8 to paragraphs.
         - Do not change the text content, only the HTML structure and styles for spacing.
+        - Preserve French apostrophes (m'appelle, l'école). Never add space before apostrophe.
     `,
     translate: (theme: string) => `
         Translate the provided text content STRICTLY into this language: ${theme}.

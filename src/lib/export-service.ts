@@ -45,11 +45,12 @@ export async function checkExportLimit(userId: string) {
         throw new Error('EXPORT_LIMIT_REACHED')
     }
 
-    // Increment count and update date
+    const isNewPeriod = !lastExport || lastExport.getMonth() !== now.getMonth() || lastExport.getFullYear() !== now.getFullYear()
+
     await prisma.user.update({
         where: { id: userId },
         data: {
-            exportCount: lastExport && lastExport.getMonth() !== now.getMonth() ? 1 : { increment: 1 },
+            exportCount: isNewPeriod ? 1 : { increment: 1 },
             lastExportDate: now
         },
     })

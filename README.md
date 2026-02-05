@@ -16,7 +16,7 @@ A modern, AI-powered document editing SaaS application built with Next.js 16, fe
 - **Framework**: Next.js 16 with App Router
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js with credentials provider
-- **AI Integration**: Google Gemini API
+- **AI Integration**: Groq API (LLaMA)
 - **Styling**: Tailwind CSS 4
 - **State Management**: Zustand
 
@@ -50,7 +50,7 @@ Required environment variables:
 - `DATABASE_URL`: PostgreSQL connection string
 - `NEXTAUTH_SECRET`: Random secret for session encryption
 - `NEXTAUTH_URL`: Your app URL (e.g., http://localhost:3000)
-- `GEMINI_API_KEY`: Google Gemini API key
+- `GROQ_API_KEY`: Groq API key
 
 4. Initialize the database:
 ```bash
@@ -81,9 +81,13 @@ src/
 └── lib/                # Utilities and configurations
     ├── auth.ts         # NextAuth configuration
     ├── db.ts           # Prisma client
-    ├── gemini.ts       # AI integration
+    ├── groq.ts         # AI integration (Groq/LLaMA)
     └── logger.ts       # Logging utility
 ```
+
+## Extension Word
+
+Aurora AI est également disponible comme extension Microsoft Word. Voir [docs/UTILISER-EXTENSION-WORD.md](./docs/UTILISER-EXTENSION-WORD.md) pour le guide utilisateur.
 
 ## License
 
