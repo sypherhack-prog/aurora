@@ -13,7 +13,8 @@ const ADDIN_CSP = [
   'img-src \'self\' data: blob: https:',
   'font-src \'self\' data:',
   `connect-src 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com`,
-  "frame-ancestors 'self' https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com",
+  // frame-ancestors : autoriser Office et le domaine lui-même (pour certains cas d'usage)
+  `frame-ancestors 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com`,
   'base-uri \'self\'',
   'form-action \'self\'',
 ].join('; ');
@@ -52,11 +53,31 @@ const defaultHeaders = [
 const nextConfig: NextConfig = {
   async headers() {
     return [
-      // Default : exclure /addin pour éviter frame-ancestors 'none' sur l'add-in
-      { source: '/((?!addin).*)', headers: defaultHeaders },
-      // Add-in : frame-ancestors permissif pour Office (iframe)
-      { source: '/addin/:path*', headers: addinHeaders },
-      { source: '/addin', headers: addinHeaders },
+      // Add-in routes : frame-ancestors permissif pour Office (doit être AVANT la règle par défaut)
+      // Ces routes doivent être accessibles depuis les iframes Office
+      { 
+        source: '/addin/:path*', 
+        headers: addinHeaders,
+      },
+      { 
+        source: '/addin', 
+        headers: addinHeaders,
+      },
+      // Routes publiques qui peuvent être chargées par Office (manifest, assets, etc.)
+      // On applique aussi les headers add-in pour éviter les problèmes CSP
+      { 
+        source: '/addin/manifest.xml', 
+        headers: addinHeaders,
+      },
+      { 
+        source: '/addin/manifest-prod.xml', 
+        headers: addinHeaders,
+      },
+      // Default : pour toutes les autres routes
+      { 
+        source: '/:path*', 
+        headers: defaultHeaders,
+      },
     ];
   },
 };
