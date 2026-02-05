@@ -1,0 +1,15 @@
+---
+description: Push les changements sur GitHub après chaque modification du code
+globs: 
+alwaysApply: true
+---
+
+# Push sur GitHub après modifs
+
+Après avoir modifié des fichiers du projet (et une fois les changements validés / testés) :
+
+1. **Commit et push** : faire un commit avec un message clair puis `git push origin master`.
+2. **Ne pas committer** : `word-addin/node_modules/`, fichiers générés ou sensibles (.env, secrets).
+3. **Message de commit** : court, en français ou anglais, type `fix(scope): description` ou `feat(scope): description`.
+
+Exemple après une modif : `git add <fichiers>`, `git commit -m "fix(api): ..."`, `git push origin master`.
