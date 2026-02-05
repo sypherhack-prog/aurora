@@ -76,8 +76,8 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico
          * - api routes (they handle their own auth)
-         * - addin static assets (JS, CSS, images, XML) - served by Next.js static file handler
+         * Note: Exclusions for addin static assets are handled in the authorized callback
          */
-        '/((?!_next/static|_next/image|favicon\\.ico|api|addin/.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|map|xml)).*)',
+        '/((?!_next/static|_next/image|favicon\\.ico|api).*)',
     ],
 }
