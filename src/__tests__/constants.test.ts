@@ -26,7 +26,7 @@ describe('Application Constants', () => {
         })
 
         it('should have LIMITS for AI and Groq', () => {
-            expect(APP_CONSTANTS.LIMITS.MAX_AI_CONTENT_LENGTH).toBe(200_000)
+            expect(APP_CONSTANTS.LIMITS.MAX_AI_CONTENT_LENGTH).toBe(28_000)
             expect(APP_CONSTANTS.LIMITS.AI_GLOBAL_REQUESTS_PER_MINUTE).toBe(25)
             expect(APP_CONSTANTS.LIMITS.GROQ_MAX_COMPLETION_TOKENS).toBe(4000)
         })

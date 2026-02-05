@@ -22,9 +22,9 @@ export const APP_CONSTANTS = {
         AVG_READING_SPEED: 200, // words per minute
     },
     LIMITS: {
-        /** Max caractères envoyés à l'IA (livres ~63 p. ≈ 150–200k). Groq Llama 3.3 70B = 131k tokens contexte → 200k chars ≈ 50k tokens, large marge. */
-        MAX_AI_CONTENT_LENGTH: 200_000,
-        /** Requêtes IA max par minute pour TOUTE l'app (une clé Groq = 30 RPM, 12k TPM). À augmenter si tu passes sur un tier Groq supérieur. */
+        /** Max caractères par requête IA. Groq TPM = 12k → une requête doit rester sous ~12k tokens (prompt + contenu + sortie). ~28k chars ≈ ~7k tokens + overhead < 12k. */
+        MAX_AI_CONTENT_LENGTH: 28_000,
+        /** Requêtes IA max par minute pour TOUTE l'app (une clé Groq = 30 RPM, 12k TPM). */
         AI_GLOBAL_REQUESTS_PER_MINUTE: 25,
         /** Tokens max en sortie Groq par requête. */
         GROQ_MAX_COMPLETION_TOKENS: 4000,

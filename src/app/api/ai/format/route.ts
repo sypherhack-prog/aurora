@@ -171,6 +171,12 @@ function formatErrorResponse(error: unknown): NextResponse {
             { status: 503 }
         )
     }
+    if (/Request too large|TPM|tokens per minute|exceeded.*limit/i.test(message)) {
+        return NextResponse.json(
+            { error: 'Document ou sélection trop long. Réduisez à environ 28 000 caractères (ou sélectionnez une partie).' },
+            { status: 400 }
+        )
+    }
     if (/Groq API Error|Failed to process with Groq|Missing GROQ_API_KEY/i.test(message)) {
         return NextResponse.json(
             { error: 'Service IA indisponible. Veuillez réessayer dans un moment.' },
