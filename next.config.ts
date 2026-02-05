@@ -5,14 +5,15 @@ const siteOrigin =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
   'https://aurora-omega.vercel.app';
 
+// CSP add-in : autoriser Office.js + API Aurora (URL fixe prod pour fiabilité)
 const ADDIN_CSP = [
-  'default-src \'self\' https://appsforoffice.microsoft.com',
+  'default-src \'self\' https://appsforoffice.microsoft.com https://aurora-omega.vercel.app',
   'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://appsforoffice.microsoft.com https://ajax.aspnetcdn.com',
   'style-src \'self\' \'unsafe-inline\'',
-  'img-src \'self\' data: blob:',
+  'img-src \'self\' data: blob: https:',
   'font-src \'self\' data:',
-  `connect-src 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://api.groq.com`,
-  'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com',
+  `connect-src 'self' ${siteOrigin} https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://api.groq.com`,
+  "frame-ancestors 'self' https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://*.outlook.office.com https://*.outlook.office365.com https://*.msocdn.com https://*.sharepoint.com https://*.officeservices.live.com",
   'base-uri \'self\'',
   'form-action \'self\'',
 ].join('; ');

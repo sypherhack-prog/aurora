@@ -18,7 +18,10 @@ export const metadata: Metadata = {
     description:
         "L'IA qui formate, structure et optimise vos documents instantanément. Plus jamais de mise en page manuelle.",
     icons: {
-        icon: '/favicon.svg',
+        icon: [
+            { url: '/favicon.svg', type: 'image/svg+xml' },
+            { url: '/addin/assets/icon-32.png', sizes: '32x32', type: 'image/png' },
+        ],
         apple: '/favicon.svg',
     },
 }
