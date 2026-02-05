@@ -5,6 +5,9 @@
 
 /* global document, Office, Word */
 
+// Import CSS styles
+import './taskpane.css'
+
 // Injecté au build (webpack DefinePlugin) ; sinon fallback
 const API_BASE_URL =
   (typeof process !== 'undefined' &&
@@ -46,9 +49,48 @@ interface TaskpaneDOM {
 let currentSession: AuroraSession | null = null
 let dom: TaskpaneDOM | null = null
 
+// Global error handler for uncaught errors
+window.addEventListener('error', (event) => {
+  // eslint-disable-next-line no-console
+  console.error('Aurora Add-in: Uncaught error', event.error)
+  showGlobalError('Erreur de chargement. Vérifiez la console pour plus de détails.')
+})
+
+// Global promise rejection handler
+window.addEventListener('unhandledrejection', (event) => {
+  // eslint-disable-next-line no-console
+  console.error('Aurora Add-in: Unhandled promise rejection', event.reason)
+  showGlobalError('Erreur réseau ou serveur. Vérifiez votre connexion.')
+})
+
+const showGlobalError = (message: string): void => {
+  const container = document.querySelector('.aurora-container')
+  if (container) {
+    container.innerHTML = `
+      <div style="padding: 20px; text-align: center; color: #fca5a5;">
+        <h2 style="color: #ef4444; margin-bottom: 12px;">Erreur</h2>
+        <p style="margin-bottom: 16px;">${message}</p>
+        <button onclick="location.reload()" style="padding: 8px 16px; background: #22d3ee; color: white; border: none; border-radius: 6px; cursor: pointer;">
+          Recharger
+        </button>
+      </div>
+    `
+  }
+}
+
 Office.onReady((info) => {
-  if (info.host === Office.HostType.Word) {
-    initializeApp()
+  try {
+    if (info.host === Office.HostType.Word) {
+      initializeApp()
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn('Aurora Add-in: Not running in Word host', info.host)
+      showGlobalError('Cette extension fonctionne uniquement dans Microsoft Word.')
+    }
+  } catch (error: unknown) {
+    // eslint-disable-next-line no-console
+    console.error('Aurora Add-in: Initialization error', error)
+    showGlobalError('Erreur lors de l\'initialisation de l\'extension.')
   }
 })
 

@@ -1,5 +1,6 @@
 
 import { prisma } from '@/lib/db'
+import { DeleteTestUsersButton } from './components/DeleteTestUsersButton'
 
 export default async function AdminUsersPage() {
     const users = await prisma.user.findMany({
@@ -21,9 +22,12 @@ export default async function AdminUsersPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
-                Gestion des Utilisateurs
-            </h1>
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
+                    Gestion des Utilisateurs
+                </h1>
+                <DeleteTestUsersButton />
+            </div>
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
                 <div className="overflow-x-auto">
