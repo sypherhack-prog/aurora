@@ -25,6 +25,10 @@
   2. Word → Insérer → Obtenir des modules complémentaires → Partager un module → Parcourir  
   3. Sélectionnez le fichier `manifest.xml` téléchargé
 
+### Erreurs CSP "artifacts.dev.azure.com" dans la console
+
+Ces erreurs **ne viennent pas de notre add-in** : c'est Word/Office qui charge des source maps (.js.map) depuis Azure DevOps. La CSP de Microsoft les bloque. On ne peut pas les corriger et elles n'impactent pas notre add-in. Filtrez la console par `aurora-omega.vercel.app` pour voir nos erreurs.
+
 ### Si ça ne fonctionne toujours pas
 
 - Utilisez **Word sur le web** (office.com) pour tester : l’add-in peut se comporter différemment.
