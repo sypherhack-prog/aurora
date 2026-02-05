@@ -26,6 +26,8 @@ export const APP_CONSTANTS = {
         MAX_AI_CONTENT_LENGTH: 200_000,
         /** Requêtes IA max par minute pour TOUTE l'app (une clé Groq = 30 RPM, 12k TPM). À augmenter si tu passes sur un tier Groq supérieur. */
         AI_GLOBAL_REQUESTS_PER_MINUTE: 25,
+        /** Tokens max en sortie Groq par requête. */
+        GROQ_MAX_COMPLETION_TOKENS: 4000,
     },
     PRICING: {
         BASIC: 10000,

@@ -177,10 +177,11 @@ function formatErrorResponse(error: unknown): NextResponse {
             { status: 503 }
         )
     }
+    const isDev = process.env.NODE_ENV === 'development'
     return NextResponse.json(
         {
             error: 'Erreur interne. Veuillez réessayer.',
-            detail: message,
+            ...(isDev && { detail: message }),
         },
         { status: 500 }
     )

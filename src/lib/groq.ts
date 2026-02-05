@@ -1,4 +1,4 @@
-
+import { APP_CONSTANTS } from '@/lib/constants'
 import { logger } from '@/lib/logger'
 import { EXTENSIVE_SYSTEM_PROMPT, PROMPTS } from './ai-prompts'
 
@@ -76,7 +76,7 @@ export async function processAIRequest({ action, content, theme, documentType }:
                     }
                 ],
                 temperature: 0.3,
-                max_completion_tokens: 4000,
+                max_completion_tokens: APP_CONSTANTS.LIMITS.GROQ_MAX_COMPLETION_TOKENS,
             })
         })
 

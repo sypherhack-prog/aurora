@@ -24,6 +24,12 @@ describe('Application Constants', () => {
             expect(APP_CONSTANTS.PRICING.PRO).toBe(20000)
             expect(APP_CONSTANTS.PRICING.ANNUAL).toBe(100000)
         })
+
+        it('should have LIMITS for AI and Groq', () => {
+            expect(APP_CONSTANTS.LIMITS.MAX_AI_CONTENT_LENGTH).toBe(200_000)
+            expect(APP_CONSTANTS.LIMITS.AI_GLOBAL_REQUESTS_PER_MINUTE).toBe(25)
+            expect(APP_CONSTANTS.LIMITS.GROQ_MAX_COMPLETION_TOKENS).toBe(4000)
+        })
     })
 
     describe('VALIDATION', () => {
