@@ -6,13 +6,13 @@ const siteOrigin =
   'https://aurora-omega.vercel.app';
 
 const ADDIN_CSP = [
-  'default-src \'self\'',
-  'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'',
+  'default-src \'self\' https://appsforoffice.microsoft.com',
+  'script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://appsforoffice.microsoft.com https://ajax.aspnetcdn.com',
   'style-src \'self\' \'unsafe-inline\'',
   'img-src \'self\' data: blob:',
   'font-src \'self\' data:',
-  `connect-src 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://api.groq.com`,
-  'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.outlook.office.com https://*.outlook.office365.com',
+  `connect-src 'self' ${siteOrigin} https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://api.groq.com`,
+  'frame-ancestors https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.outlook.office.com https://*.outlook.office365.com',
   'base-uri \'self\'',
   'form-action \'self\'',
 ].join('; ');
