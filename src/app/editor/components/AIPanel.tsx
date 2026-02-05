@@ -15,6 +15,7 @@ import {
     Lightbulb,
     LucideIcon,
 } from 'lucide-react'
+import type { AIAction } from '@/lib/groq'
 
 // Types
 interface AIButtonProps {
@@ -35,7 +36,7 @@ interface AIPanelProps {
     isOpen: boolean
     onClose: () => void
     aiLoading: string | null
-    callAI: (action: string, insertMode?: 'replace' | 'append' | 'insert') => void
+    callAI: (action: AIAction, insertMode?: 'replace' | 'append' | 'insert') => Promise<void> | void
     translation: TranslationConfig
 }
 
