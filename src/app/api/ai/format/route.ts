@@ -177,17 +177,17 @@ function formatErrorResponse(error: unknown): NextResponse {
             { status: 503 }
         )
     }
-    if (/NEXTAUTH_SECRET|Prisma|P1001|P1017|connection|ECONNREFUSED/i.test(message)) {
+    if (/NEXTAUTH_SECRET|Prisma|P1001|P1017|connection|ECONNREFUSED|fetch failed|ENOTFOUND|ETIMEDOUT|Invalid.*invocation/i.test(message)) {
         return NextResponse.json(
             { error: 'Service temporairement indisponible. Réessayez dans un instant.' },
             { status: 503 }
         )
     }
-    const isDev = process.env.NODE_ENV === 'development'
+    const safeDetail = message.slice(0, 200)
     return NextResponse.json(
         {
             error: 'Erreur interne. Veuillez réessayer.',
-            ...(isDev && { detail: message }),
+            detail: safeDetail,
         },
         { status: 500 }
     )
