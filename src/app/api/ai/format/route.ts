@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -91,14 +90,20 @@ export async function POST(req: NextRequest) {
         })
 
         return NextResponse.json({ success: true, result })
-    } catch (error: any) {
-        logger.error('AI route error', { message: error.message, name: error.name })
+    } catch (error: unknown) {
+        logger.error('AI route error', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            name: error instanceof Error ? error.name : 'UnknownError',
+        })
         return formatErrorResponse(error)
     }
 }
 
-function formatErrorResponse(error: any): NextResponse {
-    if (error.message === 'SUBSCRIPTION_EXPIRED') {
+function formatErrorResponse(error: unknown): NextResponse {
+    const message = error instanceof Error ? error.message : undefined
+    const code = (error as { code?: string } | null)?.code
+
+    if (message === 'SUBSCRIPTION_EXPIRED') {
         return NextResponse.json(
             {
                 error: 'Votre abonnement a expiré. Veuillez renouveler pour continuer.',
@@ -107,7 +112,7 @@ function formatErrorResponse(error: any): NextResponse {
             { status: 403 }
         )
     }
-    if (error.message === 'LIMIT_REACHED') {
+    if (message === 'LIMIT_REACHED') {
         return NextResponse.json(
             {
                 error: 'Limite gratuite atteinte (5/5). Veuillez passer au plan supérieur.',
@@ -116,16 +121,16 @@ function formatErrorResponse(error: any): NextResponse {
             { status: 403 }
         )
     }
-    if (error.message === 'USER_NOT_FOUND' || error.code === 'P2025') {
+    if (message === 'USER_NOT_FOUND' || code === 'P2025') {
         return NextResponse.json(
             { error: 'Utilisateur introuvable. Veuillez vous reconnecter.' },
             { status: 401 }
         )
     }
-    return NextResponse.json(
-        { error: `Erreur interne: ${error.message}` },
-        { status: 500 }
-    )
+    const fallbackMessage =
+        message ?? 'Erreur interne inattendue'
+
+    return NextResponse.json({ error: `Erreur interne: ${fallbackMessage}` }, { status: 500 })
 }
 
 

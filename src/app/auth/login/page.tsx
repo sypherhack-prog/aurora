@@ -38,8 +38,9 @@ function LoginForm() {
                 setError("Erreur de connexion. Veuillez réessayer.")
                 setLoading(false)
             }
-        } catch {
-            setError("Une erreur inattendue est survenue.")
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Une erreur inattendue est survenue.'
+            setError(message)
             setLoading(false)
         }
     }

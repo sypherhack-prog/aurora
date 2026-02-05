@@ -6,179 +6,320 @@
 /* global document, Office, Word */
 
 // Injecté au build (webpack DefinePlugin) ; sinon fallback
-const API_BASE_URL = (typeof process !== "undefined" && (process as { env?: { API_BASE_URL?: string } }).env?.API_BASE_URL) || "https://aurora-omega.vercel.app";
+const API_BASE_URL =
+  (typeof process !== 'undefined' &&
+    (process as { env?: { API_BASE_URL?: string } }).env?.API_BASE_URL) ||
+  'https://aurora-omega.vercel.app'
 
-// State
-let authToken: string | null = null;
-let userName: string | null = null;
+type AuroraAction =
+  | 'auto-format'
+  | 'fix-errors'
+  | 'continue-writing'
+  | 'suggest-ideas'
+  | 'summarize'
+  | 'generate-table'
+  | 'improve-paragraph'
+  | 'smart-heading'
+  | 'improve-spacing'
+  | 'translate'
+  | 'translate-selection'
 
-// DOM Elements
-let loginSection: HTMLElement;
-let mainPanel: HTMLElement;
-let emailInput: HTMLInputElement;
-let passwordInput: HTMLInputElement;
-let loginBtn: HTMLButtonElement;
-let loginError: HTMLElement;
-let logoutBtn: HTMLButtonElement;
-let userNameEl: HTMLElement;
-let loadingIndicator: HTMLElement;
-let actionError: HTMLElement;
-let actionSuccess: HTMLElement;
+interface AuroraSession {
+  token: string
+  userName: string
+}
+
+interface TaskpaneDOM {
+  loginSection: HTMLElement
+  mainPanel: HTMLElement
+  emailInput: HTMLInputElement
+  passwordInput: HTMLInputElement
+  loginBtn: HTMLButtonElement
+  loginError: HTMLElement
+  logoutBtn: HTMLButtonElement
+  userNameEl: HTMLElement
+  loadingIndicator: HTMLElement
+  actionError: HTMLElement
+  actionSuccess: HTMLElement
+}
+
+let currentSession: AuroraSession | null = null
+let dom: TaskpaneDOM | null = null
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.Word) {
-    initializeApp();
+    initializeApp()
   }
-});
+})
 
-function initializeApp() {
-  // Get DOM elements
-  loginSection = document.getElementById('login-section') as HTMLElement;
-  mainPanel = document.getElementById('main-panel') as HTMLElement;
-  emailInput = document.getElementById('email') as HTMLInputElement;
-  passwordInput = document.getElementById('password') as HTMLInputElement;
-  loginBtn = document.getElementById('login-btn') as HTMLButtonElement;
-  loginError = document.getElementById('login-error') as HTMLElement;
-  logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement;
-  userNameEl = document.getElementById('user-name') as HTMLElement;
-  loadingIndicator = document.getElementById('loading-indicator') as HTMLElement;
-  actionError = document.getElementById('action-error') as HTMLElement;
-  actionSuccess = document.getElementById('action-success') as HTMLElement;
+const initializeApp = (): void => {
+  dom = queryDomElements()
+  if (!dom) {
+    // If the DOM is not ready, avoid crashing the add-in
+    // eslint-disable-next-line no-console
+    console.error('Aurora Add-in: DOM elements not found')
+    return
+  }
+
+  const {
+    loginSection,
+    mainPanel,
+    emailInput,
+    passwordInput,
+    loginBtn,
+    loginError,
+    logoutBtn,
+    userNameEl,
+    loadingIndicator,
+    actionError,
+    actionSuccess,
+  } = dom
 
   // Event listeners
-  loginBtn.addEventListener('click', handleLogin);
-  logoutBtn.addEventListener('click', handleLogout);
+  loginBtn.addEventListener('click', handleLogin)
+  logoutBtn.addEventListener('click', handleLogout)
 
   // Add action button listeners
-  const actionBtns = document.querySelectorAll('.aurora-action-btn');
-  actionBtns.forEach(btn => {
+  const actionBtns = document.querySelectorAll<HTMLButtonElement>('.aurora-action-btn')
+  actionBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const action = (btn as HTMLElement).dataset.action;
-      if (action) handleAIAction(action);
-    });
-  });
+      const action = btn.dataset.action as AuroraAction | undefined
+      if (action) {
+        void handleAIAction(action)
+      }
+    })
+  })
 
-  // Check for stored session
-  const storedToken = localStorage.getItem('aurora_token');
-  const storedUser = localStorage.getItem('aurora_user');
-  if (storedToken && storedUser) {
-    authToken = storedToken;
-    userName = storedUser;
-    showMainPanel();
+  // Restore stored session
+  const storedSession = loadSession()
+  if (storedSession) {
+    currentSession = storedSession
+    userNameEl.textContent = storedSession.userName
+    loginSection.style.display = 'none'
+    mainPanel.style.display = 'block'
+    loginError.style.display = 'none'
+    loadingIndicator.style.display = 'none'
+    actionError.style.display = 'none'
+    actionSuccess.style.display = 'none'
+    emailInput.value = ''
+    passwordInput.value = ''
   }
 }
 
-async function handleLogin() {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+const queryDomElements = (): TaskpaneDOM | null => {
+  const get = <T extends HTMLElement>(id: string): T | null =>
+    document.getElementById(id) as T | null
 
-  if (!email || !password) {
-    showLoginError('Veuillez remplir tous les champs');
-    return;
+  const loginSection = get<HTMLElement>('login-section')
+  const mainPanel = get<HTMLElement>('main-panel')
+  const emailInput = get<HTMLInputElement>('email')
+  const passwordInput = get<HTMLInputElement>('password')
+  const loginBtn = get<HTMLButtonElement>('login-btn')
+  const loginError = get<HTMLElement>('login-error')
+  const logoutBtn = get<HTMLButtonElement>('logout-btn')
+  const userNameEl = get<HTMLElement>('user-name')
+  const loadingIndicator = get<HTMLElement>('loading-indicator')
+  const actionError = get<HTMLElement>('action-error')
+  const actionSuccess = get<HTMLElement>('action-success')
+
+  if (
+    !loginSection ||
+    !mainPanel ||
+    !emailInput ||
+    !passwordInput ||
+    !loginBtn ||
+    !loginError ||
+    !logoutBtn ||
+    !userNameEl ||
+    !loadingIndicator ||
+    !actionError ||
+    !actionSuccess
+  ) {
+    return null
   }
 
-  loginBtn.disabled = true;
-  loginBtn.textContent = 'Connexion...';
-  hideLoginError();
+  return {
+    loginSection,
+    mainPanel,
+    emailInput,
+    passwordInput,
+    loginBtn,
+    loginError,
+    logoutBtn,
+    userNameEl,
+    loadingIndicator,
+    actionError,
+    actionSuccess,
+  }
+}
+
+const loadSession = (): AuroraSession | null => {
+  try {
+    const token = localStorage.getItem('aurora_token')
+    const userName = localStorage.getItem('aurora_user')
+    if (!token || !userName) return null
+    return { token, userName }
+  } catch {
+    return null
+  }
+}
+
+const saveSession = (session: AuroraSession): void => {
+  try {
+    localStorage.setItem('aurora_token', session.token)
+    localStorage.setItem('aurora_user', session.userName)
+  } catch {
+    // ignore storage errors (private mode, etc.)
+  }
+}
+
+const clearSession = (): void => {
+  try {
+    localStorage.removeItem('aurora_token')
+    localStorage.removeItem('aurora_user')
+  } catch {
+    // ignore
+  }
+}
+
+const handleLogin = async (): Promise<void> => {
+  if (!dom) return
+
+  const { emailInput, passwordInput, loginBtn } = dom
+  const email = emailInput.value.trim()
+  const password = passwordInput.value
+
+  if (!email || !password) {
+    showLoginError('Veuillez remplir tous les champs')
+    return
+  }
+
+  loginBtn.disabled = true
+  loginBtn.textContent = 'Connexion...'
+  hideLoginError()
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
-    });
+    })
 
-    const data = await response.json();
+    const data: { token?: string; user?: { name?: string } } = await response.json()
 
     if (!response.ok) {
-      throw new Error(data.error || 'Erreur de connexion');
+      throw new Error(data?.user ? 'Erreur de connexion' : (data as { error?: string })?.error || 'Erreur de connexion')
     }
 
-    // Store session
-    authToken = data.token || 'session';
-    userName = data.user?.name || email.split('@')[0];
-    localStorage.setItem('aurora_token', authToken!);
-    localStorage.setItem('aurora_user', userName!);
+    const token = data.token ?? 'session'
+    const computedUserName = data.user?.name || email.split('@')[0]
 
-    showMainPanel();
+    currentSession = { token, userName: computedUserName }
+    saveSession(currentSession)
+
+    showMainPanel()
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erreur de connexion';
-    showLoginError(errorMessage);
+    const errorMessage = error instanceof Error ? error.message : 'Erreur de connexion'
+    showLoginError(errorMessage)
   } finally {
-    loginBtn.disabled = false;
-    loginBtn.textContent = 'Se connecter';
+    loginBtn.disabled = false
+    loginBtn.textContent = 'Se connecter'
   }
 }
 
-function handleLogout() {
-  authToken = null;
-  userName = null;
-  localStorage.removeItem('aurora_token');
-  localStorage.removeItem('aurora_user');
-  showLoginSection();
+const handleLogout = (): void => {
+  currentSession = null
+  clearSession()
+  showLoginSection()
 }
 
-function showLoginSection() {
-  loginSection.style.display = 'block';
-  mainPanel.style.display = 'none';
-  emailInput.value = '';
-  passwordInput.value = '';
+const showLoginSection = (): void => {
+  if (!dom) return
+  const { loginSection, mainPanel, emailInput, passwordInput } = dom
+  loginSection.style.display = 'block'
+  mainPanel.style.display = 'none'
+  emailInput.value = ''
+  passwordInput.value = ''
 }
 
-function showMainPanel() {
-  loginSection.style.display = 'none';
-  mainPanel.style.display = 'block';
-  userNameEl.textContent = userName || 'Utilisateur';
+const showMainPanel = (): void => {
+  if (!dom) return
+  const { loginSection, mainPanel, userNameEl } = dom
+  loginSection.style.display = 'none'
+  mainPanel.style.display = 'block'
+  userNameEl.textContent = currentSession?.userName ?? 'Utilisateur'
 }
 
-function showLoginError(message: string) {
-  loginError.textContent = message;
-  loginError.style.display = 'block';
+const showLoginError = (message: string): void => {
+  if (!dom) return
+  const { loginError } = dom
+  loginError.textContent = message
+  loginError.style.display = 'block'
 }
 
-function hideLoginError() {
-  loginError.style.display = 'none';
+const hideLoginError = (): void => {
+  if (!dom) return
+  const { loginError } = dom
+  loginError.style.display = 'none'
 }
 
-function showActionError(message: string) {
-  actionError.textContent = message;
-  actionError.style.display = 'block';
-  actionSuccess.style.display = 'none';
-  setTimeout(() => { actionError.style.display = 'none'; }, 5000);
+const showActionError = (message: string): void => {
+  if (!dom) return
+  const { actionError, actionSuccess } = dom
+  actionError.textContent = message
+  actionError.style.display = 'block'
+  actionSuccess.style.display = 'none'
+  setTimeout(() => {
+    actionError.style.display = 'none'
+  }, 5000)
 }
 
-function showActionSuccess(message: string) {
-  actionSuccess.textContent = message;
-  actionSuccess.style.display = 'block';
-  actionError.style.display = 'none';
-  setTimeout(() => { actionSuccess.style.display = 'none'; }, 3000);
+const showActionSuccess = (message: string): void => {
+  if (!dom) return
+  const { actionError, actionSuccess } = dom
+  actionSuccess.textContent = message
+  actionSuccess.style.display = 'block'
+  actionError.style.display = 'none'
+  setTimeout(() => {
+    actionSuccess.style.display = 'none'
+  }, 3000)
 }
 
-function setLoading(loading: boolean) {
-  loadingIndicator.style.display = loading ? 'flex' : 'none';
-  const btns = document.querySelectorAll('.aurora-action-btn') as NodeListOf<HTMLButtonElement>;
-  btns.forEach(btn => btn.disabled = loading);
+const setLoading = (loading: boolean): void => {
+  if (!dom) return
+  const { loadingIndicator } = dom
+  loadingIndicator.style.display = loading ? 'flex' : 'none'
+  const btns = document.querySelectorAll<HTMLButtonElement>('.aurora-action-btn')
+  btns.forEach((btn) => {
+    btn.disabled = loading
+  })
 }
 
-async function handleAIAction(action: string) {
-  setLoading(true);
-  actionError.style.display = 'none';
-  actionSuccess.style.display = 'none';
+const handleAIAction = async (action: AuroraAction): Promise<void> => {
+  if (!dom) return
+  if (!currentSession) {
+    showActionError('Veuillez vous connecter avant de lancer une action')
+    return
+  }
+
+  const { actionError, actionSuccess } = dom
+
+  setLoading(true)
+  actionError.style.display = 'none'
+  actionSuccess.style.display = 'none'
 
   try {
-    // Get selected text from Word
-    const selectedText = await getSelectedText();
+    const selectedText = await getSelectedText()
 
     if (!selectedText && action !== 'continue-writing') {
-      throw new Error('Veuillez sélectionner du texte dans le document');
+      throw new Error('Veuillez sélectionner du texte dans le document')
     }
 
-    // Call Aurora AI API
     const response = await fetch(`${API_BASE_URL}/api/ai/format`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
+        Authorization: `Bearer ${currentSession.token}`,
       },
       credentials: 'include',
       body: JSON.stringify({
@@ -186,41 +327,38 @@ async function handleAIAction(action: string) {
         content: selectedText,
         selection: selectedText,
       }),
-    });
+    })
 
-    const data = await response.json();
+    const data: { error?: string; result?: string } = await response.json()
 
     if (!response.ok) {
-      throw new Error(data.error || 'Erreur lors du traitement');
+      throw new Error(data.error || 'Erreur lors du traitement')
     }
 
-    // Insert result into Word
     if (data.result) {
-      await replaceSelectedText(data.result);
-      showActionSuccess('Texte mis à jour avec succès !');
+      await replaceSelectedText(data.result)
+      showActionSuccess('Texte mis à jour avec succès !')
     }
-
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
-    showActionError(errorMessage);
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
+    showActionError(errorMessage)
   } finally {
-    setLoading(false);
+    setLoading(false)
   }
 }
 
-async function getSelectedText(): Promise<string> {
-  return Word.run(async (context) => {
-    const selection = context.document.getSelection();
-    selection.load('text');
-    await context.sync();
-    return selection.text;
-  });
-}
+const getSelectedText = async (): Promise<string> =>
+  Word.run(async (context) => {
+    const selection = context.document.getSelection()
+    selection.load('text')
+    await context.sync()
+    return selection.text
+  })
 
-async function replaceSelectedText(newText: string): Promise<void> {
-  return Word.run(async (context) => {
-    const selection = context.document.getSelection();
-    selection.insertText(newText, Word.InsertLocation.replace);
-    await context.sync();
-  });
-}
+const replaceSelectedText = async (newText: string): Promise<void> =>
+  Word.run(async (context) => {
+    const selection = context.document.getSelection()
+    selection.insertText(newText, Word.InsertLocation.replace)
+    await context.sync()
+  })
+

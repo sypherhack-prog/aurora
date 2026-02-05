@@ -20,14 +20,14 @@ setInterval(() => {
     }
 }, 60000) // Clean every minute
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
     /** Maximum number of requests allowed in the window */
     limit: number
     /** Time window in seconds */
     windowSeconds: number
 }
 
-interface RateLimitResult {
+export interface RateLimitResult {
     success: boolean
     remaining: number
     resetIn: number

@@ -26,6 +26,7 @@ import {
 import { AuroraIcon } from '@/components/AuroraIcon'
 import { logger } from '@/lib/logger'
 import { APP_CONSTANTS } from '@/lib/constants'
+import type { AIAction } from '@/lib/groq'
 
 // Components
 import { AIPanel } from './components/AIPanel'
@@ -144,7 +145,7 @@ export default function EditorPage() {
 
     // Call AI API with context
     const callAI = useCallback(
-        async (action: string, insertMode: 'replace' | 'append' | 'insert' = 'replace', themeOverride?: string) => {
+        async (action: AIAction, insertMode: 'replace' | 'append' | 'insert' = 'replace', themeOverride?: string) => {
             if (!editor) return
             setAiLoading(action)
 
