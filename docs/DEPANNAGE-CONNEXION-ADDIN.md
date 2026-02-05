@@ -9,8 +9,12 @@ La variable **NEXTAUTH_URL** doit être **exactement** l’URL que vous voyez da
 - Regardez la valeur de `nextAuthUrl`.
 - Si elle est vide ou différente de l’URL du site (ex. vous êtes sur `https://aurora-gilt-two.vercel.app` mais `nextAuthUrl` est `http://localhost:3000`), la connexion échouera.
 
+**Erreur fréquente :** `aurora-omega.vercel.app.com` est **incorrect** (le `.com` ne doit pas être là).  
+L’URL Vercel correcte est : `https://aurora-omega.vercel.app` (sans `.com`).
+
 **À faire :** Dans Vercel → Projet → Settings → Environment Variables, définissez :
-- `NEXTAUTH_URL` = `https://votre-url-exacte.vercel.app` (sans slash final)
+- `NEXTAUTH_URL` = `https://aurora-omega.vercel.app` (sans slash final, sans `.com`)
+- `SITE_URL` = `https://aurora-omega.vercel.app` (pour l’add-in Word)
 Puis redéployez (Redeploy).
 
 ### 2. Créer un utilisateur admin en production

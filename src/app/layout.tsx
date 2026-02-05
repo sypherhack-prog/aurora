@@ -17,6 +17,10 @@ export const metadata: Metadata = {
     title: 'Aurora AI - Documents Formatés Automatiquement',
     description:
         "L'IA qui formate, structure et optimise vos documents instantanément. Plus jamais de mise en page manuelle.",
+    icons: {
+        icon: '/favicon.svg',
+        apple: '/favicon.svg',
+    },
 }
 
 export default function RootLayout({
