@@ -3,9 +3,24 @@ import { logger } from '@/lib/logger'
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 import { validateRegistration, userExists, createUserWithSubscription } from '@/lib/user-service'
 
+const TRANSIENT_PRISMA_CODES = new Set(['P1001', 'P1017', 'P2024'])
+
+function isTransientDbError(error: unknown): boolean {
+    const e = error as { code?: string; message?: string } | undefined
+    if (!e) return false
+    if (e.code && TRANSIENT_PRISMA_CODES.has(e.code)) return true
+    const msg = (e.message || '').toLowerCase()
+    return (
+        msg.includes('connect') ||
+        msg.includes('timeout') ||
+        msg.includes('econnrefused') ||
+        msg.includes('etimedout') ||
+        msg.includes('connection')
+    )
+}
+
 export async function POST(req: NextRequest) {
     try {
-        // Rate limiting to prevent brute-force
         const ip = getClientIP(req)
         const rateLimit = checkRateLimit(`register:${ip}`, RATE_LIMITS.AUTH)
 
@@ -30,16 +45,27 @@ export async function POST(req: NextRequest) {
         }
 
         if (await userExists(email)) {
-            // Use same error message to prevent email enumeration
             return NextResponse.json({ error: 'Impossible de créer le compte. Vérifiez vos informations.' }, { status: 400 })
         }
 
-        await createUserWithSubscription(name, email, password)
-
-        return NextResponse.json({
-            success: true,
-            message: 'Compte créé avec succès',
-        })
+        let lastError: unknown
+        for (let attempt = 1; attempt <= 2; attempt++) {
+            try {
+                await createUserWithSubscription(name, email, password)
+                return NextResponse.json({
+                    success: true,
+                    message: 'Compte créé avec succès',
+                })
+            } catch (err) {
+                lastError = err
+                if (attempt === 1 && isTransientDbError(err)) {
+                    logger.warn('Registration transient error, retrying', { error: err })
+                    continue
+                }
+                throw err
+            }
+        }
+        throw lastError
     } catch (error: unknown) {
         if (error instanceof Error && error.message === 'MAX_USERS_REACHED') {
             return NextResponse.json(
@@ -47,8 +73,18 @@ export async function POST(req: NextRequest) {
                 { status: 403 }
             )
         }
+        const prismaError = error as { code?: string } | undefined
+        if (prismaError?.code === 'P2002') {
+            return NextResponse.json(
+                { error: 'Un compte existe déjà avec cet email. Connectez-vous.' },
+                { status: 409 }
+            )
+        }
         logger.error('Registration error:', error)
-        return NextResponse.json({ error: 'Erreur lors de la création du compte' }, { status: 500 })
+        return NextResponse.json(
+            { error: 'Erreur temporaire lors de la création du compte. Réessayez dans quelques secondes.' },
+            { status: 500 }
+        )
     }
 }
 

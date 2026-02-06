@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentType } from 'react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, User, Loader2, ArrowRight, Check } from 'lucide-react'
@@ -114,22 +114,38 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [success, setSuccess] = useState(false)
+    const submittingRef = useRef(false)
 
     const handleNameChange = (val: string) => setName(val)
     const handleEmailChange = (val: string) => setEmail(val)
     const handlePasswordChange = (val: string) => setPassword(val)
 
+    const doRegister = async (): Promise<Response> => {
+        return fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password }),
+        })
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (submittingRef.current) return
+        submittingRef.current = true
         setLoading(true)
         setError('')
 
         try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password }),
-            })
+            let res: Response
+            try {
+                res = await doRegister()
+            } catch {
+                res = await doRegister()
+            }
+
+            if (!res.ok && res.status >= 500) {
+                res = await doRegister()
+            }
 
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || 'Une erreur est survenue')
@@ -140,6 +156,7 @@ export default function RegisterPage() {
             const message = err instanceof Error ? err.message : 'Une erreur est survenue'
             setError(message)
         } finally {
+            submittingRef.current = false
             setLoading(false)
         }
     }
