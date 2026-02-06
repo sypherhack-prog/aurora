@@ -9,7 +9,7 @@ const ADDIN_CSP = [
     'style-src \'self\' \'unsafe-inline\'',
     'img-src \'self\' data: blob: https:',
     'font-src \'self\' data:',
-    'connect-src \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com',
+    'connect-src \'self\' https://aurora-omega.vercel.app https://*.office.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.sharepoint.com https://*.cdn.office.net https://eu-mobile.events.data.microsoft.com https://common.online.office.com https://api.groq.com https://openrouter.ai',
     'frame-ancestors \'self\' https: https://aurora-omega.vercel.app https://*.vercel.app https://office.com https://*.office.com https://office365.com https://*.office365.com https://*.office.net https://*.officeapps.live.com https://*.officeapps.live.com:443 https://outlook.office.com https://*.outlook.office.com https://outlook.office365.com https://*.outlook.office365.com https://outlook.live.com https://*.live.com https://*.msocdn.com https://*.sharepoint.com https://*.sharepointonline.com https://*.officeservices.live.com https://*.microsoft.com https://*.microsoftonline.com https://*.msauth.net',
     'base-uri \'self\'',
     'form-action \'self\'',
