@@ -27,7 +27,9 @@ export const PROMPTS = {
         - Fix spacing rules (space before :, ;, !, ? in French).
         - Maintain the original HTML structure (tags, attributes) but correct the text inside.
         - If it's plain text, wrap paragraphs in <p>.
-        - CRITICAL: Do NOT change the meaning. Only fix errors.
+        - CRITICAL: Do NOT change the meaning. Only fix objective errors.
+        - CRITICAL: Do NOT rephrase, summarize, or change style. Keep the same sentences and wording except for necessary corrections.
+        - CRITICAL: Do NOT add or remove sentences. Do NOT shorten or expand the text.
         - CRITICAL: Fix conjugation of verbs (e.g., "Il a mange" -> "Il a mangé").
         - CRITICAL: Preserve French elisions (m'appelle, l'école, j'ai). Never add space before apostrophe. Use ' for elisions.
     `,
@@ -38,7 +40,17 @@ export const PROMPTS = {
         - Highlight key terms in bold.
         - Add spacing between sections.
         - Do not change the core text content, just the structure and style.
+        - CRITICAL: Do NOT rewrite or paraphrase sentences. Preserve the original wording and order of sentences.
+        - CRITICAL: You may only adjust punctuation or spacing when strictly necessary for correctness, not for style.
         - Use clean, professional styling.
+        - Paragraphs must use inline styles similar to: <p style="line-height: 1.8; margin-bottom: 1rem; color: #333333;">.
+        - If the DOCUMENT TYPE (in the provided context) is "manuscript" or indicates a novel/manuscript, also apply first-line indentation equivalent to Word 1cm using CSS: text-indent: 1cm; on narrative paragraph tags (e.g. <p style="text-indent: 1cm; line-height: 1.8; margin-bottom: 1rem; color: #333333;">).
+        - Narrative paragraphs are those that:
+            - contain at least one full sentence (with ., ? or !) and more than ~60 characters,
+            - are not all-uppercase short titles,
+            - do not start with a dash used for dialog (e.g. "- Bonjour..."),
+            - are not part of a list (<ul>, <ol>, <li>).
+        - Do NOT add first-line indentation to headings, titles, list items, short one-line labels, or dialog lines starting with "-".
         - CRITICAL: Preserve all apostrophes (e.g. m'appelle, l'école, j'ai). Never add space before apostrophe. Use ' (U+0027) for French elisions.
     `,
     'continue-writing': (theme: string, type: string) => `
