@@ -30,8 +30,7 @@ export const APP_CONSTANTS = {
         GROQ_MAX_COMPLETION_TOKENS: 4000,
     },
     PRICING: {
-        BASIC: 10000,
-        PRO: 20000, // 20 000 Ar/mois (extension Word incluse)
+        BASIC: 10000, // 10 000 Ar/mois (extension Word incluse)
         ANNUAL: 100000,
     },
     DEFAULT_CONTENT: {

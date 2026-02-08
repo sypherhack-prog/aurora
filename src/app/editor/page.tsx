@@ -265,7 +265,7 @@ export default function EditorPage() {
 
             if (!limitResult.success) {
                 if (limitResult.error === 'LIMIT_REACHED') {
-                    showNotification('error', 'Limite mensuelle atteinte (2 exports). Passez à la version PRO.')
+                    showNotification('error', 'Limite mensuelle atteinte (2 exports). Passez à un plan payant (Basic ou Annuel).')
                     setExportLoading(false)
                     return
                 }

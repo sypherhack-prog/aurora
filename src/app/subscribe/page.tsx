@@ -10,7 +10,6 @@ const formatPrice = (n: number) => n.toLocaleString('en-US')
 
 const planDetails: Record<string, { name: string; price: string; period: string; amount: number }> = {
     BASIC: { name: 'Basic', price: formatPrice(APP_CONSTANTS.PRICING.BASIC), period: '1 mois', amount: APP_CONSTANTS.PRICING.BASIC },
-    PRO: { name: 'Pro', price: formatPrice(APP_CONSTANTS.PRICING.PRO), period: 'mois', amount: APP_CONSTANTS.PRICING.PRO },
     ANNUAL: { name: 'Annuel', price: formatPrice(APP_CONSTANTS.PRICING.ANNUAL), period: '12 mois', amount: APP_CONSTANTS.PRICING.ANNUAL },
 }
 

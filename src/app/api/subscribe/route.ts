@@ -6,10 +6,9 @@ import { logger } from '@/lib/logger'
 import { APP_CONSTANTS } from '@/lib/constants'
 import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit'
 
-// Map plan names to constant values
+// Map plan names to constant values (BASIC and ANNUAL only; PRO plan removed)
 const planAmounts: Record<string, number> = {
     BASIC: APP_CONSTANTS.PRICING.BASIC,
-    PRO: APP_CONSTANTS.PRICING.PRO,
     ANNUAL: APP_CONSTANTS.PRICING.ANNUAL,
 }
 

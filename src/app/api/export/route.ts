@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ error: 'Votre abonnement a expiré. Veuillez renouveler.' }, { status: 403 })
             }
             if (e instanceof Error && e.message === 'EXPORT_LIMIT_REACHED') {
-                return NextResponse.json({ error: 'Limite mensuelle atteinte (2 exports). Passez à la version PRO.' }, { status: 403 })
+                return NextResponse.json({ error: 'Limite mensuelle atteinte (2 exports). Passez à un plan payant (Basic ou Annuel).' }, { status: 403 })
             }
             throw e
         }

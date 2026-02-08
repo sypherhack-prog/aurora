@@ -456,7 +456,7 @@ const normalizeTextForApi = (text: string): string => {
   return text.replace(/\u2019/g, "'").replace(/\u2018/g, "'")
 }
 
-/** Nettoie la réponse IA : enlève blocs markdown et extrait le fragment HTML pour insertion Word */
+/** Nettoie la réponse IA : extrait uniquement le fragment HTML pour que le document n'affiche jamais de balises brutes. */
 function normalizeAiResultForWord(raw: string): string {
   if (!raw || !raw.trim()) return raw
   let s = raw
@@ -466,10 +466,12 @@ function normalizeAiResultForWord(raw: string): string {
     .trim()
   const firstBracket = s.indexOf('<')
   const lastBracket = s.lastIndexOf('>')
-  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket >= firstBracket) {
     s = s.slice(firstBracket, lastBracket + 1)
   }
-  return s
+  // Correctif Word : après </ul> ou </ol>, ajouter un paragraphe vide pour que toutes les listes s'affichent correctement (bug insertHtml)
+  s = s.replace(/<\/ul>/gi, '</ul><p></p>').replace(/<\/ol>/gi, '</ol><p></p>')
+  return s.trim()
 }
 
 /** Remplace ou insère le contenu selon le mode. HTML toujours inséré via insertHtml pour un rendu correct. */

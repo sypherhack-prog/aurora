@@ -76,11 +76,19 @@ function buildMessages(prompt: string, context: string): ChatMessage[] {
     ]
 }
 
+/** Ensures the API returns only the HTML fragment (or plain text), so it is never shown as raw markup in Word/editor. */
 function cleanLLMOutput(text: string): string {
-    return text
-        .replace(/^```html/, '')
-        .replace(/```$/, '')
+    let s = text
+        .replace(/^```html\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```\s*$/i, '')
         .trim()
+    const firstBracket = s.indexOf('<')
+    const lastBracket = s.lastIndexOf('>')
+    if (firstBracket !== -1 && lastBracket !== -1 && lastBracket >= firstBracket) {
+        s = s.slice(firstBracket, lastBracket + 1)
+    }
+    return s.trim()
 }
 
 function isQuotaOrRateLimitError(error: unknown): boolean {

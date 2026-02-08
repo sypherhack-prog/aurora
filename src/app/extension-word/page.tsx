@@ -47,7 +47,7 @@ export default function ExtensionWordPage() {
                     </h1>
                     <p className="text-xl text-zinc-400">
                         Formatez, traduisez et améliorez vos documents directement dans Word.
-                        L&apos;extension est incluse dans les plans Pro et Annuel.
+                        L&apos;extension est incluse dans les plans Basic et Annuel.
                     </p>
                 </div>
             </section>
@@ -116,7 +116,7 @@ export default function ExtensionWordPage() {
                             <li>Utilisez les fonctionnalités (formatage, traduction, etc.)</li>
                         </ol>
                         <p className="mt-4 text-sm text-zinc-400">
-                            L&apos;extension est incluse dans les plans Pro et Annuel. Le plan gratuit a des limites (5 générations / mois).
+                            L&apos;extension est incluse dans les plans Basic et Annuel. Le plan gratuit a des limites (5 générations / mois).
                         </p>
                     </div>
 

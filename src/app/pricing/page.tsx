@@ -24,8 +24,9 @@ const plans = [
         name: 'Basic',
         price: formatPrice(APP_CONSTANTS.PRICING.BASIC),
         period: '1 mois',
-        description: 'Pour les utilisateurs réguliers',
+        description: 'Extension Word incluse · Pour les utilisateurs réguliers',
         features: [
+            'Extension Word Aurora AI incluse',
             '50 documents par mois',
             'Formatage IA complet',
             'Export PDF, Word, HTML',
@@ -33,26 +34,8 @@ const plans = [
             'Support email',
         ],
         planCode: 'BASIC',
-        highlight: false,
-        cta: 'Souscrire',
-        popular: false,
-    },
-    {
-        name: 'Pro',
-        price: formatPrice(APP_CONSTANTS.PRICING.PRO),
-        period: 'par mois',
-        description: 'Extension Word incluse',
-        features: [
-            'Extension Word Aurora AI incluse',
-            'Documents illimités',
-            'IA avancée',
-            "Tous les formats d'export",
-            'Support prioritaire',
-            'Templates premium',
-        ],
-        planCode: 'PRO',
         highlight: true,
-        cta: 'Choisir Pro',
+        cta: 'Souscrire',
         popular: true,
     },
     {
@@ -62,7 +45,7 @@ const plans = [
         description: 'Extension Word incluse · Économisez 2 mois',
         features: [
             'Extension Word Aurora AI incluse',
-            'Tout du Pro inclus',
+            'Tout du Basic inclus',
             '2 mois gratuits',
             'Accès anticipé aux nouveautés',
             'Support dédié',
@@ -126,14 +109,14 @@ export default function PricingPage() {
                         href="/extension-word"
                         className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition text-sm"
                     >
-                        Extension Word incluse (Pro/Annuel) — Installer l&apos;extension
+                        Extension Word incluse (Basic/Annuel) — Installer l&apos;extension
                     </Link>
                 </div>
             </section>
 
             {/* Pricing Cards */}
             <section className="pb-24 px-6">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {plans.map((plan) => (
                         <div
                             key={plan.name}
