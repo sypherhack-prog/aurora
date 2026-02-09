@@ -47,6 +47,7 @@ const DOC_TITLES: Record<string, string> = {
 export default function EditorPage() {
     const { data: session } = useSession()
     const [mounted, setMounted] = useState(false)
+    const [userPlan, setUserPlan] = useState<string | null>(null)
     const [aiPanelOpen, setAiPanelOpen] = useState(true)
     const [aiLoading, setAiLoading] = useState<string | null>(null)
     const [wordCount, setWordCount] = useState(0)
@@ -133,6 +134,31 @@ export default function EditorPage() {
         }, APP_CONSTANTS.TIMEOUTS.DEBOUNCE)
         return () => clearTimeout(checkEmpty)
     }, [editor])
+
+    // Fetch user plan to show upgrade CTA for FREE users
+    useEffect(() => {
+        if (!session) {
+            setUserPlan(null)
+            return
+        }
+
+        const controller = new AbortController()
+
+        const fetchPlan = async () => {
+            try {
+                const res = await fetch('/api/me/plan', { signal: controller.signal })
+                if (!res.ok) return
+                const data = (await res.json()) as { plan?: string }
+                if (data.plan) setUserPlan(data.plan)
+            } catch {
+                // En cas d'erreur réseau, ne rien afficher plutôt que bloquer l'éditeur
+            }
+        }
+
+        void fetchPlan()
+
+        return () => controller.abort()
+    }, [session])
 
     // Show notification
     const showNotification = (type: 'success' | 'error', message: string) => {
@@ -405,8 +431,19 @@ export default function EditorPage() {
                         </span>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="text-xs text-zinc-500 hidden md:block">
-                            {wordCount} mots • {charCount} car.
+                        <div className="hidden md:flex items-center gap-4">
+                            <div className="text-xs text-zinc-500">
+                                {wordCount} mots • {charCount} car.
+                            </div>
+                            {(userPlan === 'FREE' || userPlan === 'EXPIRED' || userPlan === null) && (
+                                <a
+                                    href="/subscribe?plan=BASIC"
+                                    className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-cyan-500/50 text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 transition"
+                                >
+                                    <AuroraIcon className="w-3 h-3" />
+                                    <span>Upgrade vers Basic</span>
+                                </a>
+                            )}
                         </div>
                         <button
                             onClick={() => setShowExportModal(true)}
